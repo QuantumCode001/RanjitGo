@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaBloom · Level Path</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ══ THEME TOKENS ══ */
+    :root {
+      --ink:          #1a1a2e;
+      --ink-soft:     #2d2d44;
+      --ink-muted:    #5c5c7a;
+      --paper:        #faf8f5;
+      --paper-warm:   #f5f0e8;
+      --paper-card:   rgba(255,255,255,0.80);
+      --paper-header: rgba(250,248,245,0.92);
+      --sakura:       #e8a0b4;
+      --sakura-pale:  #f7e8ef;
+      --sakura-deep:  #c4687e;
+      --gold:         #c8a96e;
+      --gold-pale:    #f5edda;
+      --mist:         #8a8fa8;
+      --accent-blue:  #7b9bbf;
+      --green:        #5e8a6a;
+      --border:       rgba(26,26,46,0.10);
+      --shadow:       rgba(26,26,46,0.08);
+      --shadow-md:    rgba(26,26,46,0.15);
+      --toggle-track: rgba(26,26,46,0.12);
+      --toggle-thumb: #c4687e;
+      --path-line:    rgba(196,104,126,0.25);
+    }
+    [data-theme="dark"] {
+      --ink:          #e4dfd7;
+      --ink-soft:     #c0bab4;
+      --ink-muted:    #7a7590;
+      --paper:        #111018;
+      --paper-warm:   #18161f;
+      --paper-card:   rgba(28,26,40,0.88);
+      --paper-header: rgba(15,14,22,0.95);
+      --sakura:       #a05070;
+      --sakura-pale:  rgba(196,104,126,0.12);
+      --sakura-deep:  #e888a4;
+      --gold:         #c8a96e;
+      --gold-pale:    rgba(200,169,110,0.12);
+      --mist:         #56546a;
+      --accent-blue:  #5a7a9e;
+      --green:        #4a9e5e;
+      --border:       rgba(255,255,255,0.07);
+      --shadow:       rgba(0,0,0,0.40);
+      --shadow-md:    rgba(0,0,0,0.55);
+      --toggle-track: rgba(232,136,164,0.25);
+      --toggle-thumb: #e888a4;
+      --path-line:    rgba(232,136,164,0.18);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background 0.5s, color 0.5s;
+    }
+
+    /* ══ BG ══ */
+    .bg-canvas {
+      position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+    }
+    .ink-circle {
+      position:absolute; border-radius:50%; opacity:0.05;
+      animation:inkPulse 8s ease-in-out infinite; transition:background 0.5s;
+    }
+    .ink-circle:nth-child(1){width:700px;height:700px;top:-200px;right:-200px;background:var(--sakura-deep);}
+    .ink-circle:nth-child(2){width:500px;height:500px;bottom:-150px;left:-100px;background:var(--accent-blue);animation-delay:-3s;}
+    .ink-circle:nth-child(3){width:300px;height:300px;top:40%;left:30%;background:var(--gold);animation-delay:-5s;}
+    @keyframes inkPulse{0%,100%{transform:scale(1);opacity:0.04}50%{transform:scale(1.08);opacity:0.09}}
+    [data-theme="dark"] .ink-circle{opacity:0.13}
+
+    .petal{position:absolute;opacity:0;animation:petalFall linear infinite;pointer-events:none;}
+    @keyframes petalFall{
+      0%{transform:translateY(-40px) rotate(0deg);opacity:0}
+      10%{opacity:0.55}90%{opacity:0.3}
+      100%{transform:translateY(105vh) rotate(380deg) translateX(50px);opacity:0}
+    }
+    .ink-line{
+      position:absolute;height:1px;
+      background:linear-gradient(90deg,transparent,var(--ink) 30%,var(--ink) 70%,transparent);
+      opacity:0.06;animation:inkStroke 12s ease-in-out infinite;
+    }
+    @keyframes inkStroke{0%,100%{transform:scaleX(0.4);opacity:0.03}50%{transform:scaleX(1);opacity:0.07}}
+
+    /* ══ HEADER ══ */
+    header {
+      position:sticky;top:0;z-index:100;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1.1rem 5%;
+      background:var(--paper-header);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+      transition:background 0.5s,border-color 0.5s;
+    }
+    .logo-area{
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+  text-decoration:none;
+}
+
+/* Logo circle */
+.logo-mark{
+  position:relative;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-mark svg{
+  width:40px;
+  height:40px;
+}
+
+/* ✨ Smooth, subtle ring draw */
+.brush-ring{
+  stroke-dasharray:120;
+  stroke-dashoffset:120;
+  animation:drawRing 0s ease-out forwards; /* slower + smooth */
+  stroke:var(--sakura-deep);
+  fill:none;
+  transition:stroke 0.s;
+}
+
+@keyframes drawRing{
+  to{stroke-dashoffset:0;}
+}
+
+/* ✨ Softer text appearance (no zoom jump) */
+.logo-char{
+  fill:var(--ink);
+  opacity:0;
+  animation:fadeChar  forwards;
+}
+
+@keyframes fadeChar{
+  from{opacity:0; transform:translateY(4px);} /* subtle move instead of scale */
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Text */
+.logo-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+
+.logo-main{
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  font-size:1.4rem;
+  color:var(--ink);
+  letter-spacing:0.02em;
+  transition:color 0.3s ease;
+}
+
+.logo-sub{
+  font-size:0.63rem;
+  font-weight:300;
+  color:var(--mist);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-top:2px;
+  transition:color 0.3s ease;
+}                                                              
+
+    .header-right{display:flex;align-items:center;gap:1rem;}
+
+    /* Menu */
+    .menu-container{position:relative;}
+    .menu-button{
+      background:transparent;border:1px solid var(--border);color:var(--ink-soft);
+      padding:0.55rem 1.3rem;border-radius:2px;
+      font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.75rem;font-weight:400;
+      letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;
+      display:flex;align-items:center;gap:0.6rem;transition:all 0.3s;
+      position:relative;overflow:hidden;
+    }
+    .menu-button::after{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+      background:var(--sakura-deep);transform:scaleX(0);transform-origin:left;
+      transition:transform 0.4s cubic-bezier(.4,0,.2,1);
+    }
+    .menu-button:hover::after,.menu-container.active .menu-button::after{transform:scaleX(1);}
+    .menu-button:hover{border-color:var(--sakura-deep);color:var(--ink);}
+    .menu-button .chevron{font-size:0.7rem;transition:transform 0.4s;}
+    .menu-container.active .menu-button .chevron{transform:rotate(180deg);}
+    .dropdown-menu{
+      position:absolute;top:calc(100% + 10px);right:0;
+      background:var(--paper-header);backdrop-filter:blur(20px);
+      border:1px solid var(--border);border-radius:2px;
+      min-width:210px;padding:0.5rem 0;z-index:200;
+      opacity:0;visibility:hidden;transform:translateY(-8px);
+      transition:all 0.3s cubic-bezier(.4,0,.2,1);
+      box-shadow:0 24px 48px var(--shadow);
+    }
+    .menu-container.active .dropdown-menu{opacity:1;visibility:visible;transform:translateY(0);}
+    .dropdown-menu a{
+      display:flex;align-items:center;gap:0.8rem;padding:0.72rem 1.4rem;
+      color:var(--ink-soft);text-decoration:none;font-size:0.82rem;letter-spacing:0.06em;
+      transition:all 0.2s;position:relative;
+    }
+    .dropdown-menu a::before{
+      content:'';position:absolute;left:0;top:20%;bottom:20%;
+      width:2px;background:var(--sakura-deep);transform:scaleY(0);transition:transform 0.25s;
+    }
+    .dropdown-menu a:hover{color:var(--ink);background:var(--sakura-pale);}
+    .dropdown-menu a:hover::before{transform:scaleY(1);}
+    .dropdown-menu a i{width:16px;color:var(--sakura-deep);font-size:0.75rem;}
+    .dropdown-menu hr{margin:0.4rem 1rem;border:none;border-top:1px solid var(--border);}
+    .dropdown-item-toggle{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0.72rem 1.4rem;cursor:pointer;transition:background 0.2s;
+    }
+    .dropdown-item-toggle:hover{background:var(--sakura-pale);}
+    .toggle-label{display:flex;align-items:center;gap:0.8rem;font-size:0.82rem;letter-spacing:0.06em;color:var(--ink-soft);}
+    .toggle-label i{width:16px;color:var(--sakura-deep);font-size:0.8rem;}
+    .switch{position:relative;width:36px;height:20px;flex-shrink:0;}
+    .switch input{opacity:0;width:0;height:0;}
+    .switch-track{
+      position:absolute;inset:0;background:var(--toggle-track);
+      border-radius:20px;cursor:pointer;transition:background 0.4s;
+    }
+    .switch-track::after{
+      content:'';position:absolute;top:3px;left:3px;
+      width:14px;height:14px;border-radius:50%;
+      background:var(--toggle-thumb);
+      transition:transform 0.35s cubic-bezier(.4,0,.2,1),background 0.4s;
+      box-shadow:0 1px 4px rgba(0,0,0,0.2);
+    }
+    .switch input:checked + .switch-track::after{transform:translateX(16px);}
+    [data-theme="dark"] .switch-track{background:rgba(232,136,164,0.3);}
+
+    /* ══ XP BAR STRIP ══ */
+    .xp-strip {
+      position:relative;z-index:1;
+      background:var(--paper-card);border-bottom:1px solid var(--border);
+      padding:0.7rem 5%;
+      display:flex;align-items:center;gap:1.5rem;
+      backdrop-filter:blur(8px);
+      transition:background 0.5s;
+    }
+    .xp-label{font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--mist);white-space:nowrap;}
+    .xp-bar-wrap{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+    .xp-bar-fill{
+      height:100%;border-radius:3px;
+      background:linear-gradient(90deg,var(--sakura-deep),var(--gold));
+      transition:width 1s cubic-bezier(.4,0,.2,1);
+    }
+    .xp-score{
+      font-family:'Noto Serif JP',serif;font-weight:300;
+      font-size:0.9rem;color:var(--ink);white-space:nowrap;
+      display:flex;align-items:center;gap:0.4rem;
+    }
+    .xp-score i{color:var(--gold);font-size:0.75rem;}
+    .level-badge-pill{
+      display:flex;align-items:center;gap:0.4rem;
+      font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;
+      padding:0.25rem 0.75rem;border-radius:20px;
+      background:var(--sakura-pale);color:var(--sakura-deep);
+      border:1px solid var(--sakura);font-weight:400;
+      transition:background 0.5s,color 0.5s;
+    }
+
+    /* ══ MAIN ══ */
+    main {
+      position:relative;z-index:1;flex:1;
+      padding:3rem 5% 6rem;
+      display:flex;flex-direction:column;align-items:center;
+    }
+
+    /* ══ SECTION HEAD ══ */
+    .section-head{
+      width:100%;max-width:900px;
+      margin-bottom:3rem;
+      display:flex;align-items:baseline;gap:1rem;
+    }
+    .section-kanji{
+      font-family:'Noto Serif JP',serif;font-weight:200;font-size:3.5rem;
+      color:rgba(26,26,46,0.07);line-height:1;letter-spacing:-0.02em;user-select:none;
+      transition:color 0.5s;
+    }
+    [data-theme="dark"] .section-kanji{color:rgba(228,223,215,0.06);}
+    .section-title-wrap{display:flex;flex-direction:column;}
+    .section-title{
+      font-family:'Noto Serif JP',serif;font-size:1.6rem;font-weight:200;
+      color:var(--ink);letter-spacing:0.02em;line-height:1.3;transition:color 0.5s;
+    }
+    .section-title strong{font-weight:400;color:var(--sakura-deep);}
+    .section-label{font-size:0.63rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--mist);margin-top:4px;transition:color 0.5s;}
+
+    /* ══ LEVEL PATH ══ */
+    .path-container{
+      width:100%;max-width:900px;
+      position:relative;
+    }
+
+    /* Winding SVG path line */
+    .path-svg{
+      position:absolute;top:0;left:0;width:100%;height:100%;
+      pointer-events:none;z-index:0;overflow:visible;
+    }
+    .path-line{
+      fill:none;stroke:var(--path-line);stroke-width:3;
+      stroke-dasharray:8 10;stroke-linecap:round;
+    }
+
+    /* Chapters */
+    .chapter-label{
+      font-family:'Noto Serif JP',serif;font-weight:200;font-size:0.65rem;
+      letter-spacing:0.28em;text-transform:uppercase;color:var(--mist);
+      text-align:center;margin:0.5rem 0 1.8rem;
+      display:flex;align-items:center;gap:0.8rem;
+      transition:color 0.5s;
+    }
+    .chapter-label::before,.chapter-label::after{
+      content:'';flex:1;height:1px;background:var(--border);
+    }
+
+    /* Level row — 3 nodes per row alternating alignment */
+    .level-row{
+      display:flex;justify-content:center;gap:2.5rem;
+      margin-bottom:1.2rem;
+      position:relative;z-index:1;
+    }
+    .level-row.alt{flex-direction:row-reverse;}
+
+    /* ══ LEVEL NODE ══ */
+    .level-node{
+      display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+      width:120px;flex-shrink:0;
+      animation:nodeReveal 0.6s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes nodeReveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    .node-orb {
+      position:relative;
+      width:72px;height:72px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      transition:transform 0.35s cubic-bezier(.4,0,.2,1),box-shadow 0.35s;
+      outline:none;
+    }
+
+    /* Locked */
+    .node-orb.locked{
+      background:var(--paper-card);
+      border:2px solid var(--border);
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+    .node-orb.locked .orb-icon{color:var(--mist);font-size:1.4rem;opacity:0.5;}
+    .node-orb.locked .orb-num{color:var(--mist);opacity:0.4;}
+
+    /* Completed */
+    .node-orb.completed{
+      border:2px solid transparent;
+      box-shadow:0 6px 20px var(--shadow-md);
+    }
+    .node-orb.completed:hover{
+      transform:translateY(-5px) scale(1.06);
+      box-shadow:0 14px 32px var(--shadow-md);
+    }
+
+    /* Active (next to unlock) */
+    .node-orb.active{
+      border:2px solid transparent;
+      box-shadow:0 8px 24px var(--shadow-md);
+      animation:orbPulse 2.5s ease-in-out infinite;
+    }
+    .node-orb.active:hover{
+      transform:translateY(-5px) scale(1.06);
+      animation:none;
+      box-shadow:0 14px 36px var(--shadow-md);
+    }
+    @keyframes orbPulse{
+      0%,100%{box-shadow:0 6px 20px var(--shadow-md),0 0 0 0 rgba(196,104,126,0.2);}
+      50%{box-shadow:0 10px 28px var(--shadow-md),0 0 0 12px rgba(196,104,126,0);}
+    }
+
+    /* Orb inner ring (decorative) */
+    .orb-ring{
+      position:absolute;inset:-6px;border-radius:50%;
+      border:1px dashed transparent;
+      transition:border-color 0.4s,transform 0.8s;
+    }
+    .node-orb.active .orb-ring,.node-orb.completed:hover .orb-ring{
+      border-color:var(--sakura-deep);opacity:0.4;
+      transform:rotate(45deg);
+    }
+
+    .orb-inner{
+      position:relative;width:100%;height:100%;border-radius:50%;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+    }
+    .orb-num{
+      font-family:'Noto Serif JP',serif;font-weight:200;font-size:0.6rem;
+      letter-spacing:0.15em;color:white;opacity:0.85;
+    }
+    .orb-icon{font-size:1.3rem;color:white;}
+    .orb-check{
+      position:absolute;bottom:-4px;right:-4px;
+      width:22px;height:22px;border-radius:50%;
+      background:var(--green);
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.65rem;color:white;
+      border:2px solid var(--paper);
+      transition:border-color 0.5s;
+    }
+
+    /* Stars under node */
+    .node-stars{
+      display:flex;gap:3px;justify-content:center;
+    }
+    .node-star{font-size:0.7rem;color:var(--border);transition:color 0.3s;}
+    .node-star.lit{color:var(--gold);}
+
+    /* Node label */
+    .node-label{
+      font-family:'Noto Serif JP',serif;font-weight:300;
+      font-size:0.75rem;color:var(--ink-soft);letter-spacing:0.04em;
+      text-align:center;line-height:1.3;
+      transition:color 0.5s;
+    }
+    .node-label.muted{color:var(--mist);opacity:0.6;}
+    .node-sublabel{
+      font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;
+      color:var(--mist);text-align:center;opacity:0.7;
+      transition:color 0.5s;
+    }
+
+    /* Level colour themes — cycling through 5 gradients */
+    .orb-grad-0{background:linear-gradient(135deg,#c4687e,#a04060);}
+    .orb-grad-1{background:linear-gradient(135deg,#7b9bbf,#4a72a0);}
+    .orb-grad-2{background:linear-gradient(135deg,#c8a96e,#9e7a3a);}
+    .orb-grad-3{background:linear-gradient(135deg,#5e8a6a,#3d6050);}
+    .orb-grad-4{background:linear-gradient(135deg,#9b7bb8,#6a4a90);}
+
+    /* ══ MODAL POPUP ══ */
+    .modal-overlay{
+      position:fixed;inset:0;z-index:500;
+      background:rgba(0,0,0,0.35);
+      backdrop-filter:blur(6px);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;visibility:hidden;
+      transition:opacity 0.3s,visibility 0.3s;
+    }
+    .modal-overlay.open{opacity:1;visibility:visible;}
+
+    .modal{
+      width:min(440px,calc(100vw - 2rem));
+      background:var(--paper-card);
+      border:1px solid var(--border);
+      border-radius:4px;
+      overflow:hidden;
+      box-shadow:0 40px 80px rgba(0,0,0,0.3);
+      transform:translateY(20px) scale(0.97);
+      transition:transform 0.35s cubic-bezier(.4,0,.2,1);
+      backdrop-filter:blur(20px);
+    }
+    .modal-overlay.open .modal{transform:translateY(0) scale(1);}
+
+    .modal-header{
+      padding:1.4rem 1.6rem 1rem;
+      display:flex;align-items:center;gap:1rem;
+      position:relative;
+    }
+    .modal-header::after{
+      content:'';position:absolute;bottom:0;left:1.6rem;right:1.6rem;
+      height:1px;background:var(--border);
+    }
+    .modal-orb-mini{
+      width:48px;height:48px;border-radius:50%;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.2rem;color:white;
+    }
+    .modal-level-info{flex:1;}
+    .modal-level-num{
+      font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;
+      color:var(--mist);margin-bottom:3px;
+    }
+    .modal-level-name{
+      font-family:'Noto Serif JP',serif;font-size:1.25rem;font-weight:300;
+      color:var(--ink);transition:color 0.5s;
+    }
+    .modal-close{
+      background:transparent;border:none;cursor:pointer;
+      color:var(--mist);font-size:1rem;padding:0.3rem;
+      border-radius:2px;transition:color 0.2s;
+    }
+    .modal-close:hover{color:var(--ink);}
+
+    .modal-body{padding:1.2rem 1.6rem;}
+    .modal-desc{
+      font-size:0.82rem;font-weight:300;color:var(--ink-muted);
+      line-height:1.7;margin-bottom:1.2rem;
+      transition:color 0.5s;
+    }
+
+    .modal-stats{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;
+      margin-bottom:1.4rem;
+    }
+    .mstat{
+      background:var(--paper-warm);border:1px solid var(--border);
+      border-radius:2px;padding:0.75rem 0.6rem;text-align:center;
+    }
+    .mstat-num{
+      font-family:'Noto Serif JP',serif;font-size:1.3rem;font-weight:300;
+      color:var(--ink);line-height:1;
+      transition:color 0.5s;
+    }
+    .mstat-label{font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);margin-top:3px;}
+
+    .modal-stars{display:flex;gap:6px;justify-content:center;margin-bottom:1.4rem;}
+    .modal-star{font-size:1.4rem;color:var(--border);transition:color 0.4s,transform 0.3s;}
+    .modal-star.lit{color:var(--gold);transform:scale(1.1);}
+
+    .modal-footer{padding:1rem 1.6rem 1.4rem;display:flex;gap:0.7rem;}
+    .btn-play{
+      flex:1;background:var(--sakura-deep);border:none;color:white;
+      padding:0.75rem 1rem;border-radius:2px;cursor:pointer;
+      font-family:'Zen Kaku Gothic New',sans-serif;
+      font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;
+      display:flex;align-items:center;justify-content:center;gap:0.5rem;
+      transition:all 0.25s;
+    }
+    .btn-play:hover{background:#a04060;transform:translateY(-2px);box-shadow:0 8px 20px rgba(196,104,126,0.3);}
+    .btn-cancel{
+      background:transparent;border:1px solid var(--border);
+      color:var(--ink-muted);padding:0.75rem 1.2rem;border-radius:2px;cursor:pointer;
+      font-family:'Zen Kaku Gothic New',sans-serif;
+      font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;
+      transition:all 0.25s;
+    }
+    .btn-cancel:hover{border-color:var(--sakura-deep);color:var(--sakura-deep);}
+
+    /* Locked modal state */
+    .modal-locked-msg{
+      display:flex;align-items:center;gap:0.6rem;
+      background:var(--paper-warm);border:1px solid var(--border);
+      border-radius:2px;padding:0.9rem 1rem;
+      font-size:0.8rem;color:var(--mist);margin-bottom:1.2rem;
+    }
+    .modal-locked-msg i{color:var(--sakura-deep);}
+
+    /* ══ TOAST ══ */
+    .toast{
+      position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+      background:var(--ink);color:var(--paper);
+      padding:0.65rem 1.4rem;border-radius:2px;
+      font-size:0.8rem;letter-spacing:0.06em;
+      opacity:0;pointer-events:none;
+      transition:opacity 0.3s,transform 0.3s;
+      z-index:600;white-space:nowrap;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:600px){
+      .level-row{gap:1rem;}
+      .node-orb{width:60px;height:60px;}
+      .orb-icon{font-size:1.1rem;}
+      .level-node{width:90px;}
+      .xp-strip{gap:0.8rem;}
+    }
+
+    /* ══════════════════════════════════════════
+   BACK BUTTON
+══════════════════════════════════════════ */
+.back-btn {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 1000;
+
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+
+  background: var(--paper-card);
+  border: 1px solid var(--border);
+
+  color: var(--sakura-deep);
+  font-size: 1.2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 28px var(--shadow);
+
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+/* Hover effect (matching your theme) */
+.back-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: var(--sakura-deep);
+  color: var(--ink);
+  box-shadow: 0 14px 40px var(--shadow);
+}
+
+/* Active click */
+.back-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile adjustment */
+@media (max-width:540px) {
+  .back-btn {
+    bottom: 1.5rem;
+    left: 1.5rem;
+  }
+}
+  </style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="bg-canvas">
+  <div class="ink-circle"></div>
+  <div class="ink-circle"></div>
+  <div class="ink-circle"></div>
+  <div class="ink-line" style="top:22%;left:0;right:0;"></div>
+  <div class="ink-line" style="top:68%;left:0;right:0;animation-delay:-5s;"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+    <a class="logo-area" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle class="brush-ring" cx="20" cy="20" r="17" stroke-width="1" stroke-linecap="round"/>
+          <image href="logo/logo.png" x="10" y="10" width="20" height="20" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">RanjitGo</span>
+        <span class="logo-sub">English Learning</span>
+      </div>
+    </a>
+
+  <div class="header-right">
+    <div class="menu-container" id="menuContainer">
+      <button class="menu-button" id="menuToggle" aria-expanded="false">
+        <span>Menu</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </button>
+      <nav class="dropdown-menu" id="dropdownMenu">
+        <a href="index.html"><i class="fas fa-house"></i> Home</a>
+        <a href="about.html"><i class="fas fa-book-open"></i> About</a>
+        <hr>
+        <a href="login.html"><i class="fas fa-right-to-bracket"></i> Login</a>
+        <a href="#"><i class="fas fa-user-plus"></i> Sign up</a>
+        <hr>
+        <div class="dropdown-item-toggle" id="themeToggleRow" role="button" tabindex="0" aria-label="Toggle dark mode">
+          <span class="toggle-label">
+            <i class="fas fa-moon" id="themeIcon"></i>
+            <span id="themeLabel">Dark Mode</span>
+          </span>
+          <label class="switch" onclick="event.stopPropagation()">
+            <input type="checkbox" id="themeSwitch">
+            <div class="switch-track"></div>
+          </label>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- XP STRIP -->
+<div class="xp-strip">
+  <div class="level-badge-pill"><i class="fas fa-seedling"></i> <span id="xpLevelBadge">Sprout</span></div>
+  <span class="xp-label">Progress</span>
+  <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div></div>
+  <div class="xp-score"><i class="fas fa-star"></i><span id="xpTotal">0</span> XP</div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="section-head">
+    <span class="section-kanji">道</span>
+    <div class="section-title-wrap">
+      <h1 class="section-title"><strong>Your</strong> learning path</h1>
+      <span class="section-label">Complete each to unlock the next</span>
+    </div>
+  </div>
+
+  <!-- PATH CONTAINER (built by JS) -->
+  <div class="path-container" id="pathContainer"></div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-orb-mini" id="modalOrb"></div>
+      <div class="modal-level-info">
+        <div class="modal-level-num" id="modalNum"></div>
+        <div class="modal-level-name" id="modalName"></div>
+      </div>
+      <button class="modal-close" id="modalClose"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc" id="modalDesc"></p>
+      <div id="modalLockedMsg" class="modal-locked-msg" style="display:none">
+        <i class="fas fa-lock"></i>
+        <span id="modalLockedText"></span>
+      </div>
+      <div class="modal-stats" id="modalStats">
+        <div class="mstat"><div class="mstat-num" id="mstatQ">8</div><div class="mstat-label">Questions</div></div>
+        <div class="mstat"><div class="mstat-num" id="mstatXP">—</div><div class="mstat-label">XP Reward</div></div>
+        <div class="mstat"><div class="mstat-num" id="mstatBest">—</div><div class="mstat-label">Best Score</div></div>
+      </div>
+      <div class="modal-stars" id="modalStars">
+        <i class="fas fa-star modal-star" id="mstar0"></i>
+        <i class="fas fa-star modal-star" id="mstar1"></i>
+        <i class="fas fa-star modal-star" id="mstar2"></i>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="modalCancelBtn">Close</button>
+      <button class="btn-play" id="modalPlayBtn"><i class="fas fa-play"></i> Start Level</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Back Button ─── -->
+<button class="back-btn" onclick="goBack()" aria-label="Go back">
+  <i class="fas fa-arrow-left"></i>
+</button>
+
+<i class="fas fa-arrow-left-long"></i>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+
+  /* ══ THEME ══ */
+  const html = document.documentElement;
+  const themeSwitch = document.getElementById('themeSwitch');
+  const themeIcon   = document.getElementById('themeIcon');
+  const themeLabel  = document.getElementById('themeLabel');
+  const themeToggleRow = document.getElementById('themeToggleRow');
+
+  const savedTheme = localStorage.getItem('lb-theme');
+  if(savedTheme==='dark') applyDark(true,false);
+
+  function applyDark(on, save=true){
+    html.dataset.theme = on ? 'dark' : 'light';
+    themeSwitch.checked = on;
+    themeIcon.className = on ? 'fas fa-sun' : 'fas fa-moon';
+    themeLabel.textContent = on ? 'Light Mode' : 'Dark Mode';
+    if(save) localStorage.setItem('lb-theme', on?'dark':'light');
+  }
+  themeSwitch.addEventListener('change', ()=> applyDark(themeSwitch.checked));
+  themeToggleRow.addEventListener('click', ()=> applyDark(!themeSwitch.checked));
+  themeToggleRow.addEventListener('keydown', e=>{
+    if(e.key==='Enter'||e.key===' '){ e.preventDefault(); applyDark(!themeSwitch.checked); }
+  });
+
+  /* ══ MENU ══ */
+  const menuContainer = document.getElementById('menuContainer');
+  const menuToggle    = document.getElementById('menuToggle');
+  const dropdownMenu  = document.getElementById('dropdownMenu');
+  menuToggle.addEventListener('click', e=>{
+    e.stopPropagation();
+    const open = menuContainer.classList.toggle('active');
+    menuToggle.setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('click', e=>{
+    if(!menuContainer.contains(e.target)){
+      menuContainer.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded','false');
+    }
+  });
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape'){ menuContainer.classList.remove('active'); menuToggle.setAttribute('aria-expanded','false'); }
+  });
+
+  /* ══ PETALS ══ */
+  const bgCanvas = document.querySelector('.bg-canvas');
+  function isDark(){ return html.dataset.theme==='dark'; }
+  function createPetal(){
+    const el = document.createElement('div');
+    el.className = 'petal';
+    const size = 8+Math.random()*10, x=Math.random()*100;
+    const dur = 10+Math.random()*12, delay=Math.random()*-20;
+    const cols = isDark()?['#8a3a58','#a05070','#7a304a']:['#e8a0b4','#f2b8c6','#d4a0b0'];
+    const color = cols[Math.floor(Math.random()*cols.length)];
+    el.style.cssText = `left:${x}vw;top:-20px;animation-duration:${dur}s;animation-delay:${delay}s;`;
+    el.innerHTML=`<svg width="${size}" height="${size}" viewBox="0 0 20 20">
+      <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.65" transform="rotate(0,10,10)"/>
+      <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.65" transform="rotate(90,10,10)"/>
+      <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.65" transform="rotate(180,10,10)"/>
+      <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.65" transform="rotate(270,10,10)"/>
+      <circle cx="10" cy="10" r="2" fill="#f7e0e8" opacity="0.8"/></svg>`;
+    bgCanvas.appendChild(el);
+    setTimeout(()=>el.remove(),(dur+Math.abs(delay))*1000+500);
+  }
+  for(let i=0;i<6;i++) createPetal();
+  setInterval(createPetal,2000);
+
+  /* ══ LEVEL DATA ══ */
+  const LEVELS = [
+    { id:1,  name:'First Words',   jp:'最初の言葉', chapter:'Chapter I · Seedling',  icon:'fa-seedling',    xp:50,  questions:8,  desc:'Start your journey with the most common English words and simple greetings. Perfect for absolute beginners.' },
+    { id:2,  name:'Daily Life',    jp:'日常生活',   chapter:null,                    icon:'fa-sun',         xp:60,  questions:8,  desc:'Learn vocabulary for home, food, family, and everyday routines that form the backbone of conversation.' },
+    { id:3,  name:'Simple Verbs',  jp:'動詞の基礎', chapter:null,                    icon:'fa-bolt',        xp:70,  questions:8,  desc:'Master essential action words — run, eat, sleep, work — and form your first sentences in present tense.' },
+    { id:4,  name:'Describing',    jp:'形容詞',     chapter:'Chapter II · Bud',      icon:'fa-palette',     xp:80,  questions:8,  desc:'Colours, sizes, emotions — adjectives that bring your sentences to life and make your descriptions vivid.' },
+    { id:5,  name:'Past Tense',    jp:'過去形',     chapter:null,                    icon:'fa-clock-rotate-left', xp:90, questions:8, desc:'Tell stories about yesterday and last week. Learn regular and irregular past tense verbs in context.' },
+    { id:6,  name:'Questions',     jp:'疑問文',     chapter:null,                    icon:'fa-circle-question', xp:100,questions:8, desc:'Who, what, when, where, why — master question formation and engage in real back-and-forth conversation.' },
+    { id:7,  name:'Prepositions',  jp:'前置詞',     chapter:'Chapter III · Petal',   icon:'fa-arrows-up-down-left-right', xp:110,questions:8, desc:'In, on, under, beside — spatial relationships that are essential but often tricky for learners.' },
+    { id:8,  name:'Idioms Vol.1',  jp:'慣用句・一', chapter:null,                    icon:'fa-comment-dots', xp:130,questions:8, desc:'Dive into common English idioms like "under the weather" and "break a leg" with real-world examples.' },
+    { id:9,  name:'Future Plans',  jp:'未来形',     chapter:null,                    icon:'fa-rocket',      xp:140,questions:8, desc:'Will, going to, might — express future intentions, predictions, and plans with confidence and nuance.' },
+    { id:10, name:'Conditionals',  jp:'条件文',     chapter:'Chapter IV · Sakura',   icon:'fa-code-branch', xp:160,questions:8, desc:'If this, then that — first, second and third conditionals for real and hypothetical situations.' },
+    { id:11, name:'Phrasal Verbs', jp:'句動詞',     chapter:null,                    icon:'fa-link',        xp:180,questions:8, desc:'Give up, look after, turn into — master the most common multi-word verbs that native speakers use constantly.' },
+    { id:12, name:'Advanced Vocab',jp:'上級語彙',   chapter:null,                    icon:'fa-brain',       xp:200,questions:8, desc:'IELTS-grade vocabulary: ambiguous, ephemeral, ubiquitous — words that unlock academic and professional English.' },
+    { id:13, name:'Register',      jp:'文体',       chapter:'Chapter V · Storm',     icon:'fa-pen-fancy',   xp:220,questions:8, desc:'Formal vs informal, written vs spoken — understand how English changes depending on context and audience.' },
+    { id:14, name:'Inversions',    jp:'倒置構文',   chapter:null,                    icon:'fa-wand-sparkles',xp:240,questions:8, desc:'Not only did she… / Scarcely had he… — advanced grammatical inversions that mark near-native fluency.' },
+    { id:15, name:'Mastery',       jp:'完全習得',   chapter:'Chapter VI · Rise',    icon:'fa-crown',       xp:300,questions:10, desc:'The final bloom — rare vocabulary, nuanced register, literary language and the pinnacle of English mastery.' },
+    { id:16,  name:'First Words',   jp:'最初の言葉', chapter:'Chapter VI · Surge',  icon:'fa-seedling',    xp:50,  questions:8,  desc:'Start your journey with the most common English words and simple greetings. Perfect for absolute beginners.' },
+    { id:17,  name:'Daily Life',    jp:'日常生活',   chapter:null,                    icon:'fa-sun',         xp:60,  questions:8,  desc:'Learn vocabulary for home, food, family, and everyday routines that form the backbone of conversation.' },
+    { id:18,  name:'Simple Verbs',  jp:'動詞の基礎', chapter:null,                    icon:'fa-bolt',        xp:70,  questions:8,  desc:'Master essential action words — run, eat, sleep, work — and form your first sentences in present tense.' },
+    { id:19,  name:'Describing',    jp:'形容詞',     chapter:'Chapter VII · Mastery',      icon:'fa-palette',     xp:80,  questions:8,  desc:'Colours, sizes, emotions — adjectives that bring your sentences to life and make your descriptions vivid.' },
+    { id:20,  name:'Past Tense',    jp:'過去形',     chapter:null,                    icon:'fa-clock-rotate-left', xp:90, questions:8, desc:'Tell stories about yesterday and last week. Learn regular and irregular past tense verbs in context.' },
+    { id:21,  name:'Questions',     jp:'疑問文',     chapter:null,                    icon:'fa-circle-question', xp:100,questions:8, desc:'Who, what, when, where, why — master question formation and engage in real back-and-forth conversation.' },
+    { id:22,  name:'Prepositions',  jp:'前置詞',     chapter:'Chapter VIII · Dawn',   icon:'fa-arrows-up-down-left-right', xp:110,questions:8, desc:'In, on, under, beside — spatial relationships that are essential but often tricky for learners.' },
+    { id:23,  name:'Idioms Vol.1',  jp:'慣用句・一', chapter:null,                    icon:'fa-comment-dots', xp:130,questions:8, desc:'Dive into common English idioms like "under the weather" and "break a leg" with real-world examples.' },
+    { id:24,  name:'Future Plans',  jp:'未来形',     chapter:null,                    icon:'fa-rocket',      xp:140,questions:8, desc:'Will, going to, might — express future intentions, predictions, and plans with confidence and nuance.' },
+    { id:25, name:'Conditionals',  jp:'条件文',     chapter:'Chapter IX · Tsubomi',   icon:'fa-code-branch', xp:160,questions:8, desc:'If this, then that — first, second and third conditionals for real and hypothetical situations.' },
+    { id:26, name:'Phrasal Verbs', jp:'句動詞',     chapter:null,                    icon:'fa-link',        xp:180,questions:8, desc:'Give up, look after, turn into — master the most common multi-word verbs that native speakers use constantly.' },
+    { id:27, name:'Advanced Vocab',jp:'上級語彙',   chapter:null,                    icon:'fa-brain',       xp:200,questions:8, desc:'IELTS-grade vocabulary: ambiguous, ephemeral, ubiquitous — words that unlock academic and professional English.' },
+    { id:28, name:'Register',      jp:'文体',       chapter:'Chapter X · Kagayaki',     icon:'fa-pen-fancy',   xp:220,questions:8, desc:'Formal vs informal, written vs spoken — understand how English changes depending on context and audience.' },
+    { id:29, name:'Inversions',    jp:'倒置構文',   chapter:null,                    icon:'fa-wand-sparkles',xp:240,questions:8, desc:'Not only did she… / Scarcely had he… — advanced grammatical inversions that mark near-native fluency.' },
+    { id:30, name:'Mastery',       jp:'完全習得',   chapter:'Chapter X · Kagayaki',    icon:'fa-crown',       xp:300,questions:10, desc:'The final bloom — rare vocabulary, nuanced register, literary language and the pinnacle of English mastery.' },
+  ];
+
+  /* ══ PROGRESS STATE ══ */
+  let progress = JSON.parse(localStorage.getItem('lb-progress') || 'null') || {
+    unlocked: 1,   // level IDs unlocked (1..15)
+    stars: {},     // { "1": 3, "2": 2, ... }
+    scores: {},    // { "1": 85, ... }
+    totalXP: 0,
+  };
+
+  function saveProgress(){ localStorage.setItem('lb-progress', JSON.stringify(progress)); }
+
+  // For demo: unlock levels that have been simulated
+  function getStars(lvlId){ return progress.stars[lvlId] || 0; }
+  function isCompleted(lvlId){ return getStars(lvlId) > 0; }
+  function isUnlocked(lvlId){ return lvlId <= progress.unlocked; }
+  function isActive(lvlId){ return lvlId === progress.unlocked && !isCompleted(lvlId); }
+
+  /* ══ XP BAR ══ */
+  const xpBadgeNames = ['Sprout','Bud','Petal','Sakura','Storm','Bloom'];
+  function updateXP(){
+    const totalPossible = LEVELS.reduce((a,l)=>a+l.xp,0);
+    const pct = Math.min(100, Math.round((progress.totalXP/totalPossible)*100));
+    document.getElementById('xpBarFill').style.width = pct+'%';
+    document.getElementById('xpTotal').textContent = progress.totalXP;
+    // badge label
+    const idx = Math.min(5, Math.floor(pct/17));
+    document.getElementById('xpLevelBadge').textContent = xpBadgeNames[idx];
+  }
+
+  /* ══ COLOUR ══ */
+  const gradClasses = ['orb-grad-0','orb-grad-1','orb-grad-2','orb-grad-3','orb-grad-4'];
+  function gradClass(lvlId){ return gradClasses[(lvlId-1)%5]; }
+
+  /* ══ BUILD PATH ══ */
+  const container = document.getElementById('pathContainer');
+
+  // Layout: rows of 3, alternating direction (zigzag)
+  // Row 0: levels 1,2,3  (left to right)
+  // Row 1: levels 4,5,6  (right to left)
+  // Row 2: levels 7,8,9  ...
+  // Row 3: levels 10,11,12
+  // Row 4: levels 13,14,15
+
+  let levelIndex = 0;
+  let rowIndex = 0;
+
+  while(levelIndex < LEVELS.length){
+    const rowLevels = LEVELS.slice(levelIndex, levelIndex+3);
+    const firstInRow = rowLevels[0];
+
+    // Chapter label
+    if(firstInRow.chapter){
+      const chap = document.createElement('div');
+      chap.className = 'chapter-label';
+      chap.textContent = firstInRow.chapter;
+      container.appendChild(chap);
+    }
+
+    // Row
+    const row = document.createElement('div');
+    row.className = 'level-row' + (rowIndex%2===1?' alt':'');
+
+    rowLevels.forEach((lvl, i)=>{
+      const node = document.createElement('div');
+      node.className = 'level-node';
+      node.style.animationDelay = (levelIndex*0.06 + i*0.08)+'s';
+
+      const completed = isCompleted(lvl.id);
+      const unlocked  = isUnlocked(lvl.id);
+      const active    = isActive(lvl.id);
+      const stars     = getStars(lvl.id);
+
+      const stateClass = completed ? 'completed' : (active ? 'active' : (unlocked ? 'active' : 'locked'));
+      const grad = (completed||active||unlocked) ? gradClass(lvl.id) : '';
+
+      node.innerHTML = `
+        <div class="node-orb ${stateClass} ${grad}" data-lvl="${lvl.id}" tabindex="${unlocked?'0':'-1'}" role="button" aria-label="Level ${lvl.id}: ${lvl.name}">
+          <div class="orb-ring"></div>
+          <div class="orb-inner">
+            <span class="orb-num">${String(lvl.id).padStart(2,'0')}</span>
+            <i class="orb-icon fas ${unlocked ? lvl.icon : 'fa-lock'}"></i>
+          </div>
+          ${completed ? '<div class="orb-check"><i class="fas fa-check"></i></div>' : ''}
+        </div>
+        <div class="node-stars">
+          ${[0,1,2].map(s=>`<span class="node-star${s < stars ? ' lit' : ''}">★</span>`).join('')}
+        </div>
+        <div class="node-label ${!unlocked?'muted':''}">${lvl.name}</div>
+        <div class="node-sublabel">${lvl.jp}</div>
+      `;
+
+      row.appendChild(node);
+    });
+
+    container.appendChild(row);
+
+    // Spacer between rows
+    if(levelIndex + 3 < LEVELS.length){
+      const spacer = document.createElement('div');
+      spacer.style.height = '1rem';
+      container.appendChild(spacer);
+    }
+
+    levelIndex += 3;
+    rowIndex++;
+  }
+
+  /* ══ NODE CLICKS ══ */
+  container.addEventListener('click', e=>{
+    const orb = e.target.closest('.node-orb');
+    if(!orb) return;
+    const lvlId = parseInt(orb.dataset.lvl);
+    openModal(lvlId);
+  });
+  container.addEventListener('keydown', e=>{
+    if(e.key==='Enter'||e.key===' '){
+      const orb = e.target.closest('.node-orb');
+      if(orb){ e.preventDefault(); openModal(parseInt(orb.dataset.lvl)); }
+    }
+  });
+
+  /* ══ MODAL ══ */
+  const overlay   = document.getElementById('modalOverlay');
+  const modalOrb  = document.getElementById('modalOrb');
+  const modalNum  = document.getElementById('modalNum');
+  const modalName = document.getElementById('modalName');
+  const modalDesc = document.getElementById('modalDesc');
+  const modalLockedMsg = document.getElementById('modalLockedMsg');
+  const modalLockedText= document.getElementById('modalLockedText');
+  const modalStats= document.getElementById('modalStats');
+  const mstatQ    = document.getElementById('mstatQ');
+  const mstatXP   = document.getElementById('mstatXP');
+  const mstatBest = document.getElementById('mstatBest');
+  const mstar     = [0,1,2].map(i=>document.getElementById('mstar'+i));
+  const playBtn   = document.getElementById('modalPlayBtn');
+  const cancelBtn = document.getElementById('modalCancelBtn');
+  const closeBtn  = document.getElementById('modalClose');
+
+  let currentModalLvl = null;
+
+  function openModal(lvlId){
+    const lvl = LEVELS[lvlId-1];
+    currentModalLvl = lvlId;
+    const completed  = isCompleted(lvlId);
+    const unlocked   = isUnlocked(lvlId);
+    const stars      = getStars(lvlId);
+    const best       = progress.scores[lvlId];
+
+    // Orb colour
+    const g = gradClass(lvlId);
+    modalOrb.className = `modal-orb-mini ${unlocked?g:''}`;
+    modalOrb.innerHTML = `<i class="fas ${unlocked?lvl.icon:'fa-lock'}"></i>`;
+
+    modalNum.textContent  = `Level ${String(lvlId).padStart(2,'0')} · ${lvl.jp}`;
+    modalName.textContent = lvl.name;
+    modalDesc.textContent = lvl.desc;
+
+    // Stats
+    mstatQ.textContent   = lvl.questions;
+    mstatXP.textContent  = '+'+lvl.xp;
+    mstatBest.textContent= best ? best+'%' : '—';
+
+    // Stars
+    mstar.forEach((s,i)=>{ s.classList.toggle('lit', i < stars); });
+
+    // Locked message
+    if(!unlocked){
+      modalLockedMsg.style.display = 'flex';
+      const prevName = LEVELS[lvlId-2].name;
+      modalLockedText.textContent = `Complete "${prevName}" to unlock this level.`;
+      playBtn.disabled = true;
+      playBtn.style.opacity = '0.4';
+      playBtn.style.cursor = 'not-allowed';
+    } else {
+      modalLockedMsg.style.display = 'none';
+      playBtn.disabled = false;
+      playBtn.style.opacity = '1';
+      playBtn.style.cursor = 'pointer';
+      playBtn.innerHTML = completed
+        ? '<i class="fas fa-rotate-right"></i> Replay'
+        : '<i class="fas fa-play"></i> Start Level';
+    }
+
+    overlay.classList.add('open');
+  }
+
+  function closeModal(){ overlay.classList.remove('open'); currentModalLvl = null; }
+  closeBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+  /* ══ SIMULATE PLAY ══ */
+  playBtn.addEventListener('click', ()=>{
+  if(!currentModalLvl) return;
+
+  const lvlId = currentModalLvl;
+
+  if(!isUnlocked(lvlId)) return;
+
+  // Save current level (optional but useful)
+  localStorage.setItem("currentLevel", lvlId);
+
+  // Go to game page
+  window.location.href = "game.html";
+});
+
+
+
+  function simulatePlay(lvlId){
+    showToast(`🌸 Playing Level ${lvlId}…`);
+    setTimeout(()=>{
+      // Simulate a result: random 1–3 stars, random score
+      const lvl = LEVELS[lvlId-1];
+      const starsEarned = Math.floor(Math.random()*3)+1;
+      const scoreEarned = [55,72,88,95][starsEarned]; // rough scores
+      const prevStars   = getStars(lvlId);
+
+      // Only add XP if first time or improvement
+      const isNewCompletion = prevStars === 0;
+
+      progress.stars[lvlId]  = Math.max(prevStars, starsEarned);
+      progress.scores[lvlId] = Math.max(progress.scores[lvlId]||0, scoreEarned);
+
+      if(isNewCompletion){
+        progress.totalXP += lvl.xp;
+        // Unlock next
+        if(lvlId < 15) progress.unlocked = Math.max(progress.unlocked, lvlId+1);
+      }
+      saveProgress();
+      updateXP();
+      rebuildPath();
+
+      const msgs = ['✨ Great job!','🌸 Level complete!','🎉 Well done!','🌺 Excellent!'];
+      showToast(msgs[Math.floor(Math.random()*msgs.length)] + ` Level ${lvlId} — ${starsEarned}★`);
+
+      if(isNewCompletion && lvlId < 15){
+        setTimeout(()=>showToast(`🔓 Level ${lvlId+1} unlocked!`), 2000);
+      }
+    }, 1200);
+  }
+
+  /* ══ REBUILD PATH ══ */
+  function rebuildPath(){
+    container.innerHTML = '';
+    let li = 0, ri = 0;
+    while(li < LEVELS.length){
+      const rowLevels = LEVELS.slice(li,li+3);
+      const first = rowLevels[0];
+      if(first.chapter){
+        const chap = document.createElement('div');
+        chap.className = 'chapter-label';
+        chap.textContent = first.chapter;
+        container.appendChild(chap);
+      }
+      const row = document.createElement('div');
+      row.className = 'level-row'+(ri%2===1?' alt':'');
+      rowLevels.forEach((lvl,i)=>{
+        const completed = isCompleted(lvl.id);
+        const unlocked  = isUnlocked(lvl.id);
+        const active    = isActive(lvl.id);
+        const stars     = getStars(lvl.id);
+        const stateClass= completed?'completed':(active?'active':(unlocked?'active':'locked'));
+        const grad      = (completed||active||unlocked)?gradClass(lvl.id):'';
+        const node = document.createElement('div');
+        node.className = 'level-node';
+        node.style.animationDelay = (i*0.06)+'s';
+        node.innerHTML=`
+          <div class="node-orb ${stateClass} ${grad}" data-lvl="${lvl.id}" tabindex="${unlocked?'0':'-1'}" role="button">
+            <div class="orb-ring"></div>
+            <div class="orb-inner">
+              <span class="orb-num">${String(lvl.id).padStart(2,'0')}</span>
+              <i class="orb-icon fas ${unlocked?lvl.icon:'fa-lock'}"></i>
+            </div>
+            ${completed?'<div class="orb-check"><i class="fas fa-check"></i></div>':''}
+          </div>
+          <div class="node-stars">${[0,1,2].map(s=>`<span class="node-star${s<stars?' lit':''}">★</span>`).join('')}</div>
+          <div class="node-label ${!unlocked?'muted':''}">${lvl.name}</div>
+          <div class="node-sublabel">${lvl.jp}</div>`;
+        row.appendChild(node);
+      });
+      container.appendChild(row);
+      if(li+3 < LEVELS.length){
+        const sp=document.createElement('div'); sp.style.height='1rem'; container.appendChild(sp);
+      }
+      li+=3; ri++;
+    }
+  }
+
+  /* ══ TOAST ══ */
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function showToast(msg){
+    clearTimeout(toastTimer);
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(()=> toastEl.classList.remove('show'), 2800);
+  }
+
+  /* ══ RESET BUTTON (dev helper) — triple-click XP score ══ */
+  document.getElementById('xpTotal').addEventListener('dblclick', ()=>{
+    if(!confirm('Reset all progress?')) return;
+    progress = { unlocked:1, stars:{}, scores:{}, totalXP:0 };
+    saveProgress(); updateXP(); rebuildPath();
+    showToast('Progress reset 🌱');
+  });
+
+  /* ══ INIT ══ */
+  updateXP();
+
+})();
+
+function goBack() {
+  window.history.back();
+}
+  document.getElementById("modalPlayBtn").addEventListener("click", function() {
+    window.location.href = "game.html"; // 👈 your new HTML file name
+  });
+
+  let progress = JSON.parse(localStorage.getItem('lb-progress'));
+
+let lvlId = parseInt(localStorage.getItem("currentLevel"));
+
+// Unlock next level
+if (lvlId < 15) {
+  progress.unlocked = Math.max(progress.unlocked, lvlId + 1);
+}
+
+localStorage.setItem('lb-progress', JSON.stringify(progress));
+</script>
+</body>
+</html>

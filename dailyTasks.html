@@ -1,0 +1,3217 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RanjitGo · Daily Tasks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --ink:          #1a1a2e;
+      --ink-soft:     #2d2d44;
+      --ink-muted:    #5c5c7a;
+      --paper:        #faf8f5;
+      --paper-warm:   #f5f0e8;
+      --paper-card:   rgba(255,255,255,0.75);
+      --paper-header: rgba(250,248,245,0.88);
+      --sakura:       #e8a0b4;
+      --sakura-pale:  #f7e8ef;
+      --sakura-deep:  #c4687e;
+      --gold:         #c8a96e;
+      --gold-pale:    #f5edda;
+      --mist:         #8a8fa8;
+      --accent-blue:  #7b9bbf;
+      --border:       rgba(26,26,46,0.10);
+      --shadow:       rgba(26,26,46,0.08);
+      --paper-header: rgba(250,248,245,0.88);
+      --toggle-track: rgba(26,26,46,0.12);
+      --toggle-thumb: #c4687e;
+      --success:      #5a9e7a;
+      --success-pale: #e8f5ee;
+      --error:        #c46860;
+      --error-pale:   #f5e8e8;
+    }
+
+    [data-theme="dark"] {
+      --ink:          #e4dfd7;
+      --ink-soft:     #c0bab4;
+      --ink-muted:    #7a7590;
+      --paper:        #111018;
+      --paper-warm:   #18161f;
+      --paper-card:   rgba(28,26,40,0.82);
+      --paper-header: rgba(15,14,22,0.92);
+      --sakura:       #a05070;
+      --sakura-pale:  rgba(196,104,126,0.15);
+      --sakura-deep:  #e888a4;
+      --gold:         #8a6c38;
+      --gold-pale:    rgba(200,169,110,0.12);
+      --mist:         #56546a;
+      --accent-blue:  #5a7a9e;
+      --border:       rgba(255,255,255,0.07);
+      --shadow:       rgba(0,0,0,0.35);
+      --toggle-track: rgba(232,136,164,0.25);
+      --toggle-thumb: #e888a4;
+      --success:      #4a8e6a;
+      --success-pale: rgba(90,158,122,0.15);
+      --error:        #b45860;
+      --error-pale:   rgba(196,104,96,0.15);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    /* ── Background ── */
+    .bg-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .ink-circle {
+      position: absolute; border-radius: 50%;
+      opacity: 0.06;
+      animation: inkPulse 8s ease-in-out infinite;
+      transition: background 0.5s ease;
+    }
+    .ink-circle:nth-child(1) { width:700px; height:700px; top:-200px; right:-200px; background:var(--sakura-deep); animation-delay:0s; }
+    .ink-circle:nth-child(2) { width:500px; height:500px; bottom:-150px; left:-100px; background:var(--accent-blue); animation-delay:-3s; }
+    .ink-circle:nth-child(3) { width:300px; height:300px; top:40%; left:30%; background:var(--gold); animation-delay:-5s; }
+    @keyframes inkPulse {
+      0%,100% { transform:scale(1); opacity:0.05; }
+      50%      { transform:scale(1.08); opacity:0.09; }
+    }
+    [data-theme="dark"] .ink-circle { opacity: 0.12; }
+
+    .petal { position:absolute; opacity:0; animation:petalFall linear infinite; }
+    .petal svg { display:block; }
+    @keyframes petalFall {
+      0%   { transform:translateY(-40px) rotate(0deg) translateX(0); opacity:0; }
+      10%  { opacity:0.6; }
+      90%  { opacity:0.35; }
+      100% { transform:translateY(105vh) rotate(360deg) translateX(60px); opacity:0; }
+    }
+    .ink-line {
+      position:absolute; height:1px;
+      background:linear-gradient(90deg, transparent, var(--ink) 30%, var(--ink) 70%, transparent);
+      opacity:0.07;
+      animation:inkStroke 12s ease-in-out infinite;
+    }
+    @keyframes inkStroke {
+      0%,100% { transform:scaleX(0.4); opacity:0.03; }
+      50%      { transform:scaleX(1); opacity:0.08; }
+    }
+
+    /* ── Header ── */
+    header {
+      position: sticky; top:0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 5%;
+      background: var(--paper-header);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.5s ease, border-color 0.5s ease;
+    }
+    .logo-area{
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+  text-decoration:none;
+}
+
+/* Logo circle */
+.logo-mark{
+  position:relative;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-mark svg{
+  width:40px;
+  height:40px;
+}
+
+/* ✨ Smooth, subtle ring draw */
+.brush-ring{
+  stroke-dasharray:120;
+  stroke-dashoffset:120;
+  animation:drawRing 0s ease-out forwards; /* slower + smooth */
+  stroke:var(--sakura-deep);
+  fill:none;
+  transition:stroke 0.s;
+}
+
+@keyframes drawRing{
+  to{stroke-dashoffset:0;}
+}
+
+/* ✨ Softer text appearance (no zoom jump) */
+.logo-char{
+  fill:var(--ink);
+  opacity:0;
+  animation:fadeChar  forwards;
+}
+
+@keyframes fadeChar{
+  from{opacity:0; transform:translateY(4px);} /* subtle move instead of scale */
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Text */
+.logo-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+
+.logo-main{
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  font-size:1.4rem;
+  color:var(--ink);
+  letter-spacing:0.02em;
+  transition:color 0.3s ease;
+}
+
+.logo-sub{
+  font-size:0.63rem;
+  font-weight:300;
+  color:var(--mist);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-top:2px;
+  transition:color 0.3s ease;
+}                                                             
+
+    .menu-container { position:relative; }
+    .menu-button {
+      background: transparent; border: 1px solid var(--border); color: var(--ink-soft);
+      padding: 0.55rem 1.3rem; border-radius: 2px;
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.75rem; font-weight: 400;
+      letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+      display: flex; align-items: center; gap: 0.6rem; transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .menu-button::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--sakura-deep); transform:scaleX(0); transform-origin:left; transition:transform 0.4s cubic-bezier(.4,0,.2,1); }
+    .menu-button:hover::after, .menu-container.active .menu-button::after { transform:scaleX(1); }
+    .menu-button:hover { border-color:var(--sakura-deep); color:var(--ink); }
+    .menu-button .chevron { font-size:0.7rem; transition:transform 0.4s; }
+    .menu-container.active .menu-button .chevron { transform:rotate(180deg); }
+    .dropdown-menu {
+      position: absolute; top:calc(100% + 10px); right:0;
+      background: var(--paper-header); backdrop-filter: blur(20px);
+      border: 1px solid var(--border); border-radius: 2px; min-width: 210px;
+      padding: 0.5rem 0; z-index: 200; opacity: 0; visibility: hidden;
+      transform: translateY(-8px); transition: all 0.3s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 24px 48px var(--shadow);
+    }
+    .menu-container.active .dropdown-menu { opacity:1; visibility:visible; transform:translateY(0); }
+    .dropdown-menu a { display: flex; align-items:center; gap:0.8rem; padding: 0.72rem 1.4rem; color: var(--ink-soft); text-decoration: none; font-size: 0.82rem; letter-spacing:0.06em; transition: all 0.2s; position: relative; }
+    .dropdown-menu a::before { content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; background:var(--sakura-deep); transform:scaleY(0); transition:transform 0.25s; }
+    .dropdown-menu a:hover { color:var(--ink); background:var(--sakura-pale); }
+    .dropdown-menu a:hover::before { transform:scaleY(1); }
+    .dropdown-menu a i { width:16px; color:var(--sakura-deep); font-size:0.75rem; }
+    .dropdown-menu hr { margin:0.4rem 1rem; border:none; border-top:1px solid var(--border); }
+    .dropdown-item-toggle { display: flex; align-items: center; justify-content: space-between; padding: 0.72rem 1.4rem; cursor: pointer; transition: background 0.2s; }
+    .dropdown-item-toggle:hover { background: var(--sakura-pale); }
+    .toggle-label { display: flex; align-items: center; gap: 0.8rem; font-size: 0.82rem; letter-spacing: 0.06em; color: var(--ink-soft); }
+    .toggle-label i { width:16px; color:var(--sakura-deep); font-size:0.8rem; }
+    .switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .switch input { opacity:0; width:0; height:0; }
+    .switch-track { position: absolute; inset: 0; background: var(--toggle-track); border-radius: 20px; cursor: pointer; transition: background 0.4s; }
+    .switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--toggle-thumb); transition: transform 0.35s cubic-bezier(.4,0,.2,1), background 0.4s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    .switch input:checked + .switch-track::after { transform: translateX(16px); }
+
+    /* ── MAIN ── */
+    main {
+      position: relative; z-index: 1;
+      flex: 1; padding: 3rem 5% 6rem;
+    }
+
+    .tasks-container { width: 100%; max-width: 900px; margin: 0 auto; }
+
+    /* Section head */
+    .tasks-head { margin-bottom: 2.5rem; display:flex; align-items:baseline; gap:1rem; }
+    .tasks-kanji {
+      font-family:'Noto Serif JP', serif; font-weight:200; font-size:3.5rem;
+      color: rgba(26,26,46,0.07); line-height:1; letter-spacing:-0.02em; user-select:none;
+      transition: color 0.5s ease;
+    }
+    [data-theme="dark"] .tasks-kanji { color: rgba(228,223,215,0.06); }
+    .tasks-title-wrap { display:flex; flex-direction:column; }
+    .tasks-title { font-family:'Noto Serif JP', serif; font-size:1.6rem; font-weight:200; color:var(--ink); letter-spacing:0.02em; line-height:1.3; transition: color 0.5s ease; }
+    .tasks-title strong { font-weight:400; color:var(--sakura-deep); }
+    .tasks-label { font-size:0.63rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--mist); margin-top:4px; }
+
+    /* Progress bar */
+    .progress-bar-wrap {
+      background: var(--paper-card); border: 1px solid var(--border);
+      border-radius: 3px; padding: 1.2rem 1.8rem;
+      margin-bottom: 2rem; display:flex; align-items:center; gap:1.5rem;
+      backdrop-filter: blur(8px); transition: background 0.5s;
+    }
+    .progress-label { font-size:0.75rem; letter-spacing:0.15em; color:var(--mist); text-transform:uppercase; white-space:nowrap; }
+    .progress-track {
+      flex:1; height:6px; background: var(--border); border-radius:3px; overflow:hidden;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--sakura), var(--sakura-deep));
+      border-radius: 3px; transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    }
+    .progress-count { font-family:'Noto Serif JP', serif; font-size:1rem; color:var(--sakura-deep); white-space:nowrap; }
+
+    /* Task card */
+    .task-card {
+      background: var(--paper-card); border: 1px solid var(--border);
+      border-radius: 3px; padding: 2.2rem 2.5rem 2rem;
+      position: relative; overflow: hidden; backdrop-filter: blur(8px);
+      transition: transform 0.4s cubic-bezier(.4,0,.2,1), border-color 0.4s, box-shadow 0.4s, background 0.5s ease;
+      margin-bottom: 2rem; animation: cardIn 0.45s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes cardIn {
+      from { opacity:0; transform: translateY(18px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .task-card::before { content:''; position:absolute; top:0; left:0; width:36px; height:36px; border-top:2px solid transparent; border-left:2px solid transparent; transition:border-color 0.4s, width 0.4s, height 0.4s; }
+    .task-card::after  { content:''; position:absolute; bottom:0; right:0; width:36px; height:36px; border-bottom:2px solid transparent; border-right:2px solid transparent; transition:border-color 0.4s, width 0.4s, height 0.4s; }
+    .task-card:hover::before { border-color:var(--sakura-deep); width:52px; height:52px; }
+    .task-card:hover::after  { border-color:var(--gold); width:52px; height:52px; }
+
+    .task-type-badge {
+      display: inline-flex; align-items:center; gap:0.4rem;
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--sakura-deep); margin-bottom: 1rem;
+    }
+    .task-type-badge i { font-size: 0.7rem; }
+
+    .task-question {
+      font-family: 'Noto Serif JP', serif; font-size: 1.35rem;
+      font-weight: 300; color: var(--ink); margin-bottom: 1.5rem; line-height: 1.5;
+    }
+
+    /* Image grid for naming task */
+    .image-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .image-option {
+      background: var(--paper-warm); border: 2px solid var(--border);
+      border-radius: 4px; padding: 0.8rem; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+      transition: all 0.25s; user-select: none;
+    }
+    .image-option:hover { border-color: var(--sakura); transform: translateY(-2px); }
+    .image-option.selected { border-color: var(--sakura-deep); background: var(--sakura-pale); }
+    .image-option.correct  { border-color: var(--success); background: var(--success-pale); }
+    .image-option.wrong    { border-color: var(--error);   background: var(--error-pale); }
+    .image-option img {
+      width: 80px; height: 80px; object-fit: contain;
+      transition: transform 0.25s;
+    }
+    .image-option:hover img { transform: scale(1.08); }
+    .image-option .img-label {
+      font-size: 0.75rem; color: var(--ink-muted); letter-spacing: 0.05em;
+    }
+
+    /* Word matching */
+    .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    .match-col { display: flex; flex-direction: column; gap: 0.5rem; }
+    .match-item {
+      background: var(--paper-warm); border: 2px solid var(--border);
+      border-radius: 3px; padding: 0.7rem 1rem;
+      font-size: 0.9rem; color: var(--ink-soft); cursor: pointer;
+      transition: all 0.2s; user-select: none; text-align: center;
+    }
+    .match-item:hover { border-color: var(--sakura); color: var(--ink); }
+    .match-item.selected { border-color: var(--sakura-deep); background: var(--sakura-pale); color: var(--ink); }
+    .match-item.matched   { border-color: var(--success); background: var(--success-pale); color: var(--success); pointer-events: none; }
+    .match-item.error     { border-color: var(--error);   background: var(--error-pale);   color: var(--error); }
+
+    /* Input tasks */
+    .task-input {
+      width: 100%; padding: 0.9rem 1.1rem;
+      background: var(--paper-warm); border: 1.5px solid var(--border);
+      border-radius: 3px; font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-size: 1rem; color: var(--ink); outline: none; resize: vertical; min-height: 80px;
+      transition: border-color 0.25s, background 0.5s;
+      margin-bottom: 1rem;
+    }
+    .task-input::placeholder { color: var(--mist); }
+    .task-input:focus { border-color: var(--sakura-deep); }
+    .task-input.correct { border-color: var(--success); background: var(--success-pale); }
+    .task-input.wrong   { border-color: var(--error);   background: var(--error-pale); }
+
+    /* Sentence completion blanks */
+    .sentence-display {
+      font-size: 1.2rem; color: var(--ink); line-height: 2; margin-bottom: 1.2rem;
+      font-family: 'Noto Serif JP', serif; font-weight: 300;
+    }
+    .blank-input {
+      display: inline-block; min-width: 120px; padding: 0.1rem 0.6rem;
+      border: none; border-bottom: 2px solid var(--sakura-deep);
+      background: transparent; font-family: 'Noto Serif JP', serif;
+      font-size: 1.1rem; color: var(--sakura-deep); outline: none;
+      transition: border-color 0.25s; text-align: center;
+    }
+    .blank-input:focus { border-color: var(--gold); }
+    .blank-input.correct { border-color: var(--success); color: var(--success); }
+    .blank-input.wrong   { border-color: var(--error);   color: var(--error); }
+
+    /* Options (MCQ) */
+    .options-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.7rem; margin-bottom: 1.5rem;
+    }
+    .option-btn {
+      background: var(--paper-warm); border: 2px solid var(--border);
+      border-radius: 3px; padding: 0.8rem 1.1rem;
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.92rem;
+      color: var(--ink-soft); cursor: pointer; text-align: left;
+      transition: all 0.2s; display: flex; align-items:center; gap:0.5rem;
+    }
+    .option-btn:hover { border-color: var(--sakura); color: var(--ink); transform: translateX(2px); }
+    .option-btn.selected  { border-color: var(--sakura-deep); color: var(--ink); background: var(--sakura-pale); }
+    .option-btn.correct   { border-color: var(--success); background: var(--success-pale); color: var(--success); }
+    .option-btn.wrong     { border-color: var(--error);   background: var(--error-pale);   color: var(--error); pointer-events:none; }
+    .option-btn .opt-letter { font-family:'Noto Serif JP',serif; font-weight:400; color:var(--sakura-deep); min-width:1.2rem; }
+    .option-btn.correct .opt-letter { color:var(--success); }
+    .option-btn.wrong   .opt-letter { color:var(--error); }
+
+    /* Speak task */
+    .speak-counter {
+      display: flex; align-items:center; gap:1rem; margin-bottom:1.2rem;
+    }
+    .speak-dot {
+      width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border);
+      background: transparent; transition: all 0.3s;
+    }
+    .speak-dot.done { background: var(--sakura-deep); border-color: var(--sakura-deep); }
+    .speak-dot.active { background: var(--gold); border-color: var(--gold); animation: speakPulse 0.8s ease-in-out infinite; }
+    @keyframes speakPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+    .speak-btn {
+      display: inline-flex; align-items:center; gap:0.6rem;
+      background: var(--paper-warm); border: 1.5px solid var(--sakura-deep);
+      border-radius: 3px; padding: 0.7rem 1.4rem;
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.88rem;
+      color: var(--sakura-deep); cursor: pointer; transition: all 0.2s;
+    }
+    .speak-btn:hover { background: var(--sakura-pale); }
+    .speak-btn.speaking { background: var(--sakura-pale); color: var(--sakura-deep); }
+
+    /* Sentence for speak */
+    .speak-sentence {
+      font-family: 'Noto Serif JP', serif; font-size: 1.3rem; font-weight: 300;
+      color: var(--ink); line-height: 1.6; margin-bottom: 1.5rem;
+      padding: 1rem 1.5rem; background: var(--sakura-pale); border-left: 3px solid var(--sakura-deep);
+      border-radius: 0 3px 3px 0;
+    }
+
+    /* Feedback */
+    .feedback-msg {
+      padding: 0.8rem 1.1rem; border-radius: 3px; font-size: 0.9rem;
+      margin-bottom: 1rem; display: none; align-items: center; gap: 0.6rem;
+    }
+    .feedback-msg.success { background: var(--success-pale); color: var(--success); border: 1px solid var(--success); display:flex; }
+    .feedback-msg.error   { background: var(--error-pale);   color: var(--error);   border: 1px solid var(--error);   display:flex; }
+
+    /* Action row */
+    .task-actions { display:flex; gap:0.8rem; align-items:center; margin-top:1.2rem; flex-wrap:wrap; }
+
+    .check-btn {
+      background: var(--sakura-deep); border: none; color: white;
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.92rem;
+      letter-spacing: 0.1em; padding: 0.75rem 2rem; border-radius: 2px;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 0.6rem;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 12px rgba(196,104,126,0.3);
+    }
+    .check-btn:hover { background: #a05070; transform: scale(1.02); }
+    .check-btn:active { transform: scale(0.98); }
+    .check-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .next-btn {
+      background: transparent; border: 1px solid var(--border); color: var(--ink-muted);
+      padding: 0.65rem 1.4rem; border-radius: 2px;
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.78rem;
+      letter-spacing: 0.1em; cursor: pointer; transition: all 0.2s;
+      display: none; align-items:center; gap:0.4rem;
+    }
+    .next-btn.visible { display: inline-flex; }
+    .next-btn:hover { border-color: var(--sakura-deep); color: var(--ink); }
+
+    /* Completed state */
+    .all-done {
+      text-align: center; padding: 3rem 2rem;
+      background: var(--paper-card); border: 1px solid var(--border);
+      border-radius: 3px; backdrop-filter: blur(8px);
+    }
+    .all-done-icon { font-size: 3rem; color: var(--gold); margin-bottom: 1rem; }
+    .all-done h2 { font-family:'Noto Serif JP',serif; font-size:1.8rem; font-weight:300; color:var(--ink); margin-bottom:0.6rem; }
+    .all-done p { color:var(--mist); margin-bottom:2rem; }
+
+    .restart-btn {
+      background: var(--sakura-deep); border: none; color: white;
+      font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 0.92rem;
+      padding: 0.8rem 2.5rem; border-radius: 2px; cursor: pointer;
+      transition: all 0.3s; box-shadow: 0 4px 12px rgba(196,104,126,0.3);
+    }
+    .restart-btn:hover { background: #a05070; }
+
+    /* Hint */
+    .task-hint { color: var(--mist); font-size: 0.75rem; font-style:italic; margin-top: 0.4rem; }
+
+    /* mini task list dots */
+    .task-dots {
+      display:flex; gap:0.4rem; margin-bottom: 2rem; flex-wrap:wrap;
+    }
+    .task-dot {
+      width: 28px; height: 6px; border-radius: 3px;
+      background: var(--border); transition: all 0.3s;
+    }
+    .task-dot.done    { background: var(--sakura-deep); }
+    .task-dot.current { background: var(--gold); }
+
+    /* back btn */
+    .back-btn {
+      position: fixed; bottom: 2rem; left: 2rem; z-index: 1000;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--paper-card); border: 1px solid var(--border);
+      color: var(--sakura-deep); font-size: 1.2rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; backdrop-filter: blur(10px);
+      box-shadow: 0 8px 28px var(--shadow); transition: all 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    .back-btn:hover { transform: translateY(-4px) scale(1.05); border-color: var(--sakura-deep); }
+    .back-btn:active { transform: scale(0.95); }
+
+    .quest-hint {
+      margin-top:2.5rem; text-align:center; font-size:0.7rem; letter-spacing:0.15em;
+      color:var(--mist); text-transform:uppercase; opacity:0.65;
+      display:flex; align-items:center; justify-content:center; gap:0.6rem;
+    }
+    .quest-hint::before, .quest-hint::after { content:''; display:inline-block; width:24px; height:1px; background:var(--mist); opacity:0.5; }
+
+    @media (max-width: 600px) {
+      .options-grid { grid-template-columns: 1fr; }
+      .match-grid { grid-template-columns: 1fr; }
+      .image-grid { grid-template-columns: repeat(2, 1fr); }
+      .task-card { padding: 1.5rem 1.2rem; }
+    }
+    .back-btn {
+  text-decoration: none;   /* ❌ removes underline */
+}
+  </style>
+</head>
+<body>
+
+  <div class="bg-canvas">
+    <div class="ink-circle"></div>
+    <div class="ink-circle"></div>
+    <div class="ink-circle"></div>
+    <div class="ink-line" style="top:22%;left:0;right:0;"></div>
+    <div class="ink-line" style="top:68%;left:0;right:0;animation-delay:-5s;"></div>
+  </div>
+
+   <header>
+    <a class="logo-area" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle class="brush-ring" cx="20" cy="20" r="17" stroke-width="1" stroke-linecap="round"/>
+          <image href="logo/logo.png" x="10" y="10" width="20" height="20" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">RanjitGo</span>
+        <span class="logo-sub">English Learning</span>
+      </div>
+    </a>
+
+    <div class="menu-container" id="menuContainer">
+      <button class="menu-button" id="menuToggle" aria-expanded="false">
+        <span>Menu</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </button>
+      <nav class="dropdown-menu" id="dropdownMenu">
+        <a href="index.html"><i class="fas fa-house"></i> Home</a>
+        <a href="about.html"><i class="fas fa-book-open"></i> About</a>
+        <hr>
+        <a href="login.html"><i class="fas fa-right-to-bracket"></i> Login</a>
+        <a href="#" style="opacity:0.65;font-size:0.78rem;"><i class="fas fa-user-plus"></i> Sign up</a>
+        <hr>
+        <div class="dropdown-item-toggle" id="themeToggleRow" role="button" tabindex="0" aria-label="Toggle dark mode">
+          <span class="toggle-label">
+            <i class="fas fa-moon" id="themeIcon"></i>
+            <span id="themeLabel">Dark Mode</span>
+          </span>
+          <label class="switch" onclick="event.stopPropagation()">
+            <input type="checkbox" id="themeSwitch">
+            <div class="switch-track"></div>
+          </label>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="tasks-container">
+      <div class="tasks-head">
+        <span class="tasks-kanji">練習</span>
+        <div class="tasks-title-wrap">
+          <h1 class="tasks-title"><strong>Daily Tasks</strong> — 10 challenges today</h1>
+          <span class="tasks-label">Practice, learn, grow</span>
+        </div>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <span class="progress-label">Progress</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <span class="progress-count" id="progressCount">0 / 10</span>
+      </div>
+
+      <div class="task-dots" id="taskDots"></div>
+
+      <div id="taskArea"></div>
+
+      <div class="quest-hint">· practice every day</div>
+    </div>
+  </main>
+
+  <a href="index.html" class="back-btn">
+ <i class="fas fa-arrow-left-long"></i>
+</a>
+
+  <script>
+  (function () {
+
+    /* ── Petals ── */
+    const canvas = document.querySelector('.bg-canvas');
+    const lc = ['#e8a0b4','#f2b8c6','#d4a0b0','#ebbcca'];
+    const dc = ['#8a3a58','#a05070','#7a304a','#6a2840'];
+    function isDark() { return document.documentElement.dataset.theme === 'dark'; }
+    function createPetal() {
+      const el = document.createElement('div'); el.className = 'petal';
+      const size = 8 + Math.random()*10, x = Math.random()*100;
+      const dur = 10 + Math.random()*12, delay = Math.random()*-20;
+      const cols = isDark() ? dc : lc, color = cols[Math.floor(Math.random()*cols.length)];
+      el.style.cssText = `left:${x}vw;top:-20px;animation-duration:${dur}s;animation-delay:${delay}s;`;
+      el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 20 20">
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.7" transform="rotate(0,10,10)"/>
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.7" transform="rotate(90,10,10)"/>
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.7" transform="rotate(180,10,10)"/>
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${color}" opacity="0.7" transform="rotate(270,10,10)"/>
+        <circle cx="10" cy="10" r="2" fill="#f7e0e8" opacity="0.85"/>
+      </svg>`;
+      canvas.appendChild(el);
+      setTimeout(() => el.remove(), (dur + Math.abs(delay))*1000 + 500);
+    }
+    for (let i = 0; i < 8; i++) createPetal();
+    setInterval(createPetal, 1800);
+
+    /* ── Menu ── */
+    const menuContainer = document.getElementById('menuContainer');
+    const menuToggle    = document.getElementById('menuToggle');
+    const dropdownMenu  = document.getElementById('dropdownMenu');
+    menuToggle.addEventListener('click', e => { e.stopPropagation(); const o = menuContainer.classList.toggle('active'); menuToggle.setAttribute('aria-expanded', o); });
+    document.addEventListener('click', e => { if (!menuContainer.contains(e.target)) { menuContainer.classList.remove('active'); menuToggle.setAttribute('aria-expanded','false'); } });
+    document.addEventListener('keydown', e => { if (e.key==='Escape') { menuContainer.classList.remove('active'); menuToggle.setAttribute('aria-expanded','false'); } });
+
+    /* ── Dark Mode ── */
+    const themeSwitch = document.getElementById('themeSwitch');
+    const themeIcon   = document.getElementById('themeIcon');
+    const themeLabel  = document.getElementById('themeLabel');
+    const themeToggleRow = document.getElementById('themeToggleRow');
+    const html = document.documentElement;
+    if (localStorage.getItem('lb-theme')==='dark') applyDark(true, false);
+    function applyDark(on, save=true) {
+      html.dataset.theme = on ? 'dark' : 'light';
+      themeSwitch.checked = on;
+      themeIcon.className = on ? 'fas fa-sun' : 'fas fa-moon';
+      themeLabel.textContent = on ? 'Light Mode' : 'Dark Mode';
+      if (save) localStorage.setItem('lb-theme', on ? 'dark' : 'light');
+    }
+    themeSwitch.addEventListener('change', () => applyDark(themeSwitch.checked));
+    themeToggleRow.addEventListener('click', () => applyDark(!themeSwitch.checked));
+
+    /* ══════════════════════════════════════════════
+       TASK DATA
+    ══════════════════════════════════════════════ */
+
+    // Image paths (uploaded files)
+    const IMAGES = {
+  // sea/ocean creatures
+  angelfish:     'dailytaskimages/angelfish.png',
+  marlin:        'dailytaskimages/marlin.png',
+  jellyfish:     'dailytaskimages/jellyfish.png',
+  crab:          'dailytaskimages/crab.png',
+  dolphin:       'dailytaskimages/dolphin.png',
+  anglerfish:    'dailytaskimages/anglerfish.png',
+  shark:         'dailytaskimages/shark.png',
+  pufferfish:    'dailytaskimages/pufferfish.png',
+  turtle:        'dailytaskimages/sea-turtle.png',
+  seal:          'dailytaskimages/seal.png',
+  shrimp:        'dailytaskimages/shrimp.png',
+
+  // land / safari / farm animals
+  elephant:      'dailytaskimages/elephant.png',
+  hippo:         'dailytaskimages/hippopotamus.png',
+  fox:           'dailytaskimages/fox.png',           // sitting one
+  fox2:          'dailytaskimages/fox2.png',          // standing one
+  pig:           'dailytaskimages/pig.png',
+  cow:           'dailytaskimages/cow.png',
+  donkey:        'dailytaskimages/donkey.png',
+  kangaroo:      'dailytaskimages/kangaroo.png',
+  mouse:         'dailytaskimages/mouse.png',
+  pug:           'dailytaskimages/pug.png',
+  rabbit:        'dailytaskimages/rabbit.png',
+  hyena:         'dailytaskimages/hyena.png',
+  panda:         'dailytaskimages/panda.png',
+  monkey:        'dailytaskimages/monkey.png',
+  sheep:         'dailytaskimages/sheep.png',
+  frog:          'dailytaskimages/frog.png',
+  tiger:         'dailytaskimages/tiger.png',
+  lion:          'dailytaskimages/lion.png',
+  zebra:         'dailytaskimages/zebra.png',
+  leopard:       'dailytaskimages/cheetah.png',       // (cheetah/leopard style)
+  buffalo:       'dailytaskimages/buffalo.png',
+  horse:         'dailytaskimages/horse.png',
+  goat:          'dailytaskimages/goat.png',
+  chicken:       'dailytaskimages/chicken.png',
+  ostrich:       'dailytaskimages/ostrich.png',
+  warthog:       'dailytaskimages/wild-boar.png',
+  snail:         'dailytaskimages/snail.png',
+  chameleon:     'dailytaskimages/chameleon.png',
+      hamburger: 'dailytaskimages/hamburger.png',
+      panda:     'dailytaskimages/panda-bear.png',
+      pizza:     'dailytaskimages/pizza-slice.png',
+      popcorn:   'dailytaskimages/popcorn.png',
+      raccoon:   'dailytaskimages/raccoon.png',
+      sheep:     'dailytaskimages/sheep.png',
+      crocodile: 'dailytaskimages/crocodile.png',
+
+  // polar / cold
+  polarbear:     'dailytaskimages/polar-bear.png',
+  penguin:       'dailytaskimages/penguin.png',
+
+  // others / bonus
+  parrot:        'dailytaskimages/parrot.png',
+  flamingo:      'dailytaskimages/flamingo.png',
+};
+    // All possible tasks pool
+    const TASK_POOL = [
+
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.angelfish,
+    correctAnswer: 'angelfish',
+    options: ['clownfish', 'angelfish', 'butterflyfish', 'goldfish'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.marlin,
+    correctAnswer: 'marlin',
+    options: ['swordfish', 'tuna', 'marlin', 'sailfish'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.jellyfish,
+    correctAnswer: 'jellyfish',
+    options: ['octopus', 'squid', 'jellyfish', 'starfish'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.crab,
+    correctAnswer: 'crab',
+    options: ['lobster', 'shrimp', 'crab', 'crayfish'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.dolphin,
+    correctAnswer: 'dolphin',
+    options: ['whale', 'porpoise', 'dolphin', 'shark'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.anglerfish,
+    correctAnswer: 'anglerfish',
+    options: ['lionfish', 'pufferfish', 'anglerfish', 'stonefish'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.shark,
+    correctAnswer: 'shark',
+    options: ['dolphin', 'whale', 'shark', 'ray'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.pufferfish,
+    correctAnswer: 'pufferfish',
+    options: ['blowfish', 'pufferfish', 'balloonfish', 'porcupinefish'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.turtle,
+    correctAnswer: 'turtle',
+    options: ['tortoise', 'terrapin', 'turtle', 'snapping turtle'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.seal,
+    correctAnswer: 'seal',
+    options: ['sea lion', 'walrus', 'seal', 'otter'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.shrimp,
+    correctAnswer: 'shrimp',
+    options: ['prawn', 'lobster', 'shrimp', 'krill'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.elephant,
+    correctAnswer: 'elephant',
+    options: ['mammoth', 'rhino', 'elephant', 'hippo'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.hippo,
+    correctAnswer: 'hippopotamus',
+    options: ['rhino', 'elephant', 'hippopotamus', 'capybara'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.fox,
+    correctAnswer: 'fox',
+    options: ['wolf', 'dog', 'fox', 'coyote'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.pig,
+    correctAnswer: 'pig',
+    options: ['boar', 'hog', 'pig', 'warthog'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.cow,
+    correctAnswer: 'cow',
+    options: ['bull', 'buffalo', 'cow', 'ox'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.kangaroo,
+    correctAnswer: 'kangaroo',
+    options: ['wallaby', 'koala', 'kangaroo', 'wombat'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.panda,
+    correctAnswer: 'panda',
+    options: ['bear', 'raccoon', 'panda', 'koala'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.tiger,
+    correctAnswer: 'tiger',
+    options: ['lion', 'leopard', 'tiger', 'cheetah'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.lion,
+    correctAnswer: 'lion',
+    options: ['tiger', 'leopard', 'lion', 'jaguar'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.zebra,
+    correctAnswer: 'zebra',
+    options: ['horse', 'donkey', 'zebra', 'giraffe'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.leopard,
+    correctAnswer: 'leopard',
+    options: ['cheetah', 'jaguar', 'leopard', 'tiger'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.penguin,
+    correctAnswer: 'penguin',
+    options: ['puffin', 'auk', 'penguin', 'seagull'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.polarbear,
+    correctAnswer: 'polar bear',
+    options: ['grizzly bear', 'panda', 'polar bear', 'brown bear'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.flamingo,
+    correctAnswer: 'flamingo',
+    options: ['crane', 'heron', 'flamingo', 'stork'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.parrot,
+    correctAnswer: 'parrot',
+    options: ['macaw', 'cockatoo', 'parrot', 'toucan'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.rabbit,
+    correctAnswer: 'rabbit',
+    options: ['hare', 'bunny', 'rabbit', 'chinchilla'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.monkey,
+    correctAnswer: 'monkey',
+    options: ['ape', 'gorilla', 'monkey', 'lemur'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.frog,
+    correctAnswer: 'frog',
+    options: ['toad', 'salamander', 'frog', 'newt'],
+  },
+  {
+    type: 'name-animal',
+    badge: 'Name the Animal',
+    icon: 'fa-paw',
+    question: 'What animal is shown in this image?',
+    image: IMAGES.chameleon,
+    correctAnswer: 'chameleon',
+    options: ['gecko', 'lizard', 'chameleon', 'iguana'],
+  },
+      // ── TYPE 3: Complete the sentence ──
+      {
+        type: 'complete-sentence',
+        badge: 'Complete the Sentence',
+        icon: 'fa-pen-nib',
+        question: 'Fill in the blank to complete the sentence:',
+        sentence: 'The panda is eating ___ bamboo.',
+        blank: 'some',
+        hint: 'Use an appropriate quantifier word.',
+        options: ['many', 'some', 'much', 'a'],
+      },
+      {
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The boy is ___ a book.',
+  blank: 'reading',
+  hint: 'Present continuous action.',
+  options: ['read', 'reading', 'reads', 'readed'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She ___ her homework every day.',
+  blank: 'does',
+  hint: 'Verb for "she".',
+  options: ['do', 'does', 'did', 'doing'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'I saw a ___ in the zoo.',
+  blank: 'lion',
+  hint: 'Name of an animal.',
+  options: ['lion', 'tree', 'car', 'book'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'They are ___ cricket in the field.',
+  blank: 'playing',
+  hint: 'Present continuous.',
+  options: ['play', 'playing', 'played', 'plays'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The baby is ___ milk.',
+  blank: 'drinking',
+  hint: 'Action happening now.',
+  options: ['drink', 'drinking', 'drank', 'drinks'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'He ___ to school by bus.',
+  blank: 'goes',
+  hint: 'Daily routine.',
+  options: ['go', 'goes', 'went', 'going'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The sky looks very ___.',
+  blank: 'blue',
+  hint: 'Color of the sky.',
+  options: ['blue', 'green', 'black', 'yellow'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She ___ a song beautifully.',
+  blank: 'sings',
+  hint: 'Verb for "she".',
+  options: ['sing', 'sings', 'sang', 'singing'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'We ___ dinner together.',
+  blank: 'eat',
+  hint: 'Simple present.',
+  options: ['eat', 'eats', 'ate', 'eating'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The cat is ___ the chair.',
+  blank: 'under',
+  hint: 'Preposition of place.',
+  options: ['on', 'under', 'in', 'at'],
+},
+
+// 40 MORE 👇
+
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'He ___ football yesterday.',
+  blank: 'played',
+  hint: 'Past tense.',
+  options: ['play', 'plays', 'played', 'playing'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She is ___ than me.',
+  blank: 'taller',
+  hint: 'Comparative form.',
+  options: ['tall', 'taller', 'tallest', 'more tall'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'They ___ to the market.',
+  blank: 'went',
+  hint: 'Past tense of go.',
+  options: ['go', 'went', 'gone', 'going'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'I have ___ friends.',
+  blank: 'many',
+  hint: 'Used for countable nouns.',
+  options: ['many', 'much', 'few', 'little'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The bird is ___ in the sky.',
+  blank: 'flying',
+  hint: 'Action verb.',
+  options: ['fly', 'flying', 'flew', 'flies'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She ___ her keys.',
+  blank: 'lost',
+  hint: 'Past tense.',
+  options: ['lose', 'lost', 'losing', 'loses'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'We are ___ TV now.',
+  blank: 'watching',
+  hint: 'Present continuous.',
+  options: ['watch', 'watching', 'watched', 'watches'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'He ___ a car.',
+  blank: 'has',
+  hint: 'Possession.',
+  options: ['have', 'has', 'had', 'having'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'I ___ my homework.',
+  blank: 'finished',
+  hint: 'Past tense.',
+  options: ['finish', 'finished', 'finishing', 'finishes'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She is ___ happy today.',
+  blank: 'very',
+  hint: 'Adverb.',
+  options: ['very', 'much', 'more', 'most'],
+},
+
+// last 20
+
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The boy ___ fast.',
+  blank: 'runs',
+  hint: 'Simple present.',
+  options: ['run', 'runs', 'ran', 'running'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She ___ cooking now.',
+  blank: 'is',
+  hint: 'Helping verb.',
+  options: ['is', 'are', 'am', 'was'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'They ___ a match.',
+  blank: 'won',
+  hint: 'Past tense.',
+  options: ['win', 'won', 'winning', 'wins'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'I ___ tea every morning.',
+  blank: 'drink',
+  hint: 'Habit.',
+  options: ['drink', 'drinks', 'drank', 'drinking'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She ___ a letter.',
+  blank: 'wrote',
+  hint: 'Past tense.',
+  options: ['write', 'writes', 'wrote', 'writing'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The water is very ___.',
+  blank: 'cold',
+  hint: 'Adjective.',
+  options: ['cold', 'hot', 'sweet', 'dry'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'He ___ his bike.',
+  blank: 'rides',
+  hint: 'Simple present.',
+  options: ['ride', 'rides', 'rode', 'riding'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'We ___ a movie yesterday.',
+  blank: 'watched',
+  hint: 'Past tense.',
+  options: ['watch', 'watched', 'watching', 'watches'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'She ___ very kind.',
+  blank: 'is',
+  hint: 'Verb to be.',
+  options: ['is', 'are', 'am', 'be'],
+},
+{
+  type: 'complete-sentence',
+  badge: 'Complete the Sentence',
+  icon: 'fa-pen-nib',
+  question: 'Fill in the blank to complete the sentence:',
+  sentence: 'The dog ___ loudly.',
+  blank: 'barks',
+  hint: 'Simple present.',
+  options: ['bark', 'barks', 'barked', 'barking'],
+},
+      {
+        type: 'complete-sentence',
+        badge: 'Complete the Sentence',
+        icon: 'fa-pen-nib',
+        question: 'Fill in the blank to complete the sentence:',
+        sentence: 'She ordered a ___ of pizza for lunch.',
+        blank: 'slice',
+        hint: 'Think about how pizza is divided.',
+        options: ['piece', 'slice', 'chunk', 'bite'],
+      },
+      
+      {
+        type: 'complete-sentence',
+        badge: 'Complete the Sentence',
+        icon: 'fa-pen-nib',
+        question: 'Fill in the blank to complete the sentence:',
+        sentence: 'The raccoon ___ quietly through the forest.',
+        blank: 'moved',
+        hint: 'A past tense verb for movement.',
+        options: ['jump', 'moved', 'were', 'flying'],
+      },
+      {
+        type: 'complete-sentence',
+        badge: 'Complete the Sentence',
+        icon: 'fa-pen-nib',
+        question: 'Fill in the blank to complete the sentence:',
+        sentence: 'The sheep has very ___ and soft wool.',
+        blank: 'thick',
+        hint: 'Describing the texture and amount of wool.',
+        options: ['thin', 'thick', 'hard', 'wet'],
+      },
+
+      // ── TYPE 4: Rewrite the sentence ──
+      {
+        type: 'rewrite',
+        badge: 'Rewrite the Sentence',
+        icon: 'fa-pencil',
+        question: 'Rewrite this sentence in the past tense:',
+        original: 'The crocodile swims in the river.',
+        answer: 'The crocodile swam in the river.',
+        hint: 'Change "swims" → "swam"',
+      },
+
+      {
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'She walks to school every day.',
+  answer: 'She walked to school every day.',
+  hint: 'Change "walks" → "walked"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'They play football.',
+  answer: 'They do not play football.',
+  hint: 'Add "do not" before the verb.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'He is reading a book.',
+  answer: 'Is he reading a book?',
+  hint: 'Move "is" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'The dog barks loudly.',
+  answer: 'The dog barked loudly.',
+  hint: 'Change "barks" → "barked"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'She likes ice cream.',
+  answer: 'She does not like ice cream.',
+  hint: 'Use "does not" for "she".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'They are watching TV.',
+  answer: 'Are they watching TV?',
+  hint: 'Move "are" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'He eats an apple.',
+  answer: 'He ate an apple.',
+  hint: 'Change "eats" → "ate"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'I know the answer.',
+  answer: 'I do not know the answer.',
+  hint: 'Add "do not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'She can swim fast.',
+  answer: 'Can she swim fast?',
+  hint: 'Move "can" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'They go to the market.',
+  answer: 'They went to the market.',
+  hint: 'Change "go" → "went"',
+},
+
+// next 10 👇
+
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'He plays cricket.',
+  answer: 'He does not play cricket.',
+  hint: 'Use "does not" for "he".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'The boy is running.',
+  answer: 'Is the boy running?',
+  hint: 'Move "is" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'She sings a song.',
+  answer: 'She sang a song.',
+  hint: 'Change "sings" → "sang"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'We enjoy the movie.',
+  answer: 'We do not enjoy the movie.',
+  hint: 'Add "do not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'They have finished the work.',
+  answer: 'Have they finished the work?',
+  hint: 'Move "have" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'The baby cries loudly.',
+  answer: 'The baby cried loudly.',
+  hint: 'Change "cries" → "cried"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'She eats vegetables.',
+  answer: 'She does not eat vegetables.',
+  hint: 'Use "does not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'He was late to school.',
+  answer: 'Was he late to school?',
+  hint: 'Move "was" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'We watch a movie.',
+  answer: 'We watched a movie.',
+  hint: 'Change "watch" → "watched"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'They understand the lesson.',
+  answer: 'They do not understand the lesson.',
+  hint: 'Add "do not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'He drives a car.',
+  answer: 'He drove a car.',
+  hint: 'Change "drives" → "drove"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'She understands the lesson.',
+  answer: 'She does not understand the lesson.',
+  hint: 'Use "does not" for "she".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'They are playing chess.',
+  answer: 'Are they playing chess?',
+  hint: 'Move "are" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'She writes a letter.',
+  answer: 'She wrote a letter.',
+  hint: 'Change "writes" → "wrote"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'He likes mangoes.',
+  answer: 'He does not like mangoes.',
+  hint: 'Use "does not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'She was singing.',
+  answer: 'Was she singing?',
+  hint: 'Move "was" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'They build a house.',
+  answer: 'They built a house.',
+  hint: 'Change "build" → "built"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'We have a test today.',
+  answer: 'We do not have a test today.',
+  hint: 'Add "do not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'He can solve the problem.',
+  answer: 'Can he solve the problem?',
+  hint: 'Move "can" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'She drinks water.',
+  answer: 'She drank water.',
+  hint: 'Change "drinks" → "drank"',
+},
+
+// next 10 👇
+
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'They know the answer.',
+  answer: 'They do not know the answer.',
+  hint: 'Add "do not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'The cat is sleeping on the bed.',
+  answer: 'Is the cat sleeping on the bed?',
+  hint: 'Move "is" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'He catches the ball.',
+  answer: 'He caught the ball.',
+  hint: 'Change "catches" → "caught"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'She speaks English.',
+  answer: 'She does not speak English.',
+  hint: 'Use "does not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'They were late.',
+  answer: 'Were they late?',
+  hint: 'Move "were" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'We take photos.',
+  answer: 'We took photos.',
+  hint: 'Change "take" → "took"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'He helps his friend.',
+  answer: 'He does not help his friend.',
+  hint: 'Use "does not".',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Change this sentence to a question:',
+  original: 'She has finished her work.',
+  answer: 'Has she finished her work?',
+  hint: 'Move "has" to the beginning.',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Rewrite this sentence in the past tense:',
+  original: 'The boy runs fast.',
+  answer: 'The boy ran fast.',
+  hint: 'Change "runs" → "ran"',
+},
+{
+  type: 'rewrite',
+  badge: 'Rewrite the Sentence',
+  icon: 'fa-pencil',
+  question: 'Make this sentence negative:',
+  original: 'They enjoy music.',
+  answer: 'They do not enjoy music.',
+  hint: 'Add "do not".',
+},
+      {
+        type: 'rewrite',
+        badge: 'Rewrite the Sentence',
+        icon: 'fa-pencil',
+        question: 'Make this sentence negative:',
+        original: 'I like hamburgers.',
+        answer: 'I do not like hamburgers.',
+        hint: 'Add "do not" before the verb.',
+      },
+      {
+        type: 'rewrite',
+        badge: 'Rewrite the Sentence',
+        icon: 'fa-pencil',
+        question: 'Change this sentence to a question:',
+        original: 'The sheep is sleeping.',
+        answer: 'Is the sheep sleeping?',
+        hint: 'Move "is" to the beginning.',
+      },
+
+      // ── TYPE 5: Say it 3 times ──
+      {
+        type: 'speak-3',
+        badge: 'Say It 3 Times',
+        icon: 'fa-microphone',
+        question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+        sentence: 'The hungry crocodile caught a big fish.',
+      },
+      {
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The quick brown fox jumps over the lazy dog.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'She sells seashells by the seashore.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The sun shines brightly in the clear sky.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'A little bird is singing on the tree branch.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'He quickly packed his bag and ran to school.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The tall giraffe reached the leaves easily.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'My best friend always helps me with homework.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The children are playing happily in the park.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The train arrived early in the morning.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'She wore a beautiful dress to the party.',
+},
+
+// 40 MORE 👇
+
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The teacher explained the lesson very clearly.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'We visited the museum last Sunday.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The cold wind was blowing through the forest.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'He opened the window to let in fresh air.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The puppy chased the ball across the yard.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'She carefully painted a colorful picture.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The farmer harvested crops in the field.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The baby laughed loudly at the funny toy.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The moon was shining brightly in the night sky.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'He fixed the broken chair with great care.',
+},
+
+// continue
+
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The students listened quietly in the classroom.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The chef prepared a delicious meal for everyone.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The old man walked slowly with a stick.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The bright stars twinkled in the sky.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The kids built a sandcastle on the beach.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'She completed her project before the deadline.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The dog wagged its tail happily.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The river flows gently through the valley.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The boy solved the puzzle very quickly.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The girl danced gracefully on the stage.',
+},
+
+// last 20
+
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The train moved slowly out of the station.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The clouds covered the sky before the rain.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'She opened the book and started reading.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The teacher asked a very simple question.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The boy climbed the tree to get the ball.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The wind made the leaves rustle softly.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'She carefully folded her clothes after washing.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Say this sentence aloud 3 times clearly:',
+  sentence: 'The man repaired his bike in the garage.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Practise this sentence by saying it 3 times:',
+  sentence: 'The children enjoyed the picnic in the garden.',
+},
+{
+  type: 'speak-3',
+  badge: 'Say It 3 Times',
+  icon: 'fa-microphone',
+  question: 'Read this sentence aloud 3 times to practise your pronunciation:',
+  sentence: 'The bright sun warmed the cold morning air.',
+},
+      {
+        type: 'speak-3',
+        badge: 'Say It 3 Times',
+        icon: 'fa-microphone',
+        question: 'Say this sentence aloud 3 times clearly:',
+        sentence: 'A cheerful panda loves fresh bamboo shoots.',
+      },
+      {
+        type: 'speak-3',
+        badge: 'Say It 3 Times',
+        icon: 'fa-microphone',
+        question: 'Practise this sentence by saying it 3 times:',
+        sentence: 'She bought popcorn before the movie started.',
+      },
+
+      // ── TYPE 6: Word matching ──
+      {
+        type: 'match-words',
+        badge: 'Match the Words',
+        icon: 'fa-link',
+        question: 'Match each word with its correct meaning:',
+        pairs: [
+          { word: 'Hungry',   meaning: 'wanting food' },
+          { word: 'Fluffy',   meaning: 'soft and light' },
+          { word: 'Fierce',   meaning: 'very strong or wild' },
+          { word: 'Curious',  meaning: 'eager to know things' },
+        ],
+      },
+      {
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Brave', meaning: 'showing courage' },
+    { word: 'Tiny', meaning: 'very small' },
+    { word: 'Angry', meaning: 'feeling mad' },
+    { word: 'Bright', meaning: 'full of light' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Quick', meaning: 'very fast' },
+    { word: 'Lazy', meaning: 'not willing to work' },
+    { word: 'Happy', meaning: 'feeling joy' },
+    { word: 'Clean', meaning: 'not dirty' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Cold', meaning: 'low temperature' },
+    { word: 'Hot', meaning: 'high temperature' },
+    { word: 'Wet', meaning: 'covered with water' },
+    { word: 'Dry', meaning: 'not wet' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Strong', meaning: 'having great power' },
+    { word: 'Weak', meaning: 'not strong' },
+    { word: 'Heavy', meaning: 'having much weight' },
+    { word: 'Light', meaning: 'not heavy' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Old', meaning: 'having lived long' },
+    { word: 'Young', meaning: 'not old' },
+    { word: 'Tall', meaning: 'having great height' },
+    { word: 'Short', meaning: 'not tall' },
+  ],
+},
+
+// 35 MORE 👇
+
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Fast', meaning: 'moving quickly' },
+    { word: 'Slow', meaning: 'moving without speed' },
+    { word: 'Loud', meaning: 'making strong sound' },
+    { word: 'Quiet', meaning: 'making little sound' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Rich', meaning: 'having much money' },
+    { word: 'Poor', meaning: 'having little money' },
+    { word: 'Kind', meaning: 'being nice to others' },
+    { word: 'Rude', meaning: 'not polite' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Sharp', meaning: 'having a fine edge' },
+    { word: 'Blunt', meaning: 'not sharp' },
+    { word: 'Smooth', meaning: 'even surface' },
+    { word: 'Rough', meaning: 'uneven surface' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Early', meaning: 'before time' },
+    { word: 'Late', meaning: 'after expected time' },
+    { word: 'Open', meaning: 'not closed' },
+    { word: 'Closed', meaning: 'shut' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Easy', meaning: 'not difficult' },
+    { word: 'Hard', meaning: 'difficult to do' },
+    { word: 'Near', meaning: 'not far' },
+    { word: 'Far', meaning: 'at a great distance' },
+  ],
+},
+
+// more 👇
+
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Begin', meaning: 'to start' },
+    { word: 'End', meaning: 'to finish' },
+    { word: 'Give', meaning: 'to provide' },
+    { word: 'Take', meaning: 'to receive' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Buy', meaning: 'to purchase' },
+    { word: 'Sell', meaning: 'to give for money' },
+    { word: 'Win', meaning: 'to be successful' },
+    { word: 'Lose', meaning: 'to fail' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Run', meaning: 'to move fast' },
+    { word: 'Walk', meaning: 'to move slowly' },
+    { word: 'Jump', meaning: 'to leap' },
+    { word: 'Sit', meaning: 'to rest on a seat' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Read', meaning: 'to look at words' },
+    { word: 'Write', meaning: 'to form letters' },
+    { word: 'Speak', meaning: 'to talk' },
+    { word: 'Listen', meaning: 'to hear carefully' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Build', meaning: 'to make something' },
+    { word: 'Break', meaning: 'to damage' },
+    { word: 'Fix', meaning: 'to repair' },
+    { word: 'Create', meaning: 'to make new' },
+  ],
+},
+
+// last set 👇
+
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Teacher', meaning: 'one who teaches' },
+    { word: 'Doctor', meaning: 'one who treats patients' },
+    { word: 'Farmer', meaning: 'one who grows crops' },
+    { word: 'Driver', meaning: 'one who drives' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Chair', meaning: 'a seat' },
+    { word: 'Table', meaning: 'a flat surface' },
+    { word: 'Bed', meaning: 'place to sleep' },
+    { word: 'Door', meaning: 'entry or exit' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Apple', meaning: 'a fruit' },
+    { word: 'Carrot', meaning: 'a vegetable' },
+    { word: 'Milk', meaning: 'a drink' },
+    { word: 'Bread', meaning: 'a food item' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Morning', meaning: 'early part of day' },
+    { word: 'Noon', meaning: 'middle of the day' },
+    { word: 'Evening', meaning: 'late part of day' },
+    { word: 'Night', meaning: 'dark time' },
+  ],
+},
+{
+  type: 'match-words',
+  badge: 'Match the Words',
+  icon: 'fa-link',
+  question: 'Match each word with its correct meaning:',
+  pairs: [
+    { word: 'Sun', meaning: 'gives light' },
+    { word: 'Moon', meaning: 'seen at night' },
+    { word: 'Star', meaning: 'shines in sky' },
+    { word: 'Cloud', meaning: 'white in sky' },
+  ],
+},
+      {
+        type: 'match-words',
+        badge: 'Match the Words',
+        icon: 'fa-link',
+        question: 'Match each word with its correct meaning:',
+        pairs: [
+          { word: 'Delicious', meaning: 'very tasty' },
+          { word: 'Ancient',   meaning: 'very old' },
+          { word: 'Rapid',     meaning: 'very fast' },
+          { word: 'Silent',    meaning: 'making no sound' },
+        ],
+      },
+
+      // ── TYPE 7: General question ──
+      {
+        type: 'general-mcq',
+        badge: 'General Question',
+        icon: 'fa-circle-question',
+        question: 'What is your name?',
+        prompt: 'Write your name in a full English sentence.',
+        placeholder: 'e.g. My name is Ranjit.',
+        isOpen: true,
+      },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What is the tallest animal in the world?',
+    options: ['Elephant', 'Giraffe', 'Kangaroo', 'Horse'],
+    correctAnswer: 'Giraffe',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which animal is known as the king of the jungle?',
+    options: ['Tiger', 'Elephant', 'Lion', 'Bear'],
+    correctAnswer: 'Lion',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What color is a banana when it is ripe?',
+    options: ['Green', 'Red', 'Yellow', 'Blue'],
+    correctAnswer: 'Yellow',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'How many legs does a spider have?',
+    options: ['Six', 'Eight', 'Ten', 'Four'],
+    correctAnswer: 'Eight',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What do bees make that we can eat?',
+    options: ['Milk', 'Honey', 'Cheese', 'Bread'],
+    correctAnswer: 'Honey',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which animal says "meow"?',
+    options: ['Dog', 'Cat', 'Cow', 'Duck'],
+    correctAnswer: 'Cat',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What is the biggest planet in our solar system?',
+    options: ['Earth', 'Mars', 'Jupiter', 'Venus'],
+    correctAnswer: 'Jupiter',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which animal has a long trunk?',
+    options: ['Giraffe', 'Elephant', 'Monkey', 'Zebra'],
+    correctAnswer: 'Elephant',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What do we call a baby dog?',
+    options: ['Kitten', 'Puppy', 'Calf', 'Foal'],
+    correctAnswer: 'Puppy',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which of these is a fruit?',
+    options: ['Carrot', 'Apple', 'Potato', 'Onion'],
+    correctAnswer: 'Apple',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What color is the sky on a clear day?',
+    options: ['Green', 'Red', 'Blue', 'Yellow'],
+    correctAnswer: 'Blue',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which animal hops and has a pouch for its baby?',
+    options: ['Kangaroo', 'Penguin', 'Ostrich', 'Flamingo'],
+    correctAnswer: 'Kangaroo',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What do cows give us to drink?',
+    options: ['Juice', 'Milk', 'Water', 'Soda'],
+    correctAnswer: 'Milk',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'How many fingers do you have on one hand?',
+    options: ['Three', 'Four', 'Five', 'Six'],
+    correctAnswer: 'Five',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which bird cannot fly but can swim very well?',
+    options: ['Eagle', 'Penguin', 'Parrot', 'Sparrow'],
+    correctAnswer: 'Penguin',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What is the name of a baby cat?',
+    options: ['Puppy', 'Kitten', 'Calf', 'Chick'],
+    correctAnswer: 'Kitten',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which of these is a vegetable?',
+    options: ['Strawberry', 'Carrot', 'Grape', 'Orange'],
+    correctAnswer: 'Carrot',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What animal is black and white and looks like a horse?',
+    options: ['Zebra', 'Cow', 'Panda', 'Skunk'],
+    correctAnswer: 'Zebra',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'How many seasons are there in a year?',
+    options: ['Two', 'Three', 'Four', 'Five'],
+    correctAnswer: 'Four',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which animal is very slow and hangs from trees?',
+    options: ['Cheetah', 'Sloth', 'Rabbit', 'Fox'],
+    correctAnswer: 'Sloth',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What do we use to brush our teeth?',
+    options: ['Comb', 'Toothbrush', 'Spoon', 'Fork'],
+    correctAnswer: 'Toothbrush',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which of these animals lives in the ocean?',
+    options: ['Dolphin', 'Lion', 'Cow', 'Sheep'],
+    correctAnswer: 'Dolphin',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What color are strawberries usually?',
+    options: ['Blue', 'Red', 'Purple', 'Green'],
+    correctAnswer: 'Red',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'Which animal is famous for changing colors?',
+    options: ['Chameleon', 'Frog', 'Snake', 'Lizard'],
+    correctAnswer: 'Chameleon',
+  },
+  {
+    type: 'general-mcq',
+    badge: 'General Question',
+    icon: 'fa-circle-question',
+    question: 'What is the opposite of hot?',
+    options: ['Warm', 'Cold', 'Boiling', 'Sunny'],
+    correctAnswer: 'Cold',
+  },
+      {
+        type: 'general-mcq',
+        badge: 'General Question',
+        icon: 'fa-circle-question',
+        question: 'Which of these is a mammal?',
+        options: ['Crocodile', 'Panda', 'Pizza', 'Salmon'],
+        correctAnswer: 'Panda',
+      },
+      {
+        type: 'general-mcq',
+        badge: 'General Question',
+        icon: 'fa-circle-question',
+        question: 'Which food is made from dough with toppings?',
+        options: ['Popcorn', 'Hamburger', 'Pizza', 'Bamboo'],
+        correctAnswer: 'Pizza',
+      },
+      {
+        type: 'general-mcq',
+        badge: 'General Question',
+        icon: 'fa-circle-question',
+        question: 'What do we call the coat of a sheep?',
+        options: ['Feathers', 'Scales', 'Wool', 'Fur'],
+        correctAnswer: 'Wool',
+      },
+
+      // ── TYPE 8: Image → sentence ──
+      {
+        type: 'image-sentence',
+        badge: 'Describe the Image',
+        icon: 'fa-image',
+        question: 'Look at the image and write ONE sentence about what you see:',
+        image: IMAGES.raccoon,
+        placeholder: 'e.g. The raccoon is running through the forest.',
+        hint: 'Include the animal name and an action.',
+        isOpen: true,
+      },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.panda,
+    placeholder: 'e.g. The panda is eating green bamboo happily.',
+    hint: 'Include the animal name and what it is doing or eating.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.dolphin,
+    placeholder: 'e.g. The dolphin is jumping out of the blue water.',
+    hint: 'Write about the dolphin and an action in the sea.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.elephant,
+    placeholder: 'e.g. The big elephant is walking with its long trunk raised.',
+    hint: 'Use words like big, long, or gray to describe the elephant.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.lion,
+    placeholder: 'e.g. The lion has a beautiful golden mane and looks proud.',
+    hint: 'Describe the lion’s mane or how it looks/feels.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.tiger,
+    placeholder: 'e.g. The orange tiger has black stripes and is sitting calmly.',
+    hint: 'Mention the tiger’s colors and pattern.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.penguin,
+    placeholder: 'e.g. The cute penguin is standing on the ice with flippers out.',
+    hint: 'Use words like cute, black and white, or waddling.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.kangaroo,
+    placeholder: 'e.g. The kangaroo is jumping high with its baby in the pouch.',
+    hint: 'Write about jumping or the baby kangaroo (joey).',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.flamingo,
+    placeholder: 'e.g. The tall pink flamingo is standing on one leg in the water.',
+    hint: 'Mention the color pink and standing on one leg.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.zebra,
+    placeholder: 'e.g. The zebra has black and white stripes and is looking at me.',
+    hint: 'Talk about the zebra’s special black and white pattern.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.jellyfish,
+    placeholder: 'e.g. The jellyfish is floating gently with long glowing tentacles.',
+    hint: 'Use words like floating, tentacles, or colorful.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.pizza,
+    placeholder: 'e.g. The pizza has lots of melted cheese and colorful toppings.',
+    hint: 'Describe the cheese, toppings or how yummy it looks.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.popcorn,
+    placeholder: 'e.g. The popcorn is fluffy and golden in a big red box.',
+    hint: 'Use words like fluffy, golden, or yummy snack.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.crabs,
+    placeholder: 'e.g. The red crab has big claws and is walking sideways.',
+    hint: 'Mention the color and sideways walking.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.rabbit,
+    placeholder: 'e.g. The fluffy rabbit has long ears and is hopping happily.',
+    hint: 'Describe the ears or how soft/cute it looks.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.monkey,
+    placeholder: 'e.g. The funny monkey is holding a yellow banana and smiling.',
+    hint: 'Include the banana or a funny expression/action.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.sheep,
+    placeholder: 'e.g. The white sheep has soft wool and is standing in the grass.',
+    hint: 'Talk about wool or the grassy place.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.shark,
+    placeholder: 'e.g. The big shark is swimming fast with sharp teeth showing.',
+    hint: 'Use words like big, fast, or sharp teeth.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.turtle,
+    placeholder: 'e.g. The green turtle is swimming slowly under the blue sea.',
+    hint: 'Mention swimming or the hard shell.',
+    isOpen: true,
+  },
+  {
+    type: 'image-sentence',
+    badge: 'Describe the Image',
+    icon: 'fa-image',
+    question: 'Look at the image and write ONE sentence about what you see:',
+    image: IMAGES.pufferfish,
+    placeholder: 'e.g. The pufferfish looks round and spiky like a balloon.',
+    hint: 'Describe it looking round, spiky or puffed up.',
+    isOpen: true,
+  },
+      {
+        type: 'image-sentence',
+        badge: 'Describe the Image',
+        icon: 'fa-image',
+        question: 'Look at the image and write ONE sentence about what you see:',
+        image: IMAGES.hamburger,
+        placeholder: 'e.g. The hamburger looks big and delicious.',
+        hint: 'Describe the food using adjectives.',
+        isOpen: true,
+      },
+    ];
+
+    /* ══════════════════════════════════════════════
+       GAME ENGINE
+    ══════════════════════════════════════════════ */
+
+    let session = [];
+    let current = 0;
+    let score   = 0;
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length-1; i > 0; i--) {
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+
+    function pickSession() {
+      // Pick 10 tasks: ensure variety across types
+      const byType = {};
+      TASK_POOL.forEach(t => { (byType[t.type] = byType[t.type]||[]).push(t); });
+      const types = Object.keys(byType);
+      let pool = [];
+      // Round-robin through types
+      let i = 0;
+      while (pool.length < 10) {
+        const type = types[i % types.length];
+        const arr = byType[type];
+        if (arr.length > 0) {
+          const idx = Math.floor(Math.random()*arr.length);
+          pool.push(arr.splice(idx,1)[0]);
+        }
+        i++;
+        // safety: if all exhausted
+        if (types.every(t => (byType[t]||[]).length === 0)) break;
+      }
+      // Shuffle final pool and pad if needed
+      pool = shuffle(pool).slice(0,10);
+      return pool;
+    }
+
+    function initSession() {
+      session = pickSession();
+      current = 0;
+      score   = 0;
+      renderDots();
+      renderTask();
+    }
+
+    function renderDots() {
+      const wrap = document.getElementById('taskDots');
+      wrap.innerHTML = '';
+      for (let i = 0; i < session.length; i++) {
+        const d = document.createElement('div');
+        d.className = 'task-dot' + (i < current ? ' done' : i === current ? ' current' : '');
+        wrap.appendChild(d);
+      }
+    }
+
+    function updateProgress() {
+      const pct = (current / session.length) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressCount').textContent = current + ' / ' + session.length;
+    }
+
+    function nextTask() {
+      current++;
+      renderDots();
+      updateProgress();
+      if (current >= session.length) {
+        renderAllDone();
+      } else {
+        renderTask();
+      }
+    }
+
+    function renderTask() {
+      updateProgress();
+      const task = session[current];
+      const area = document.getElementById('taskArea');
+      area.innerHTML = '';
+
+      let html = '';
+      switch (task.type) {
+        case 'name-animal':
+        case 'name-food':
+          html = renderImageMCQ(task); break;
+        case 'complete-sentence':
+          html = renderCompleteSentence(task); break;
+        case 'rewrite':
+          html = renderRewrite(task); break;
+        case 'speak-3':
+          html = renderSpeak(task); break;
+        case 'match-words':
+          html = renderMatch(task); break;
+        case 'general-mcq':
+          html = task.isOpen ? renderOpenQuestion(task) : renderMCQ(task); break;
+        case 'image-sentence':
+          html = renderImageSentence(task); break;
+      }
+
+      area.innerHTML = html;
+      bindTask(task);
+    }
+
+    /* ── Renderers ── */
+
+    function badge(task) {
+      return `<div class="task-type-badge"><i class="fas ${task.icon}"></i> ${task.badge} · Task ${current+1} of ${session.length}</div>`;
+    }
+
+    function renderImageMCQ(task) {
+      const opts = shuffle(task.options).map(o =>
+        `<button class="option-btn" data-val="${o}"><span class="opt-letter">→</span> ${o}</button>`
+      ).join('');
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <div style="text-align:center;margin-bottom:1.5rem;">
+            <img src="${task.image}" style="max-width:200px;max-height:200px;object-fit:contain;border-radius:8px;" alt="Task image"/>
+          </div>
+          <div class="options-grid">${opts}</div>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="check-btn" id="checkBtn" disabled><i class="fas fa-check"></i> Check</button>
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderMCQ(task) {
+      const opts = shuffle(task.options).map(o =>
+        `<button class="option-btn" data-val="${o}"><span class="opt-letter">→</span> ${o}</button>`
+      ).join('');
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <div class="options-grid">${opts}</div>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="check-btn" id="checkBtn" disabled><i class="fas fa-check"></i> Check</button>
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderCompleteSentence(task) {
+      const sentence = task.sentence.replace('___',
+        `<input class="blank-input" id="blankInput" placeholder="___" autocomplete="off"/>`
+      );
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <div class="sentence-display">${sentence}</div>
+          <p class="task-hint"><i class="fas fa-lightbulb"></i> Hint: ${task.hint}</p>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="check-btn" id="checkBtn"><i class="fas fa-check"></i> Check</button>
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderRewrite(task) {
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <div class="speak-sentence">${task.original}</div>
+          <p class="task-hint"><i class="fas fa-lightbulb"></i> Hint: ${task.hint}</p>
+          <textarea class="task-input" id="rewriteInput" placeholder="Type your rewritten sentence here…"></textarea>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="check-btn" id="checkBtn"><i class="fas fa-check"></i> Check</button>
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderSpeak(task) {
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <div class="speak-sentence">${task.sentence}</div>
+          <div class="speak-counter">
+            <div class="speak-dot active" id="dot0"></div>
+            <div class="speak-dot" id="dot1"></div>
+            <div class="speak-dot" id="dot2"></div>
+            <span style="font-size:0.8rem;color:var(--mist);margin-left:0.5rem;" id="speakStatus">0 / 3 times</span>
+          </div>
+          <button class="speak-btn" id="speakBtn"><i class="fas fa-volume-high"></i> I said it!</button>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderMatch(task) {
+      const meanings = shuffle(task.pairs.map(p => p.meaning));
+      const words    = task.pairs.map(p => p.word);
+      const wordItems = words.map(w =>
+        `<div class="match-item" data-type="word" data-val="${w}">${w}</div>`
+      ).join('');
+      const meaningItems = meanings.map(m =>
+        `<div class="match-item" data-type="meaning" data-val="${m}">${m}</div>`
+      ).join('');
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <div class="match-grid">
+            <div class="match-col" id="wordCol">${wordItems}</div>
+            <div class="match-col" id="meaningCol">${meaningItems}</div>
+          </div>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderOpenQuestion(task) {
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <textarea class="task-input" id="openInput" placeholder="${task.placeholder || 'Write your answer here…'}"></textarea>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="check-btn" id="checkBtn"><i class="fas fa-check"></i> Submit</button>
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderImageSentence(task) {
+      return `
+        <div class="task-card">
+          ${badge(task)}
+          <p class="task-question">${task.question}</p>
+          <div style="text-align:center;margin-bottom:1.2rem;">
+            <img src="${task.image}" style="max-width:200px;max-height:200px;object-fit:contain;border-radius:8px;" alt="Task image"/>
+          </div>
+          <p class="task-hint" style="margin-bottom:0.8rem;"><i class="fas fa-lightbulb"></i> Hint: ${task.hint}</p>
+          <textarea class="task-input" id="imgSentInput" placeholder="${task.placeholder}"></textarea>
+          <div class="feedback-msg" id="feedback"></div>
+          <div class="task-actions">
+            <button class="check-btn" id="checkBtn"><i class="fas fa-check"></i> Submit</button>
+            <button class="next-btn" id="nextBtn"><i class="fas fa-arrow-right"></i> Next Task</button>
+          </div>
+        </div>`;
+    }
+
+    function renderAllDone() {
+      const area = document.getElementById('taskArea');
+      area.innerHTML = `
+        <div class="all-done">
+          <div class="all-done-icon"><i class="fas fa-star"></i></div>
+          <h2>All Done! 🎉</h2>
+          <p>You completed all 10 daily tasks. Come back tomorrow for more!</p>
+          <button class="restart-btn" id="restartBtn"><i class="fas fa-redo"></i> Start Again</button>
+        </div>`;
+      document.getElementById('restartBtn').addEventListener('click', initSession);
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('progressCount').textContent = '10 / 10';
+      // All dots done
+      document.querySelectorAll('.task-dot').forEach(d => { d.className = 'task-dot done'; });
+    }
+
+    /* ── Binders ── */
+
+    function showFeedback(ok, msg) {
+      const fb = document.getElementById('feedback');
+      if (!fb) return;
+      fb.className = 'feedback-msg ' + (ok ? 'success' : 'error');
+      fb.innerHTML = `<i class="fas ${ok ? 'fa-circle-check' : 'fa-circle-xmark'}"></i> ${msg}`;
+    }
+
+    function showNext() {
+      const nb = document.getElementById('nextBtn');
+      if (nb) nb.classList.add('visible');
+    }
+
+    function bindTask(task) {
+      const nextBtn  = document.getElementById('nextBtn');
+      const checkBtn = document.getElementById('checkBtn');
+
+      if (nextBtn) nextBtn.addEventListener('click', nextTask);
+
+      switch (task.type) {
+        case 'name-animal':
+        case 'name-food':
+        case 'general-mcq': {
+          if (task.isOpen) {
+            // Open question
+            if (checkBtn) checkBtn.addEventListener('click', () => {
+              const val = (document.getElementById('openInput')||{}).value.trim();
+              if (!val) return;
+              showFeedback(true, 'Great answer! Well done 🌸');
+              checkBtn.disabled = true;
+              showNext();
+            });
+          } else {
+            // MCQ
+            document.querySelectorAll('.option-btn').forEach(btn => {
+              btn.addEventListener('click', () => {
+                document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                if (checkBtn) checkBtn.disabled = false;
+              });
+            });
+            if (checkBtn) checkBtn.addEventListener('click', () => {
+              const sel = document.querySelector('.option-btn.selected');
+              if (!sel) return;
+              const val = sel.dataset.val;
+              const correct = val === task.correctAnswer;
+              document.querySelectorAll('.option-btn').forEach(b => {
+                if (b.dataset.val === task.correctAnswer) b.classList.add('correct');
+                else if (b.classList.contains('selected')) b.classList.add('wrong');
+                b.style.pointerEvents = 'none';
+              });
+              showFeedback(correct, correct ? 'Correct! 🎉 Great job!' : `Not quite. The answer is <strong>${task.correctAnswer}</strong>.`);
+              checkBtn.disabled = true;
+              showNext();
+            });
+          }
+          break;
+        }
+
+        case 'complete-sentence': {
+          const inp = document.getElementById('blankInput');
+          if (checkBtn) checkBtn.addEventListener('click', () => {
+            const val = inp ? inp.value.trim().toLowerCase() : '';
+            const correct = val === task.blank.toLowerCase();
+            if (inp) inp.classList.add(correct ? 'correct' : 'wrong');
+            showFeedback(correct, correct ? 'Perfect! 🌸' : `The answer is <strong>${task.blank}</strong>.`);
+            checkBtn.disabled = true;
+            showNext();
+          });
+          break;
+        }
+
+        case 'rewrite': {
+          if (checkBtn) checkBtn.addEventListener('click', () => {
+            const val = (document.getElementById('rewriteInput')||{}).value.trim();
+            if (!val) return;
+            // Accept if close enough (simple check: contains key changed word)
+            const correct = val.toLowerCase().includes(task.answer.toLowerCase().split(' ')[3] || '');
+            showFeedback(true, `Your sentence: "${val}" — Example answer: <strong>${task.answer}</strong>`);
+            checkBtn.disabled = true;
+            showNext();
+          });
+          break;
+        }
+
+        case 'speak-3': {
+          let count = 0;
+          const speakBtn = document.getElementById('speakBtn');
+          const statusEl = document.getElementById('speakStatus');
+          if (speakBtn) speakBtn.addEventListener('click', () => {
+            if (count >= 3) return;
+            const dot = document.getElementById('dot' + count);
+            if (dot) { dot.classList.remove('active'); dot.classList.add('done'); }
+            count++;
+            if (statusEl) statusEl.textContent = count + ' / 3 times';
+            if (count < 3) {
+              const next = document.getElementById('dot' + count);
+              if (next) next.classList.add('active');
+            }
+            if (count === 3) {
+              speakBtn.disabled = true;
+              speakBtn.textContent = '✓ Done!';
+              showFeedback(true, 'Excellent pronunciation practice! 🎤');
+              showNext();
+            }
+          });
+          break;
+        }
+
+        case 'match-words': {
+          let selectedWord    = null;
+          let selectedMeaning = null;
+          let matched = 0;
+          const correct = {};
+          task.pairs.forEach(p => correct[p.word] = p.meaning);
+
+          document.querySelectorAll('.match-item').forEach(item => {
+            item.addEventListener('click', () => {
+              if (item.classList.contains('matched')) return;
+
+              if (item.dataset.type === 'word') {
+                document.querySelectorAll('.match-item[data-type="word"]').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedWord = item;
+              } else {
+                document.querySelectorAll('.match-item[data-type="meaning"]').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedMeaning = item;
+              }
+
+              if (selectedWord && selectedMeaning) {
+                const wv = selectedWord.dataset.val;
+                const mv = selectedMeaning.dataset.val;
+                const ok = correct[wv] === mv;
+
+                if (ok) {
+                  selectedWord.classList.add('matched'); selectedWord.classList.remove('selected');
+                  selectedMeaning.classList.add('matched'); selectedMeaning.classList.remove('selected');
+                  matched++;
+                  if (matched === task.pairs.length) {
+                    showFeedback(true, 'All matched correctly! 🎉');
+                    showNext();
+                  }
+                } else {
+                  selectedWord.classList.add('error'); selectedMeaning.classList.add('error');
+                  setTimeout(() => {
+                    selectedWord.classList.remove('error','selected');
+                    selectedMeaning.classList.remove('error','selected');
+                  }, 800);
+                }
+                selectedWord = null; selectedMeaning = null;
+              }
+            });
+          });
+          break;
+        }
+
+        case 'image-sentence': {
+          if (checkBtn) checkBtn.addEventListener('click', () => {
+            const val = (document.getElementById('imgSentInput')||{}).value.trim();
+            if (val.length < 5) return;
+            showFeedback(true, 'Nice sentence! Keep describing what you see 🌸');
+            checkBtn.disabled = true;
+            showNext();
+          });
+          break;
+        }
+      }
+    }
+
+    /* ── Start ── */
+    initSession();
+
+  })();
+  
+  </script>
+</body>
+</html>

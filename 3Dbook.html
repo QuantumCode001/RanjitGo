@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MCA Project 2K26 · 3D Flipbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Noto+Serif+JP:wght@200;300;400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --ink:#1a1a2e; --ink-soft:#2d2d44; --ink-muted:#5c5c7a;
+  --paper:#faf8f5; --paper-warm:#f5f0e8; --paper-card:rgba(255,255,255,0.85);
+  --sakura:#e8a0b4; --sakura-pale:#f7e8ef; --sakura-deep:#c4687e;
+  --gold:#c8a96e; --gold-pale:#f5edda;
+  --mist:#8a8fa8; --accent-blue:#7b9bbf;
+  --border:rgba(26,26,46,0.10); --shadow:rgba(26,26,46,0.18);
+  --page-bg:#fffdf9; --page-shadow:rgba(0,0,0,0.25);
+  --spine:#c4687e; --spine-dark:#a04060;
+  --cover-bg:linear-gradient(135deg,#1a1a2e 0%,#2d1a2e 60%,#3a1a30 100%);
+  --page-w: 280px; --page-h: 390px;
+  --btn-size: 44px;
+}
+[data-theme="dark"]{
+  --ink:#e4dfd7; --ink-soft:#c0bab4; --ink-muted:#7a7590;
+  --paper:#111018; --paper-warm:#18161f; --paper-card:rgba(28,26,40,0.9);
+  --sakura-pale:rgba(196,104,126,0.15); --sakura-deep:#e888a4;
+  --gold:#c8a96e; --mist:#56546a; --accent-blue:#5a7a9e;
+  --border:rgba(255,255,255,0.07); --shadow:rgba(0,0,0,0.5);
+  --page-bg:#1e1b2e; --spine:#e888a4; --spine-dark:#c4687e;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  display:flex;flex-direction:column;
+  transition:background .5s,color .5s;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* ── BG ── */
+.bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.ink-circle{position:absolute;border-radius:50%;opacity:.06;animation:inkPulse 8s ease-in-out infinite;}
+.ink-circle:nth-child(1){width:600px;height:600px;top:-200px;right:-150px;background:var(--sakura-deep);animation-delay:0s;}
+.ink-circle:nth-child(2){width:400px;height:400px;bottom:-100px;left:-100px;background:var(--accent-blue);animation-delay:-3s;}
+@keyframes inkPulse{0%,100%{transform:scale(1);opacity:.05}50%{transform:scale(1.08);opacity:.09}}
+[data-theme="dark"] .ink-circle{opacity:.14}
+
+/* ── HEADER ── */
+header{
+  position:relative;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.65rem 3%;
+  background:rgba(250,248,245,0.95);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  transition:background .5s,border-color .5s;
+  gap:.5rem;
+}
+[data-theme="dark"] header{background:rgba(17,16,24,0.95);}
+
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+  text-decoration:none;
+}
+
+/* Logo circle */
+.logo-mark{
+  position:relative;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-mark svg{
+  width:40px;
+  height:40px;
+}
+
+/* ✨ Smooth, subtle ring draw */
+.brush-ring{
+  stroke-dasharray:120;
+  stroke-dashoffset:120;
+  animation:drawRing 0s ease-out forwards; /* slower + smooth */
+  stroke:var(--sakura-deep);
+  fill:none;
+  transition:stroke 0.s;
+}
+
+@keyframes drawRing{
+  to{stroke-dashoffset:0;}
+}
+
+/* ✨ Softer text appearance (no zoom jump) */
+.logo-char{
+  fill:var(--ink);
+  opacity:0;
+  animation:fadeChar  forwards;
+}
+
+@keyframes fadeChar{
+  from{opacity:0; transform:translateY(4px);} /* subtle move instead of scale */
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Text */
+.logo-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+
+.logo-main{
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  font-size:1.4rem;
+  color:var(--ink);
+  letter-spacing:0.02em;
+  transition:color 0.3s ease;
+}
+
+.logo-sub{
+  font-size:0.63rem;
+  font-weight:300;
+  color:var(--mist);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-top:2px;
+  transition:color 0.3s ease;
+}
+.header-right{display:flex;align-items:center;gap:.5rem;}
+.page-counter{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.72rem;color:var(--mist);
+  background:var(--paper-warm);
+  border:1px solid var(--border);
+  padding:.28rem .6rem;border-radius:2px;
+  min-width:60px;text-align:center;
+  transition:all .5s;
+  white-space:nowrap;
+}
+
+.icon-btn{
+  background:transparent;border:1px solid var(--border);
+  color:var(--ink-soft);
+  width:var(--btn-size);height:var(--btn-size);
+  border-radius:6px;
+  cursor:pointer;font-size:.8rem;
+  transition:all .25s;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.icon-btn:hover,.icon-btn:active{border-color:var(--sakura-deep);color:var(--sakura-deep);background:var(--sakura-pale);}
+
+/* ── MAIN STAGE ── */
+.stage{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:1;
+  overflow:hidden;
+  padding:.5rem;
+}
+
+/* ── BOOK WRAPPER ── */
+.book-wrapper{
+  position:relative;
+  display:flex;align-items:center;justify-content:center;
+  perspective:2000px;
+  perspective-origin:50% 45%;
+}
+
+/* The actual book container */
+.book{
+  position:relative;
+  display:flex;
+  transform-style:preserve-3d;
+  transform:rotateX(4deg) rotateY(-3deg);
+  transition:transform .6s cubic-bezier(.4,0,.2,1);
+  filter:drop-shadow(0 20px 50px var(--shadow)) drop-shadow(0 8px 16px rgba(0,0,0,.2));
+}
+
+/* Mobile: single page, no tilt */
+@media(max-width:640px){
+  .book{
+    transform:none !important;
+    filter:drop-shadow(0 12px 32px var(--shadow));
+  }
+}
+
+/* ── SPINE ── */
+.book-spine{
+  width:20px;
+  flex-shrink:0;
+  background:linear-gradient(to right, var(--spine-dark), var(--spine), var(--spine-dark));
+  box-shadow:inset -3px 0 8px rgba(0,0,0,.3), inset 3px 0 8px rgba(0,0,0,.2);
+  border-radius:2px 0 0 2px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:10;
+}
+/* Hide spine on mobile single-page view */
+@media(max-width:640px){
+  .book-spine{display:none;}
+  .left-side{display:none !important;}
+  .right-side{border-radius:4px !important;border:1px solid rgba(0,0,0,.08) !important;}
+}
+
+.spine-text{
+  font-family:'Noto Serif JP',serif;
+  font-size:.48rem;color:rgba(255,255,255,0.7);
+  writing-mode:vertical-rl;letter-spacing:.15em;
+  font-weight:200;
+}
+
+/* ── PAGE SIDES ── */
+.left-side,.right-side{
+  width:var(--page-w);
+  height:var(--page-h);
+  position:relative;
+  overflow:hidden;
+  flex-shrink:0;
+}
+.left-side{
+  box-shadow:inset -8px 0 15px rgba(0,0,0,.08);
+  border-radius:3px 0 0 3px;
+  border:1px solid rgba(0,0,0,.08);
+  border-right:none;
+}
+.right-side{
+  box-shadow:inset 8px 0 15px rgba(0,0,0,.06);
+  border-radius:0 3px 3px 0;
+  border:1px solid rgba(0,0,0,.08);
+  border-left:none;
+}
+
+/* ── FLIPPING LEAF ── */
+.flip-container{
+  position:absolute;
+  top:0;right:0;
+  width:var(--page-w);
+  height:var(--page-h);
+  transform-style:preserve-3d;
+  transform-origin:left center;
+  transition:transform .8s cubic-bezier(.645,.045,.355,1.000);
+  z-index:20;
+  pointer-events:none;
+}
+/* On mobile, flip container covers full width */
+@media(max-width:640px){
+  .flip-container{
+    left:0;right:auto;
+    width:var(--page-w);
+  }
+}
+.flip-container.flipping-forward{
+  animation:flipForward .8s cubic-bezier(.645,.045,.355,1.000) forwards;
+}
+.flip-container.flipping-backward{
+  animation:flipBackward .8s cubic-bezier(.645,.045,.355,1.000) forwards;
+}
+@keyframes flipForward{
+  0%  {transform:rotateY(0deg);z-index:30;}
+  50% {transform:rotateY(-90deg);z-index:30;}
+  100%{transform:rotateY(-180deg);z-index:5;}
+}
+@keyframes flipBackward{
+  0%  {transform:rotateY(-180deg);z-index:5;}
+  50% {transform:rotateY(-90deg);z-index:30;}
+  100%{transform:rotateY(0deg);z-index:30;}
+}
+
+.flip-front,.flip-back{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  overflow:hidden;
+}
+.flip-front{
+  background:var(--page-bg);
+  border-radius:0 3px 3px 0;
+}
+.flip-back{
+  background:var(--page-bg);
+  transform:rotateY(180deg);
+  border-radius:3px 0 0 3px;
+  box-shadow:inset 10px 0 20px rgba(0,0,0,.08);
+}
+.flip-front::after{
+  content:'';position:absolute;top:0;left:0;width:12px;height:100%;
+  background:linear-gradient(to right,rgba(0,0,0,.12),transparent);pointer-events:none;
+}
+.flip-back::after{
+  content:'';position:absolute;top:0;right:0;width:12px;height:100%;
+  background:linear-gradient(to left,rgba(0,0,0,.1),transparent);pointer-events:none;
+}
+
+/* ── PAGE CONTENT ── */
+.page-content{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  background:var(--page-bg);
+  transition:background .5s;
+}
+
+/* Cover page */
+.page-cover{
+  background:var(--cover-bg) !important;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:2rem 1.5rem;
+  gap:.9rem;
+}
+.cover-badge{
+  font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(200,169,110,0.8);border:1px solid rgba(200,169,110,0.3);
+  padding:.22rem .75rem;border-radius:1px;
+}
+.cover-year{
+  font-family:'Share Tech Mono',monospace;
+  font-size:2.2rem;color:var(--sakura);
+  line-height:1;opacity:.6;
+}
+.cover-title{
+  font-family:'Noto Serif JP',serif;
+  font-size:.95rem;font-weight:300;
+  color:rgba(255,255,255,0.9);
+  letter-spacing:.08em;line-height:1.5;
+}
+.cover-sub{font-size:.6rem;color:rgba(200,169,110,0.7);letter-spacing:.2em;text-transform:uppercase;}
+.cover-deco{width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(200,169,110,0.5),transparent);}
+.cover-kanji{
+  font-family:'Noto Serif JP',serif;
+  font-size:3.5rem;color:rgba(196,104,126,0.25);
+  font-weight:200;position:absolute;
+  top:.5rem;right:.8rem;line-height:1;
+}
+.cover-author{font-size:.64rem;color:rgba(255,255,255,.4);letter-spacing:.12em;text-transform:uppercase;margin-top:.4rem;}
+
+/* Inner page styles */
+.page-header{
+  padding:.45rem .65rem .28rem;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.page-section-tag{font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sakura-deep);font-weight:400;}
+.page-num-tag{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--mist);}
+.page-body{
+  flex:1;padding:.45rem .65rem;overflow:hidden;
+  display:flex;flex-direction:column;gap:.35rem;
+}
+
+.code-block{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.56rem;line-height:1.5;
+  background:rgba(26,26,46,.04);
+  border:1px solid var(--border);
+  border-left:2px solid var(--sakura-deep);
+  padding:.35rem .55rem;
+  border-radius:2px;
+  overflow:hidden;
+  white-space:pre-wrap;
+  word-break:break-all;
+  color:var(--ink-soft);
+  transition:background .5s;
+}
+[data-theme="dark"] .code-block{background:rgba(255,255,255,.04);color:#b8b4cc;}
+.code-block .kw{color:#c4687e;}
+.code-block .fn{color:#7b9bbf;}
+.code-block .str{color:#5e8a6a;}
+.code-block .num{color:#c8a96e;}
+.code-block .cm{color:#8a8fa8;font-style:italic;}
+
+.q-label{
+  font-family:'Noto Serif JP',serif;
+  font-size:.62rem;font-weight:400;
+  color:var(--ink);line-height:1.4;
+  border-left:2px solid var(--gold);
+  padding:.18rem .48rem;
+  background:var(--gold-pale);
+  border-radius:0 2px 2px 0;
+  transition:background .5s;
+}
+[data-theme="dark"] .q-label{background:rgba(200,169,110,.08);}
+
+.output-label{font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:var(--sakura-deep);font-weight:600;margin-top:.15rem;}
+.output-block{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.56rem;
+  background:rgba(26,26,46,.03);
+  border:1px solid var(--border);
+  padding:.28rem .55rem;
+  border-radius:2px;
+  color:var(--ink-muted);
+  white-space:pre;overflow:hidden;
+  transition:background .5s;
+}
+[data-theme="dark"] .output-block{background:rgba(0,0,0,.2);color:#9a96b0;}
+
+.sql-table{font-family:'Share Tech Mono',monospace;font-size:.49rem;border-collapse:collapse;width:100%;}
+.sql-table th{background:var(--sakura-deep);color:white;padding:.18rem .35rem;font-weight:400;text-transform:uppercase;letter-spacing:.05em;}
+.sql-table td{border:1px solid var(--border);padding:.15rem .3rem;color:var(--ink-soft);transition:color .5s,border-color .5s;}
+.sql-table tr:nth-child(even) td{background:rgba(26,26,46,.02);}
+[data-theme="dark"] .sql-table tr:nth-child(even) td{background:rgba(255,255,255,.03);}
+
+.page-divider{height:1px;background:var(--border);margin:.25rem 0;flex-shrink:0;}
+
+.end-page{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:1rem;padding:2rem;text-align:center;}
+.end-title{font-family:'Noto Serif JP',serif;font-size:1.1rem;font-weight:300;color:var(--ink);letter-spacing:.08em;}
+.end-sub{font-size:.7rem;color:var(--mist);letter-spacing:.15em;text-transform:uppercase;}
+
+/* ── NAV BUTTONS (Desktop) ── */
+.nav-btn{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:46px;height:46px;border-radius:50%;
+  background:var(--sakura-deep);border:none;
+  color:white;font-size:.9rem;
+  cursor:pointer;z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(196,104,126,.4);
+  transition:transform .25s,box-shadow .25s,opacity .3s;
+  opacity:.9;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.nav-btn:hover{transform:translateY(-50%) scale(1.1);box-shadow:0 8px 24px rgba(196,104,126,.5);}
+.nav-btn:active{transform:translateY(-50%) scale(.96);}
+.nav-btn:disabled{opacity:.22;cursor:not-allowed;pointer-events:none;}
+.nav-prev{left:-60px;}
+.nav-next{right:-60px;}
+@media(max-width:640px){
+  .nav-prev,.nav-next{display:none;}
+}
+
+/* ── MOBILE BOTTOM NAV ── */
+.mobile-nav{
+  display:none;
+  position:relative;z-index:50;
+  align-items:center;justify-content:space-between;
+  padding:.55rem 4%;
+  background:rgba(250,248,245,0.97);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+  transition:background .5s,border-color .5s;
+  gap:.5rem;
+}
+[data-theme="dark"] .mobile-nav{background:rgba(17,16,24,0.97);}
+
+@media(max-width:640px){
+  .mobile-nav{display:flex;}
+}
+
+.mob-btn{
+  display:flex;align-items:center;justify-content:center;gap:.4rem;
+  background:var(--sakura-deep);
+  color:white;
+  border:none;
+  border-radius:8px;
+  padding:.6rem 1.2rem;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:.78rem;
+  font-weight:400;
+  letter-spacing:.06em;
+  cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 3px 12px rgba(196,104,126,.35);
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  min-width:90px;
+}
+.mob-btn:active{transform:scale(.95);box-shadow:0 1px 6px rgba(196,104,126,.25);}
+.mob-btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none;}
+.mob-btn.ghost{
+  background:transparent;
+  color:var(--ink-soft);
+  border:1px solid var(--border);
+  box-shadow:none;
+}
+.mob-btn.ghost:active{background:var(--sakura-pale);}
+
+.mob-counter{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.72rem;
+  color:var(--mist);
+  text-align:center;
+  flex:1;
+}
+
+/* ── BOTTOM BAR (Desktop) ── */
+.bottom-bar{
+  position:relative;z-index:50;
+  display:flex;align-items:center;justify-content:center;gap:1rem;
+  padding:.55rem 4%;
+  background:rgba(250,248,245,0.95);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+  transition:background .5s,border-color .5s;
+}
+[data-theme="dark"] .bottom-bar{background:rgba(17,16,24,0.95);}
+@media(max-width:640px){
+  .bottom-bar{display:none;}
+}
+
+.progress-track{width:180px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--sakura-deep),var(--gold));border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.hint{font-size:.58rem;letter-spacing:.12em;color:var(--mist);text-transform:uppercase;display:flex;align-items:center;gap:.4rem;}
+.hint::before,.hint::after{content:'';width:14px;height:1px;background:var(--mist);opacity:.4;}
+
+/* ── SWIPE FEEDBACK OVERLAY ── */
+.swipe-overlay{
+  position:absolute;inset:0;z-index:200;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.swipe-overlay.show{opacity:1;}
+.swipe-icon{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(196,104,126,0.85);
+  color:white;font-size:1.2rem;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+
+/* Scroll indicator on page */
+.scroll-hint{
+  position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  font-size:.48rem;color:var(--mist);letter-spacing:.1em;
+  opacity:.5;pointer-events:none;
+  display:none;
+}
+@media(max-width:640px){.scroll-hint{display:block;}}
+
+/* ══════════════════════════════════════════
+   BACK BUTTON
+══════════════════════════════════════════ */
+.back-btn {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 1000;
+
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+
+  background: var(--paper-card);
+  border: 1px solid var(--border);
+
+  color: var(--sakura-deep);
+  font-size: 1.2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 28px var(--shadow);
+
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+/* Hover effect (matching your theme) */
+.back-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: var(--sakura-deep);
+  color: var(--ink);
+  box-shadow: 0 14px 40px var(--shadow);
+}
+
+/* Active click */
+.back-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile adjustment */
+@media (max-width:540px) {
+  .back-btn {
+    bottom: 1.5rem;
+    left: 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="ink-circle"></div>
+  <div class="ink-circle"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+    <a class="logo-area" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle class="brush-ring" cx="20" cy="20" r="17" stroke-width="1" stroke-linecap="round"/>
+          <image href="logo/logo.png" x="10" y="10" width="20" height="20" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">RanjitGo</span>
+        <span class="logo-sub">English Learning</span>
+      </div>
+    </a>
+
+
+    
+  <div class="header-right">
+    <div class="page-counter" id="pageCounter">1 / 7</div>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">
+      <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+    <button class="icon-btn" id="fullBtn" title="Fullscreen" aria-label="Fullscreen">
+      <i class="fas fa-expand"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ─── Back Button ─── -->
+<button class="back-btn" onclick="goBack()" aria-label="Go back">
+  <i class="fas fa-arrow-left-long"></i>
+</button>
+
+<!-- STAGE -->
+<div class="stage" id="stage">
+  <div class="book-wrapper" id="bookWrapper">
+    <div class="book" id="book">
+      <!-- SPINE -->
+      <div class="book-spine">
+        <span class="spine-text">MCA · 2K26</span>
+      </div>
+
+      <!-- LEFT PAGE -->
+      <div class="left-side" id="leftSide">
+        <div class="page-content" id="leftContent"></div>
+      </div>
+
+      <!-- FLIPPING LEAF -->
+      <div class="flip-container" id="flipContainer">
+        <div class="flip-front" id="flipFront">
+          <div class="page-content" id="flipFrontContent"></div>
+        </div>
+        <div class="flip-back" id="flipBack">
+          <div class="page-content" id="flipBackContent"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT PAGE -->
+      <div class="right-side" id="rightSide">
+        <div class="page-content" id="rightContent"></div>
+        <div class="scroll-hint">← Swipe to navigate →</div>
+      </div>
+    </div>
+
+    <!-- Desktop NAV ARROWS -->
+    <button class="nav-btn nav-prev" id="prevBtn" aria-label="Previous page"><i class="fas fa-chevron-left"></i></button>
+    <button class="nav-btn nav-next" id="nextBtn" aria-label="Next page"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
+
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-nav">
+  <button class="mob-btn ghost" id="mobPrev" aria-label="Previous page">
+    <i class="fas fa-chevron-left"></i> Back
+  </button>
+  <div class="mob-counter" id="mobCounter">1 / 7</div>
+  <button class="mob-btn" id="mobNext" aria-label="Next page">
+    Next <i class="fas fa-chevron-right"></i>
+  </button>
+</div>
+
+<!-- DESKTOP BOTTOM BAR -->
+<div class="bottom-bar">
+  <div class="hint">Arrow keys or click arrows</div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:14%"></div>
+  </div>
+  <div class="hint">Swipe on mobile</div>
+</div>
+
+<script>
+// ── PAGE DEFINITIONS ──
+const PAGES = [
+  {type:'cover'},
+
+  {type:'inner', section:'Story of Ranjit', num:'01', content:`
+<span class="cm">Chapter-1: The Beginning</span>
+<span class="fn"></span> = <span class="str">"In a peaceful corner of West Bengal, where mornings begin with soft sunlight and the sound of life slowly waking up, a boy named Ranjit Das started his journey. He was not born extraordinary, but inside him lived a quiet curiosity — a desire to understand how things worked, how people spoke, and how dreams were built."</span>
+
+`},
+
+  {type:'inner', section:'Story of Ranjit', num:'02', content:`
+<span class="cm">Chapter-2: The Spark of Learning</span>
+<span class="fn"></span> = <span class="str">"As a Class 11 science student, Ranjit found himself surrounded by books, formulas, and theories. But unlike many others, he didn’t just study to pass exams — he studied to understand. Reading became his superpower. Every page he turned opened a new world, and slowly, knowledge became not a burden, but a passion."</span>
+`},
+
+  {type:'inner', section:'Story of Ranjit', num:'03–04', content:`
+<span class="cm">Chapter-3: The Discovery of Technology</span>
+<span class="fn"></span> = <span class="str">"One day, he stepped into a new universe — the world of web development. At first, it looked like a maze of codes and symbols. But soon, he realized something magical — with code, he could create anything. A simple idea in his mind could become a real website on a screen."</span>
+
+`},
+
+  {type:'inner', section:'Story of Ranjit', num:'01–02', content:`
+<span class="cm">Chapter-4: The Creative Awakening</span>
+<span class="fn"></span> = <span class="str">"With growing confidence, Ranjit began building projects. Not just for marks, but for meaning. He designed learning platforms, interactive pages, and creative layouts. Every button, every color, every line of code carried his imagination. His work slowly started to reflect who he truly was — a learner and a creator."</span>
+`},
+
+  {type:'inner', section:'Story of Ranjit', num:'03–05', content:`
+<span class="cm">Chapter-5: The Struggles and Challenges</span>
+<span class="fn"></span> = <span class="str">"But the journey was not easy. Errors appeared. Codes broke. Designs failed. There were moments of frustration when nothing worked. But instead of giving up, Ranjit chose to understand the problem. Each mistake became a lesson. Each failure became a step forward. Slowly, challenges stopped being obstacles — they became teachers."</span>
+`},
+
+  {type:'inner', section:'Story of Ranjit', num:'06–07', content:`
+<span class="cm">Chapter-6: Growth Beyond Skills</span>
+<span class="fn"></span> = <span class="str">"As days passed, Ranjit didn’t just grow as a developer — he grew as a thinker. His English improved, his confidence increased, and his ability to express ideas became stronger. He realized that learning is not just about knowledge, but about communication, creativity, and consistency."</span>
+`},
+
+ {type:'inner', section:'Story of Ranjit', num:'07–08', content:`
+<span class="cm">Chapter-7: The Vision and Dream</span>
+<span class="fn"></span> = <span class="str">"Deep inside, a vision began to form. Ranjit didn’t just want to learn — he wanted to help others learn. He dreamed of creating platforms where students like him could improve their English, build skills, and gain confidence. He wanted to make learning simple, modern, and inspiring."</span>
+`},
+
+ {type:'inner', section:'Story of Ranjit', num:'08–09', content:`
+<span class="cm">Chapter-8: The Journey Continues</span>
+<span class="fn"></span> = <span class="str">"And today, Ranjit Das continues his journey — not as someone who has reached the destination, but as someone who has just begun. With every line of code he writes, every idea he builds, and every challenge he faces, he moves one step closer to his dream. His story is still being written — and the best chapters are yet to come."</span>
+`},
+
+ {type:'inner', section:'Story of Ranjit', num:'09–10', content:`
+<span class="cm">Chapter-9: The Power of Persistence</span>
+<span class="fn"></span> = <span class="str">"And as the sun sets on each day, Ranjit does not see an ending — he sees a beginning. The screen still glows in front of him, lines of code waiting to be written, ideas waiting to be shaped into reality. The journey that once started with curiosity has now turned into purpose.
+
+He knows the road ahead will not be easy. There will be harder challenges, bigger failures, and moments of doubt. But this time, he is ready. Because he has learned something powerful — success is not about never falling, but about rising every single time.
+
+Somewhere in the future, a student will open a platform created by him and feel inspired. Someone will learn English with confidence. Someone will believe in themselves — just like he once did.
+
+And maybe, years later, when people ask about his success, they will not just see a developer or a creator — they will see a story. A story of a boy who dared to dream, chose to learn, and never stopped moving forward.
+
+Because this is not just Ranjit's story.
+
+This is the story of becoming."</span>
+`},
+
+  {type:'end'},
+];
+
+// ── BOOK SIZING ──
+function computeSize(){
+  const stage = document.getElementById('stage');
+  const sw = stage.clientWidth;
+  const sh = stage.clientHeight;
+  const isMobile = window.innerWidth <= 640;
+
+  let pageW, pageH;
+  if(isMobile){
+    // Single page: fill most of the stage
+    pageW = Math.min(sw * 0.88, sh * 0.78);
+    pageH = pageW / 0.72;
+    if(pageH > sh * 0.92){ pageH = sh * 0.92; pageW = pageH * 0.72; }
+  } else {
+    const available = sw - 140;
+    pageH = sh * 0.92;
+    pageW = Math.min(pageH * 0.72, available / 2 - 12);
+    pageH = pageW / 0.72;
+    if(pageH > sh * 0.92){ pageH = sh * 0.92; pageW = pageH * 0.72; }
+  }
+  document.documentElement.style.setProperty('--page-w', pageW+'px');
+  document.documentElement.style.setProperty('--page-h', pageH+'px');
+}
+computeSize();
+window.addEventListener('resize', ()=>{ computeSize(); renderSpread(); });
+
+// ── RENDER HELPERS ──
+function makeCover(){
+  return `<div class="page-content page-cover">
+    <div class="cover-kanji">学</div>
+    <div class="cover-badge">A Boy Beyond Understanding</div>
+    <div class="cover-year">2K26</div>
+    <div class="cover-deco"></div>
+    <div class="cover-title">The Story of <br>Ranjit</div>
+    <div class="cover-deco"></div>
+    <div class="cover-sub">A Journey Through Silence & Thoughts</div>
+<div class="cover-author">by Ranjit Das</div>
+  </div>`;
+}
+
+function makeInner(p){
+  return `<div class="page-content">
+    <div class="page-header">
+      <span class="page-section-tag">${p.section}</span>
+      <span class="page-num-tag">Q ${p.num}</span>
+    </div>
+    <div class="page-body">${p.content}</div>
+  </div>`;
+}
+
+function makeBlank(label=''){
+  return `<div class="page-content" style="display:flex;align-items:center;justify-content:center;opacity:.3;">
+    <span style="font-family:'Noto Serif JP',serif;font-size:2rem;font-weight:200;color:var(--mist);">${label}</span>
+  </div>`;
+}
+
+function makeEnd(){
+  return `<div class="page-content"><div class="end-page">
+    <div style="font-family:'Noto Serif JP',serif;font-size:3rem;font-weight:200;color:var(--sakura);">終</div>
+    <div class="end-title">The End</div>
+    <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--sakura-deep),transparent);"></div>
+    <div class="end-sub">Modern Computer Application · 2K26</div>
+    <div style="font-size:.65rem;color:var(--mist);margin-top:.5rem;">by Rohit</div>
+  </div></div>`;
+}
+
+function getPageHTML(index){
+  if(index < 0 || index >= PAGES.length) return makeBlank();
+  const p = PAGES[index];
+  if(p.type === 'cover') return makeCover();
+  if(p.type === 'inner') return makeInner(p);
+  if(p.type === 'end')   return makeEnd();
+  return makeBlank();
+}
+
+// ── STATE ──
+let currentLeft = -1;
+let currentRight = 0;
+let isAnimating = false;
+
+function renderSpread(){
+  const isMobile = window.innerWidth <= 640;
+  document.getElementById('leftContent').innerHTML = getPageHTML(currentLeft);
+  // On mobile, show the current page in rightContent
+  document.getElementById('rightContent').innerHTML = getPageHTML(currentRight);
+
+  const total = PAGES.length;
+  const shown = currentRight >= 0 ? currentRight + 1 : 0;
+  const txt = shown + ' / ' + total;
+  document.getElementById('pageCounter').textContent = txt;
+  document.getElementById('mobCounter').textContent = txt;
+
+  const pct = total > 1 ? (shown / total * 100) : 0;
+  document.getElementById('progressFill').style.width = Math.max(5,pct) + '%';
+
+  const atStart = currentRight <= 0;
+  const atEnd   = currentRight >= PAGES.length - 1;
+  document.getElementById('prevBtn').disabled = atStart;
+  document.getElementById('nextBtn').disabled = atEnd;
+  document.getElementById('mobPrev').disabled = atStart;
+  document.getElementById('mobNext').disabled = atEnd;
+
+  // Style disabled mobile back button
+  const mobPrev = document.getElementById('mobPrev');
+  mobPrev.style.opacity = atStart ? '0.3' : '1';
+  const mobNext = document.getElementById('mobNext');
+  mobNext.style.opacity = atEnd ? '0.3' : '1';
+}
+
+// ── FLIP FORWARD ──
+function flipForward(){
+  if(isAnimating) return;
+  if(currentRight >= PAGES.length - 1) return;
+  isAnimating = true;
+
+  const fc = document.getElementById('flipContainer');
+  const ff = document.getElementById('flipFrontContent');
+  const fb = document.getElementById('flipBackContent');
+
+  ff.innerHTML = getPageHTML(currentRight);
+  const nextLeft  = currentRight;
+  const nextRight = currentRight + 1;
+  fb.innerHTML = getPageHTML(nextLeft);
+
+  fc.style.pointerEvents = 'none';
+  fc.classList.add('flipping-forward');
+
+  setTimeout(()=>{
+    fc.classList.remove('flipping-forward');
+    fc.style.transform = '';
+    currentLeft  = nextLeft;
+    currentRight = nextRight;
+    renderSpread();
+    isAnimating = false;
+  }, 820);
+}
+
+// ── FLIP BACKWARD ──
+function flipBackward(){
+  if(isAnimating) return;
+  if(currentRight <= 0) return;
+  isAnimating = true;
+
+  const fc = document.getElementById('flipContainer');
+  const ff = document.getElementById('flipFrontContent');
+  const fb = document.getElementById('flipBackContent');
+
+  const prevRight = currentRight - 1;
+  const prevLeft  = currentRight - 2;
+
+  fb.innerHTML = getPageHTML(currentLeft);
+  ff.innerHTML = getPageHTML(prevRight);
+
+  fc.style.pointerEvents = 'none';
+  fc.classList.add('flipping-backward');
+
+  setTimeout(()=>{
+    fc.classList.remove('flipping-backward');
+    fc.style.transform = '';
+    currentLeft  = prevLeft;
+    currentRight = prevRight;
+    renderSpread();
+    isAnimating = false;
+  }, 820);
+}
+
+// ── DESKTOP EVENTS ──
+document.getElementById('nextBtn').addEventListener('click', flipForward);
+document.getElementById('prevBtn').addEventListener('click', flipBackward);
+document.getElementById('leftSide').addEventListener('click', ()=>flipBackward());
+document.getElementById('rightSide').addEventListener('click', ()=>flipForward());
+
+// ── MOBILE BUTTON EVENTS ──
+document.getElementById('mobNext').addEventListener('click', flipForward);
+document.getElementById('mobPrev').addEventListener('click', flipBackward);
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e=>{
+  if(e.key === 'ArrowRight' || e.key === 'PageDown') flipForward();
+  if(e.key === 'ArrowLeft'  || e.key === 'PageUp')   flipBackward();
+});
+
+// ── TOUCH / SWIPE (improved) ──
+let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+const stage = document.getElementById('stage');
+
+stage.addEventListener('touchstart', e=>{
+  touchStartX    = e.touches[0].clientX;
+  touchStartY    = e.touches[0].clientY;
+  touchStartTime = Date.now();
+},{passive:true});
+
+stage.addEventListener('touchend', e=>{
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  const dt = Date.now() - touchStartTime;
+  // Must be mostly horizontal, fast enough, and long enough
+  if(Math.abs(dx) > Math.abs(dy) * 1.2 && Math.abs(dx) > 35 && dt < 500){
+    if(dx < 0) flipForward();
+    else        flipBackward();
+  }
+},{passive:true});
+
+// ── THEME ──
+const themeBtn  = document.getElementById('themeBtn');
+const themeIcon = document.getElementById('themeIcon');
+const html      = document.documentElement;
+const saved = localStorage.getItem('mca-theme');
+if(saved==='dark'){ html.dataset.theme='dark'; themeIcon.className='fas fa-sun'; }
+themeBtn.addEventListener('click',()=>{
+  const dark = html.dataset.theme !== 'dark';
+  html.dataset.theme = dark ? 'dark' : 'light';
+  themeIcon.className = dark ? 'fas fa-sun' : 'fas fa-moon';
+  localStorage.setItem('mca-theme', dark ? 'dark' : 'light');
+});
+
+// ── FULLSCREEN ──
+document.getElementById('fullBtn').addEventListener('click',()=>{
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+});
+
+// ── 3D HOVER TILT (desktop only) ──
+const bookEl  = document.getElementById('book');
+const wrapper = document.getElementById('bookWrapper');
+wrapper.addEventListener('mousemove', e=>{
+  if(isAnimating || window.innerWidth <= 640) return;
+  const r  = wrapper.getBoundingClientRect();
+  const cx = (e.clientX - r.left) / r.width  - 0.5;
+  const cy = (e.clientY - r.top)  / r.height - 0.5;
+  bookEl.style.transform = `rotateX(${4 - cy*6}deg) rotateY(${-3 + cx*6}deg)`;
+});
+wrapper.addEventListener('mouseleave',()=>{
+  if(window.innerWidth > 640)
+    bookEl.style.transform = 'rotateX(4deg) rotateY(-3deg)';
+});
+
+// ── INIT ──
+renderSpread();
+
+function goBack() {
+  window.location.href = "books.html";
+}
+
+</script>
+</body>
+</html>

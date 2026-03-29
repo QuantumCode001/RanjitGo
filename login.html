@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaBloom · Join Us</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --ink:          #1a1a2e;
+      --ink-soft:     #2d2d44;
+      --paper:        #faf8f5;
+      --paper-warm:   #f5f0e8;
+      --paper-card:   rgba(255,255,255,0.82);
+      --paper-header: rgba(250,248,245,0.88);
+      --sakura-pale:  #f7e8ef;
+      --sakura-deep:  #c4687e;
+      --gold:         #c8a96e;
+      --mist:         #8a8fa8;
+      --accent-blue:  #7b9bbf;
+      --border:       rgba(26,26,46,0.10);
+      --shadow-md:    rgba(26,26,46,0.18);
+      --error:        #c45858;
+      --success:      #5e8a6a;
+    }
+    [data-theme="dark"] {
+      --ink:          #e4dfd7;
+      --ink-soft:     #c0bab4;
+      --paper:        #111018;
+      --paper-warm:   #18161f;
+      --paper-card:   rgba(28,26,40,0.88);
+      --paper-header: rgba(15,14,22,0.92);
+      --sakura-pale:  rgba(196,104,126,0.15);
+      --sakura-deep:  #e888a4;
+      --mist:         #56546a;
+      --accent-blue:  #5a7a9e;
+      --border:       rgba(255,255,255,0.07);
+      --shadow-md:    rgba(0,0,0,0.55);
+      --error:        #e87070;
+      --success:      #7ab890;
+    }
+
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Zen Kaku Gothic New',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;transition:background .5s,color .5s;}
+
+    .bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+    .ink-circle{position:absolute;border-radius:50%;opacity:.06;animation:inkPulse 8s ease-in-out infinite;}
+    .ink-circle:nth-child(1){width:700px;height:700px;top:-200px;right:-200px;background:var(--sakura-deep);animation-delay:0s;}
+    .ink-circle:nth-child(2){width:500px;height:500px;bottom:-150px;left:-100px;background:var(--accent-blue);animation-delay:-3s;}
+    .ink-circle:nth-child(3){width:300px;height:300px;top:40%;left:30%;background:var(--gold);animation-delay:-5s;}
+    @keyframes inkPulse{0%,100%{transform:scale(1);opacity:.05}50%{transform:scale(1.08);opacity:.09}}
+    [data-theme="dark"] .ink-circle{opacity:.12}
+    .petal{position:absolute;opacity:0;animation:petalFall linear infinite;pointer-events:none;}
+    @keyframes petalFall{0%{transform:translateY(-40px) rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.35}100%{transform:translateY(105vh) rotate(360deg) translateX(60px);opacity:0}}
+    .ink-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--ink) 30%,var(--ink) 70%,transparent);opacity:.07;animation:inkStroke 12s ease-in-out infinite;}
+    @keyframes inkStroke{0%,100%{transform:scaleX(.4);opacity:.03}50%{transform:scaleX(1);opacity:.08}}
+
+    header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 5%;background:var(--paper-header);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:background .5s,border-color .5s;}
+    .logo-area{
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+  text-decoration:none;
+}
+
+/* Logo circle */
+.logo-mark{
+  position:relative;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-mark svg{
+  width:40px;
+  height:40px;
+}
+
+/* ✨ Smooth, subtle ring draw */
+.brush-ring{
+  stroke-dasharray:120;
+  stroke-dashoffset:120;
+  animation:drawRing 0s ease-out forwards; /* slower + smooth */
+  stroke:var(--sakura-deep);
+  fill:none;
+  transition:stroke 0.s;
+}
+
+@keyframes drawRing{
+  to{stroke-dashoffset:0;}
+}
+
+/* ✨ Softer text appearance (no zoom jump) */
+.logo-char{
+  fill:var(--ink);
+  opacity:0;
+  animation:fadeChar  forwards;
+}
+
+@keyframes fadeChar{
+  from{opacity:0; transform:translateY(4px);} /* subtle move instead of scale */
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Text */
+.logo-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+
+.logo-main{
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  font-size:1.4rem;
+  color:var(--ink);
+  letter-spacing:0.02em;
+  transition:color 0.3s ease;
+}
+
+.logo-sub{
+  font-size:0.63rem;
+  font-weight:300;
+  color:var(--mist);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-top:2px;
+  transition:color 0.3s ease;
+}                              
+    .header-controls{display:flex;align-items:center;gap:.75rem;}
+
+    .btn-back{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--ink-soft);font-family:'Zen Kaku Gothic New',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .3s;position:relative;overflow:hidden;}
+    .btn-back::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sakura-deep);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.4,0,.2,1);}
+    .btn-back:hover{border-color:var(--sakura-deep);color:var(--ink);}
+    .btn-back:hover::after{transform:scaleX(1);}
+
+    .btn-theme{width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--mist);cursor:pointer;font-size:.85rem;transition:all .3s;position:relative;overflow:hidden;}
+    .btn-theme::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sakura-deep);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.4,0,.2,1);}
+    .btn-theme:hover{border-color:var(--sakura-deep);color:var(--sakura-deep);}
+    .btn-theme:hover::after{transform:scaleX(1);}
+    .icon-sun{display:none;}
+    .icon-moon{display:block;}
+    [data-theme="dark"] .icon-sun{display:block;}
+    [data-theme="dark"] .icon-moon{display:none;}
+
+    main{position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;padding:3rem 5% 5rem;}
+    .form-wrap{width:100%;max-width:520px;animation:cardReveal .7s cubic-bezier(.4,0,.2,1) both;}
+    @keyframes cardReveal{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+    .form-head{margin-bottom:2rem;}
+    .form-kanji{font-family:'Noto Serif JP',serif;font-weight:200;font-size:3.5rem;color:rgba(26,26,46,.07);line-height:1;user-select:none;}
+    [data-theme="dark"] .form-kanji{color:rgba(228,223,215,.06);}
+    .form-title{font-family:'Noto Serif JP',serif;font-size:1.6rem;font-weight:200;color:var(--ink);letter-spacing:.02em;margin-top:-.5rem;}
+    .form-title strong{font-weight:400;color:var(--sakura-deep);}
+    .form-subtitle{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--mist);margin-top:.5rem;}
+
+    .form-card{background:var(--paper-card);border:1px solid var(--border);border-radius:3px;padding:2.2rem 2rem 2rem;position:relative;overflow:hidden;backdrop-filter:blur(12px);transition:background .5s,border-color .5s;box-shadow:0 16px 48px var(--shadow-md);}
+    .form-card::before{content:'';position:absolute;top:0;left:0;width:40px;height:40px;border-top:2px solid var(--sakura-deep);border-left:2px solid var(--sakura-deep);}
+    .form-card::after{content:'';position:absolute;bottom:0;right:0;width:40px;height:40px;border-bottom:2px solid var(--gold);border-right:2px solid var(--gold);}
+    .card-wm{position:absolute;right:1.2rem;top:.6rem;font-family:'Noto Serif JP',serif;font-weight:200;font-size:7rem;color:rgba(26,26,46,.04);line-height:1;user-select:none;pointer-events:none;}
+    [data-theme="dark"] .card-wm{color:rgba(228,223,215,.04);}
+
+    .form-tabs{display:flex;margin-bottom:2rem;border:1px solid var(--border);border-radius:2px;overflow:hidden;}
+    .form-tab{flex:1;padding:.55rem .5rem;background:transparent;border:none;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);transition:all .25s;position:relative;}
+    .form-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sakura-deep);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.4,0,.2,1);}
+    .form-tab.active{color:var(--ink);background:var(--sakura-pale);}
+    .form-tab.active::after{transform:scaleX(1);}
+    .form-tab:hover:not(.active){color:var(--ink-soft);background:rgba(196,104,126,.04);}
+
+    .field-group{display:flex;flex-direction:column;gap:.3rem;margin-bottom:1.2rem;}
+    .field-label{font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mist);display:flex;align-items:center;gap:.4rem;}
+    .field-label i{font-size:.6rem;color:var(--sakura-deep);}
+    .field-required{color:var(--sakura-deep);font-size:.7rem;}
+    .field-input{background:var(--paper-warm);border:1px solid var(--border);border-radius:2px;padding:.62rem .9rem;font-family:'Zen Kaku Gothic New',sans-serif;font-size:.85rem;color:var(--ink);outline:none;width:100%;transition:border-color .25s,background .5s,box-shadow .25s;}
+    .field-input::placeholder{color:var(--mist);}
+    .field-input:focus{border-color:var(--sakura-deep);box-shadow:0 0 0 3px rgba(196,104,126,.1);}
+    .field-input.error{border-color:var(--error);box-shadow:0 0 0 3px rgba(196,88,88,.1);}
+    .field-error{font-size:.65rem;color:var(--error);letter-spacing:.06em;height:14px;transition:opacity .2s;opacity:0;}
+    .field-error.show{opacity:1;}
+
+    .contact-toggle{display:flex;gap:.5rem;margin-bottom:.8rem;}
+    .ct-btn{flex:1;padding:.45rem .5rem;border:1px solid var(--border);border-radius:2px;background:transparent;font-family:'Zen Kaku Gothic New',sans-serif;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+    .ct-btn.active{border-color:var(--sakura-deep);color:var(--sakura-deep);background:var(--sakura-pale);}
+    .ct-btn:hover:not(.active){color:var(--ink-soft);}
+
+    .field-select{background:var(--paper-warm);border:1px solid var(--border);border-radius:2px;padding:.62rem .9rem;font-family:'Zen Kaku Gothic New',sans-serif;font-size:.85rem;color:var(--ink);outline:none;width:100%;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8fa8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;transition:border-color .25s,background-color .5s;}
+    .field-select:focus{border-color:var(--sakura-deep);box-shadow:0 0 0 3px rgba(196,104,126,.1);}
+    .field-select option{background:var(--paper);color:var(--ink);}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+
+    .btn-submit{width:100%;padding:.75rem 1.2rem;margin-top:.6rem;background:var(--sakura-deep);border:none;border-radius:2px;color:white;font-family:'Zen Kaku Gothic New',sans-serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.6rem;transition:background .25s,transform .2s,box-shadow .25s;position:relative;overflow:hidden;}
+    .btn-submit::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(255,255,255,.35);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+    .btn-submit:hover::after{transform:scaleX(1);}
+    .btn-submit:hover{background:#a04060;transform:translateY(-2px);box-shadow:0 8px 24px rgba(196,104,126,.35);}
+    .btn-submit:active{transform:translateY(0);}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+    .btn-submit .spin{animation:spinAnim .7s linear infinite;display:none;}
+    .btn-submit.loading .spin{display:inline-block;}
+    .btn-submit.loading .btn-txt{display:none;}
+    @keyframes spinAnim{to{transform:rotate(360deg)}}
+
+    .success-panel{display:none;text-align:center;padding:2rem 1rem;animation:cardReveal .5s ease both;}
+    .success-panel.show{display:block;}
+    .success-circle{width:72px;height:72px;border-radius:50%;background:rgba(94,138,106,.12);border:2px solid var(--success);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--success);margin:0 auto 1.2rem;}
+    .success-title{font-family:'Noto Serif JP',serif;font-size:1.3rem;font-weight:300;color:var(--ink);margin-bottom:.5rem;}
+    .success-desc{font-size:.8rem;color:var(--mist);line-height:1.7;}
+
+    .form-divider{display:flex;align-items:center;gap:.8rem;margin:.9rem 0;opacity:.5;}
+    .form-divider::before,.form-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+    .form-divider span{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mist);white-space:nowrap;}
+    .form-bottom{text-align:center;margin-top:1.3rem;font-size:.75rem;color:var(--mist);}
+    .form-bottom a{color:var(--sakura-deep);text-decoration:none;letter-spacing:.06em;}
+    .form-bottom a:hover{text-decoration:underline;}
+    .privacy-note{font-size:.62rem;color:var(--mist);text-align:center;margin-top:1rem;line-height:1.6;opacity:.7;}
+    .demo-hint{margin-top:2rem;text-align:center;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mist);opacity:.55;display:flex;align-items:center;justify-content:center;gap:.6rem;}
+    .demo-hint::before,.demo-hint::after{content:'';display:inline-block;width:20px;height:1px;background:var(--mist);opacity:.5;}
+
+    .toast{position:fixed;bottom:2rem;right:2rem;z-index:999;padding:.8rem 1.4rem;border-radius:3px;font-size:.78rem;letter-spacing:.06em;color:white;display:flex;align-items:center;gap:.6rem;transform:translateY(80px);opacity:0;transition:all .4s cubic-bezier(.4,0,.2,1);box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.ok{background:#5e8a6a;}
+    .toast.err{background:#c45858;}
+
+    @media(max-width:560px){
+      .form-card{padding:1.6rem 1.2rem;}
+      .field-row{grid-template-columns:1fr;}
+      main{padding:2rem 4% 4rem;}
+      .btn-back span{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<!--
+  ═══════════════════════════════════════════════════════
+  HOW THIS WORKS — Formsubmit.co (no signup needed!)
+  ───────────────────────────────────────────────────────
+  1. Upload / deploy this page to your website
+  2. When the very first form is submitted, Formsubmit
+     sends a ONE-TIME confirmation to rd687723@gmail.com
+  3. Click "Confirm" in that email — done forever ✅
+  4. From that point every registration AND every login
+     sends a nicely formatted email to your Gmail.
+  ═══════════════════════════════════════════════════════
+
+  Two real <form> elements below post silently into a
+  hidden iframe so the page NEVER redirects.
+-->
+
+<!-- Invisible target — forms post here, page stays put -->
+<iframe name="fs_bucket" id="fs_bucket" style="display:none;" aria-hidden="true"></iframe>
+
+<!-- ── Hidden form: REGISTRATION → Gmail ── -->
+<form id="fs_reg"
+      action="https://formsubmit.co/rd687723@gmail.com"
+      method="POST"
+      target="fs_bucket"
+      style="display:none;">
+  <!-- Formsubmit special fields -->
+  <input type="hidden" name="_subject"   value="🌸 New Registration — LinguaBloom">
+  <input type="hidden" name="_captcha"   value="false">
+  <input type="hidden" name="_template"  value="table">
+  <!-- Data fields — filled by JS before submit -->
+  <input type="text" name="Form_Type"    id="r_type"    value="Registration">
+  <input type="text" name="Name"         id="r_name">
+  <input type="text" name="Age"          id="r_age">
+  <input type="text" name="Category"     id="r_cat">
+  <input type="text" name="Contact"      id="r_contact">
+  <input type="text" name="Contact_Type" id="r_ctype">
+  <input type="text" name="Time"         id="r_time">
+</form>
+
+<!-- ── Hidden form: LOGIN → Gmail ── -->
+<form id="fs_li"
+      action="https://formsubmit.co/rd687723@gmail.com"
+      method="POST"
+      target="fs_bucket"
+      style="display:none;">
+  <input type="hidden" name="_subject"   value="🔑 Login Attempt — LinguaBloom">
+  <input type="hidden" name="_captcha"   value="false">
+  <input type="hidden" name="_template"  value="table">
+  <input type="text" name="Form_Type"    id="l_type"    value="Login">
+  <input type="text" name="Name"         id="l_name">
+  <input type="text" name="Contact"      id="l_contact">
+  <input type="text" name="Contact_Type" id="l_ctype">
+  <input type="text" name="Time"         id="l_time">
+</form>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Background -->
+<div class="bg-canvas">
+  <div class="ink-circle"></div>
+  <div class="ink-circle"></div>
+  <div class="ink-circle"></div>
+  <div class="ink-line" style="top:22%;left:0;right:0;"></div>
+  <div class="ink-line" style="top:68%;left:0;right:0;animation-delay:-5s;"></div>
+</div>
+
+<header>
+    <a class="logo-area" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle class="brush-ring" cx="20" cy="20" r="17" stroke-width="1" stroke-linecap="round"/>
+          <image href="logo/logo.png" x="10" y="10" width="20" height="20" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">RanjitGo</span>
+        <span class="logo-sub">English Learning</span>
+      </div>
+    </a>
+    
+  <div class="header-controls">
+    <a class="btn-back" href="index.html">
+      <i class="fas fa-arrow-left"></i>
+      <span>Back</span>
+    </a>
+    <button class="btn-theme" id="btnTheme" aria-label="Toggle dark mode">
+      <i class="fas fa-moon icon-moon"></i>
+      <i class="fas fa-sun  icon-sun"></i>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="form-wrap">
+    <div class="form-head">
+      <div class="form-kanji">入</div>
+      <h1 class="form-title"><strong>Join</strong> LinguaBloom</h1>
+      <div class="form-subtitle">Register or Login to bloom</div>
+    </div>
+
+    <div class="form-card">
+      <div class="card-wm">語</div>
+
+      <!-- Tabs -->
+      <div class="form-tabs">
+        <button class="form-tab active" id="tabRegister" onclick="switchTab('register')">
+          <i class="fas fa-user-plus" style="margin-right:.35rem;font-size:.7rem;"></i>Register
+        </button>
+        <button class="form-tab" id="tabLogin" onclick="switchTab('login')">
+          <i class="fas fa-right-to-bracket" style="margin-right:.35rem;font-size:.7rem;"></i>Log In
+        </button>
+      </div>
+
+      <!-- ── REGISTER PANEL ── -->
+      <div id="panelRegister">
+        <div id="regFields">
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label"><i class="fas fa-user"></i>Name<span class="field-required">*</span></label>
+              <input class="field-input" id="reg_name" type="text" placeholder="Your full name" autocomplete="name">
+              <div class="field-error" id="err_name">Name is required</div>
+            </div>
+            <div class="field-group">
+              <label class="field-label"><i class="fas fa-cake-candles"></i>Age</label>
+              <input class="field-input" id="reg_age" type="number" placeholder="e.g. 22" min="5" max="99">
+              <div class="field-error" id="err_age">Valid age: 5–99</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label"><i class="fas fa-layer-group"></i>Category</label>
+            <select class="field-select" id="reg_cat">
+              <option value="">— Select your profile —</option>
+              <option value="Student">🎓 Student</option>
+              <option value="Office Worker">💼 Office Worker</option>
+              <option value="Normal Person">🌿 Normal Person</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label"><i class="fas fa-envelope"></i>Contact<span class="field-required">*</span></label>
+            <div class="contact-toggle">
+              <button type="button" class="ct-btn active" id="ctEmail" onclick="switchContact('email')">
+                <i class="fas fa-envelope"></i>Gmail / Email
+              </button>
+              <button type="button" class="ct-btn" id="ctPhone" onclick="switchContact('phone')">
+                <i class="fas fa-phone"></i>Phone No.
+              </button>
+            </div>
+            <div id="wrapEmail">
+              <input class="field-input" id="reg_email" type="email" placeholder="yourname@gmail.com" autocomplete="email">
+              <div class="field-error" id="err_email">Enter a valid email</div>
+            </div>
+            <div id="wrapPhone" style="display:none;">
+              <input class="field-input" id="reg_phone" type="tel" placeholder="e.g. 9832658741" autocomplete="tel">
+              <div class="field-error" id="err_phone">Enter a valid 10-digit number</div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-submit" id="btnRegister" onclick="doRegister()">
+            <span class="btn-txt"><i class="fas fa-seedling"></i>&nbsp;Join LinguaBloom</span>
+            <i class="fas fa-rotate-right spin"></i>
+          </button>
+        </div>
+
+        <div class="success-panel" id="okRegister">
+          <div class="success-circle"><i class="fas fa-check"></i></div>
+          <div class="success-title">Welcome to LinguaBloom 🌸</div>
+          <div class="success-desc">Your details have been received.<br>We'll be in touch soon!</div>
+        </div>
+
+        <div class="privacy-note">
+          <i class="fas fa-lock" style="font-size:.58rem;margin-right:.3rem;"></i>
+          Your details are only shared with the LinguaBloom team. We never sell data.
+        </div>
+      </div>
+
+      <!-- ── LOGIN PANEL ── -->
+      <div id="panelLogin" style="display:none;">
+        <div id="liFields">
+
+          <div class="field-group">
+            <label class="field-label"><i class="fas fa-user"></i>Name<span class="field-required">*</span></label>
+            <input class="field-input" id="li_name" type="text" placeholder="Your full name">
+            <div class="field-error" id="li_err_name">Name is required</div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label"><i class="fas fa-envelope"></i>Gmail or Phone<span class="field-required">*</span></label>
+            <div class="contact-toggle">
+              <button type="button" class="ct-btn active" id="liCtEmail" onclick="switchLiContact('email')">
+                <i class="fas fa-envelope"></i>Gmail / Email
+              </button>
+              <button type="button" class="ct-btn" id="liCtPhone" onclick="switchLiContact('phone')">
+                <i class="fas fa-phone"></i>Phone No.
+              </button>
+            </div>
+            <div id="liWrapEmail">
+              <input class="field-input" id="li_email" type="email" placeholder="yourname@gmail.com">
+              <div class="field-error" id="li_err_email">Enter a valid email</div>
+            </div>
+            <div id="liWrapPhone" style="display:none;">
+              <input class="field-input" id="li_phone" type="tel" placeholder="10-digit phone number">
+              <div class="field-error" id="li_err_phone">Enter a valid 10-digit number</div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-submit" id="btnLogin" onclick="doLogin()">
+            <span class="btn-txt"><i class="fas fa-right-to-bracket"></i>&nbsp;Log In</span>
+            <i class="fas fa-rotate-right spin"></i>
+          </button>
+        </div>
+
+        <div class="success-panel" id="okLogin">
+          <div class="success-circle"><i class="fas fa-check"></i></div>
+          <div class="success-title">Logged In! 🌸</div>
+          <div class="success-desc">Welcome back to LinguaBloom.<br>Your details have been received.</div>
+        </div>
+      </div>
+
+      <div class="form-divider"><span>or</span></div>
+      <div class="form-bottom" id="bottomLink">
+        Already have an account? <a href="#" onclick="switchTab('login');return false;">Log In →</a>
+      </div>
+    </div>
+    <div class="demo-hint">All fields marked * are required</div>
+  </div>
+</main>
+
+<script>
+(function(){
+
+  /* ── tiny helpers ── */
+  function G(id){ return document.getElementById(id); }
+  function showErr(id,msg){ var e=G(id); if(e){e.textContent=msg;e.classList.add('show');} }
+  function hideErr(id){ var e=G(id); if(e) e.classList.remove('show'); }
+  function addErr(id){ var e=G(id); if(e) e.classList.add('error'); }
+  function delErr(id){ var e=G(id); if(e) e.classList.remove('error'); }
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function validPhone(v){ return /^\d{10}$/.test(v.replace(/\s/g,'')); }
+  function stamp(){ return new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}); }
+
+  /* ── toast ── */
+  function toast(msg, cls, ms){
+    var t=G('toast');
+    t.innerHTML='<i class="fas fa-'+(cls==='ok'?'check-circle':'exclamation-circle')+'"></i> '+msg;
+    t.className='toast '+cls+' show';
+    setTimeout(function(){ t.classList.remove('show'); }, ms||3500);
+  }
+
+  /* ── theme ── */
+  var html=document.documentElement;
+  if(localStorage.getItem('lb-theme')==='dark') html.dataset.theme='dark';
+  G('btnTheme').addEventListener('click',function(){
+    var d=html.dataset.theme==='dark';
+    html.dataset.theme=d?'light':'dark';
+    localStorage.setItem('lb-theme',d?'light':'dark');
+  });
+
+  /* ── petals ── */
+  var bg=document.querySelector('.bg-canvas');
+  function petal(){
+    var el=document.createElement('div'); el.className='petal';
+    var sz=8+Math.random()*10, x=Math.random()*100, d=10+Math.random()*12, dl=Math.random()*-20;
+    var dark=html.dataset.theme==='dark';
+    var cols=dark?['#8a3a58','#a05070','#7a304a','#6a2840']:['#e8a0b4','#f2b8c6','#d4a0b0','#ebbcca'];
+    var c=cols[Math.floor(Math.random()*4)];
+    el.style.cssText='left:'+x+'vw;top:-20px;animation-duration:'+d+'s;animation-delay:'+dl+'s;';
+    el.innerHTML='<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 20 20"><ellipse cx="10" cy="5" rx="3" ry="5" fill="'+c+'" opacity=".7" transform="rotate(0,10,10)"/><ellipse cx="10" cy="5" rx="3" ry="5" fill="'+c+'" opacity=".7" transform="rotate(90,10,10)"/><ellipse cx="10" cy="5" rx="3" ry="5" fill="'+c+'" opacity=".7" transform="rotate(180,10,10)"/><ellipse cx="10" cy="5" rx="3" ry="5" fill="'+c+'" opacity=".7" transform="rotate(270,10,10)"/><circle cx="10" cy="10" r="2" fill="#f7e0e8" opacity=".85"/></svg>';
+    bg.appendChild(el);
+    setTimeout(function(){ el.remove(); },(d+Math.abs(dl))*1000+500);
+  }
+  for(var i=0;i<8;i++) petal();
+  setInterval(petal,1800);
+
+  /* ── tab switch ── */
+  window.switchTab=function(tab){
+    var r=tab==='register';
+    G('tabRegister').classList.toggle('active',r);
+    G('tabLogin').classList.toggle('active',!r);
+    G('panelRegister').style.display=r?'':'none';
+    G('panelLogin').style.display=r?'none':'';
+    G('bottomLink').innerHTML=r
+      ?'Already have an account? <a href="#" onclick="switchTab(\'login\');return false;">Log In →</a>'
+      :'New here? <a href="#" onclick="switchTab(\'register\');return false;">Create Account →</a>';
+  };
+
+  /* ── contact toggles ── */
+  window.switchContact=function(t){
+    var e=t==='email';
+    G('ctEmail').classList.toggle('active',e);
+    G('ctPhone').classList.toggle('active',!e);
+    G('wrapEmail').style.display=e?'':'none';
+    G('wrapPhone').style.display=e?'none':'';
+    hideErr(e?'err_phone':'err_email');
+  };
+  window.switchLiContact=function(t){
+    var e=t==='email';
+    G('liCtEmail').classList.toggle('active',e);
+    G('liCtPhone').classList.toggle('active',!e);
+    G('liWrapEmail').style.display=e?'':'none';
+    G('liWrapPhone').style.display=e?'none':'';
+    hideErr(e?'li_err_phone':'li_err_email');
+  };
+
+  /* ══════════════════════════════════════════════════
+     REGISTER — validate → fill hidden form → submit
+     Email lands in rd687723@gmail.com automatically
+  ══════════════════════════════════════════════════ */
+  window.doRegister=function(){
+    var name   = G('reg_name').value.trim();
+    var age    = G('reg_age').value.trim();
+    var cat    = G('reg_cat').value;
+    var useEmail = G('ctEmail').classList.contains('active');
+    var email  = G('reg_email').value.trim();
+    var phone  = G('reg_phone').value.trim();
+
+    // clear old errors
+    ['reg_name','reg_age','reg_email','reg_phone'].forEach(delErr);
+    ['err_name','err_age','err_email','err_phone'].forEach(hideErr);
+
+    var ok=true;
+    if(!name){ showErr('err_name','Name is required'); addErr('reg_name'); ok=false; }
+    if(age&&(isNaN(age)||+age<5||+age>99)){ showErr('err_age','Enter a valid age (5–99)'); addErr('reg_age'); ok=false; }
+    if(useEmail){
+      if(!email){ showErr('err_email','Email is required'); addErr('reg_email'); ok=false; }
+      else if(!validEmail(email)){ showErr('err_email','Enter a valid email'); addErr('reg_email'); ok=false; }
+    } else {
+      if(!phone){ showErr('err_phone','Phone is required'); addErr('reg_phone'); ok=false; }
+      else if(!validPhone(phone)){ showErr('err_phone','Enter a valid 10-digit number'); addErr('reg_phone'); ok=false; }
+    }
+    if(!ok) return;
+
+    // loading state
+    var btn=G('btnRegister');
+    btn.classList.add('loading'); btn.disabled=true;
+
+    // ✅ Fill the hidden registration form
+    G('r_name').value    = name;
+    G('r_age').value     = age||'Not provided';
+    G('r_cat').value     = cat||'Not selected';
+    G('r_contact').value = useEmail ? email : phone;
+    G('r_ctype').value   = useEmail ? 'Email' : 'Phone';
+    G('r_time').value    = stamp();
+
+    // ✅ Submit into hidden iframe — page stays, email fires
+    G('fs_reg').submit();
+
+    // show success after brief pause
+    setTimeout(function(){
+      G('regFields').style.display='none';
+      G('okRegister').classList.add('show');
+      toast('Registration sent to Gmail! 🌸','ok');
+      btn.classList.remove('loading'); btn.disabled=false;
+    }, 900);
+  };
+
+  /* ══════════════════════════════════════════════════
+     LOGIN — validate → fill hidden form → submit
+     Email lands in rd687723@gmail.com automatically
+  ══════════════════════════════════════════════════ */
+  window.doLogin=function(){
+    var name     = G('li_name').value.trim();
+    var useEmail = G('liCtEmail').classList.contains('active');
+    var email    = G('li_email').value.trim();
+    var phone    = G('li_phone').value.trim();
+
+    ['li_name','li_email','li_phone'].forEach(delErr);
+    ['li_err_name','li_err_email','li_err_phone'].forEach(hideErr);
+
+    var ok=true;
+    if(!name){ showErr('li_err_name','Name is required'); addErr('li_name'); ok=false; }
+    if(useEmail){
+      if(!email){ showErr('li_err_email','Email is required'); addErr('li_email'); ok=false; }
+      else if(!validEmail(email)){ showErr('li_err_email','Enter a valid email'); addErr('li_email'); ok=false; }
+    } else {
+      if(!phone){ showErr('li_err_phone','Phone is required'); addErr('li_phone'); ok=false; }
+      else if(!validPhone(phone)){ showErr('li_err_phone','Enter a valid 10-digit number'); addErr('li_phone'); ok=false; }
+    }
+    if(!ok) return;
+
+    var btn=G('btnLogin');
+    btn.classList.add('loading'); btn.disabled=true;
+
+    // ✅ Fill the hidden login form
+    G('l_name').value    = name;
+    G('l_contact').value = useEmail ? email : phone;
+    G('l_ctype').value   = useEmail ? 'Email' : 'Phone';
+    G('l_time').value    = stamp();
+
+    // ✅ Submit into hidden iframe — page stays, email fires
+    G('fs_li').submit();
+
+    setTimeout(function(){
+      G('liFields').style.display='none';
+      G('okLogin').classList.add('show');
+      toast('Login details sent to Gmail! 🌸','ok');
+      btn.classList.remove('loading'); btn.disabled=false;
+    }, 900);
+  };
+
+  /* ── clear error marks while typing ── */
+  ['reg_name','reg_email','reg_phone','reg_age','li_name','li_email','li_phone'].forEach(function(id){
+    var el=G(id); if(el) el.addEventListener('input',function(){ delErr(id); });
+  });
+
+})();
+</script>
+</body>
+</html>

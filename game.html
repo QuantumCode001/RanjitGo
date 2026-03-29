@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>LinguaBloom · 継続 Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Noto+Serif+JP:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --ink:          #12111a;
+      --ink-soft:     #2e2c3f;
+      --ink-muted:    #6b6880;
+      --paper:        #f9f7f4;
+      --paper-warm:   #f2ede4;
+      --paper-card:   rgba(255,255,255,0.82);
+      --paper-header: rgba(249,247,244,0.92);
+      --sakura:       #e2869c;
+      --sakura-pale:  #faedf2;
+      --sakura-deep:  #bf4f6f;
+      --gold:         #c49a42;
+      --gold-pale:    #faf0d8;
+      --mist:         #9290a8;
+      --accent-blue:  #6688aa;
+      --border:       rgba(18,17,26,0.09);
+      --shadow:       rgba(18,17,26,0.07);
+      --green:        #4e7e60;
+      --green-pale:   rgba(78,126,96,0.1);
+      --red:          #bf4f6f;
+      --red-pale:     rgba(191,79,111,0.1);
+      --radius:       6px;
+    }
+    [data-theme="dark"] {
+      --ink:          #e8e3da;
+      --ink-soft:     #c2bcb4;
+      --ink-muted:    #7a7590;
+      --paper:        #0e0d16;
+      --paper-warm:   #151320;
+      --paper-card:   rgba(24,22,36,0.85);
+      --paper-header: rgba(12,11,20,0.94);
+      --sakura:       #9e4c68;
+      --sakura-pale:  rgba(191,79,111,0.14);
+      --sakura-deep:  #e87898;
+      --gold:         #8a6830;
+      --gold-pale:    rgba(196,154,66,0.12);
+      --mist:         #5a5870;
+      --accent-blue:  #5070a0;
+      --border:       rgba(255,255,255,0.07);
+      --shadow:       rgba(0,0,0,0.4);
+      --green:        #70a882;
+      --green-pale:   rgba(112,168,130,0.12);
+      --red:          #e87898;
+      --red-pale:     rgba(232,120,152,0.12);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-wrap {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .bg-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); opacity: 0.09;
+      animation: blobDrift 14s ease-in-out infinite;
+      transition: background 0.4s;
+    }
+    .bg-blob:nth-child(1) { width:600px; height:600px; top:-150px; right:-100px; background:var(--sakura-deep); animation-delay:0s; }
+    .bg-blob:nth-child(2) { width:450px; height:450px; bottom:-100px; left:-80px; background:var(--accent-blue); animation-delay:-5s; }
+    .bg-blob:nth-child(3) { width:300px; height:300px; top:45%; left:35%; background:var(--gold); animation-delay:-9s; }
+    @keyframes blobDrift {
+      0%,100% { transform:scale(1) translate(0,0); }
+      33%      { transform:scale(1.08) translate(15px,-10px); }
+      66%      { transform:scale(0.96) translate(-10px,8px); }
+    }
+    [data-theme="dark"] .bg-blob { opacity: 0.15; }
+
+    .grid-lines {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.4;
+    }
+
+    /* Petals */
+    .petal { position:absolute; opacity:0; animation:petalFall linear infinite; pointer-events:none; }
+    @keyframes petalFall {
+      0%   { transform:translateY(-40px) rotate(0deg) translateX(0); opacity:0; }
+      8%   { opacity:0.7; }
+      92%  { opacity:0.3; }
+      100% { transform:translateY(105vh) rotate(380deg) translateX(50px); opacity:0; }
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky; top:0; z-index:100;
+      display: flex; align-items:center; justify-content:space-between;
+      padding: 0.9rem 5%;
+      background: var(--paper-header);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.4s, border-color 0.4s;
+    }
+    .logo-area{
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+  text-decoration:none;
+}
+
+/* Logo circle */
+.logo-mark{
+  position:relative;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-mark svg{
+  width:40px;
+  height:40px;
+}
+
+/* ✨ Smooth, subtle ring draw */
+.brush-ring{
+  stroke-dasharray:120;
+  stroke-dashoffset:120;
+  animation:drawRing 0s ease-out forwards; /* slower + smooth */
+  stroke:var(--sakura-deep);
+  fill:none;
+  transition:stroke 0.s;
+}
+
+@keyframes drawRing{
+  to{stroke-dashoffset:0;}
+}
+
+/* ✨ Softer text appearance (no zoom jump) */
+.logo-char{
+  fill:var(--ink);
+  opacity:0;
+  animation:fadeChar  forwards;
+}
+
+@keyframes fadeChar{
+  from{opacity:0; transform:translateY(4px);} /* subtle move instead of scale */
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Text */
+.logo-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+
+.logo-main{
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  font-size:1.4rem;
+  color:var(--ink);
+  letter-spacing:0.02em;
+  transition:color 0.3s ease;
+}
+
+.logo-sub{
+  font-size:0.63rem;
+  font-weight:300;
+  color:var(--mist);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-top:2px;
+  transition:color 0.3s ease;
+}          
+    .header-actions { display:flex; gap:0.6rem; align-items:center; }
+    .hdr-btn {
+      display:flex; align-items:center; gap:0.5rem;
+      background:transparent; border:1px solid var(--border);
+      color:var(--ink-muted); padding:0.45rem 1rem;
+      border-radius: var(--radius); font-family:'DM Sans', sans-serif;
+      font-size:0.72rem; font-weight:500; letter-spacing:0.12em;
+      text-transform:uppercase; cursor:pointer; text-decoration:none;
+      transition:all 0.25s;
+    }
+    .hdr-btn:hover { border-color:var(--sakura-deep); color:var(--sakura-deep); background:var(--sakura-pale); }
+    .hdr-btn i { font-size:0.8em; }
+
+    /* ── MAIN ── */
+    main {
+      position:relative; z-index:1;
+      flex:1; display:flex; flex-direction:column;
+      align-items:center; padding:2rem 5% 5rem;
+    }
+
+    /* ── PAGE HEAD ── */
+    .page-head {
+      text-align:center; margin-bottom:2rem;
+      animation: riseIn 0.7s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes riseIn { from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)} }
+
+    .page-kanji {
+      font-family:'Noto Serif JP',serif; font-weight:200; font-size:5rem;
+      color:var(--ink); opacity:0.04; line-height:1; user-select:none;
+      transition:color 0.4s, opacity 0.4s;
+    }
+    .page-title {
+      font-family:'Shippori Mincho', serif; font-size:2rem; font-weight:500;
+      color:var(--ink); letter-spacing:0.01em; margin-top:-1.8rem;
+      transition:color 0.4s;
+    }
+    .page-title em { font-style:normal; color:var(--sakura-deep); }
+    .page-sub { font-size:0.68rem; letter-spacing:0.28em; text-transform:uppercase; color:var(--mist); margin-top:0.5rem; }
+
+    /* ── STREAK BANNER ── */
+    .streak-banner {
+      display:flex; align-items:center; justify-content:center; gap:0;
+      background:var(--paper-card); border:1px solid var(--border);
+      border-radius: var(--radius); overflow:hidden;
+      margin-bottom:1.8rem; width:100%; max-width:640px;
+      backdrop-filter:blur(10px);
+      animation: riseIn 0.7s 0.1s cubic-bezier(.4,0,.2,1) both;
+      transition:background 0.4s, border-color 0.4s;
+      box-shadow: 0 2px 20px var(--shadow);
+    }
+    .streak-item {
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:0.25rem;
+      padding:1rem 1.2rem; position:relative;
+    }
+    .streak-item:not(:last-child)::after {
+      content:''; position:absolute; right:0; top:20%; height:60%; width:1px;
+      background:var(--border);
+    }
+    .streak-val {
+      font-family:'Shippori Mincho', serif; font-size:1.7rem; font-weight:500;
+      color:var(--sakura-deep); line-height:1; transition:color 0.4s;
+    }
+    .streak-val.gold { color:var(--gold); }
+    .streak-val.blue { color:var(--accent-blue); }
+    .streak-label { font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--mist); }
+
+    /* ── GAME AREA ── */
+    .game-area {
+      width:100%; max-width:640px;
+      animation: riseIn 0.7s 0.18s cubic-bezier(.4,0,.2,1) both;
+    }
+
+    /* Word Card */
+    .word-card {
+      background:var(--paper-card); border:1px solid var(--border);
+      border-radius: var(--radius); padding:2.2rem 2rem 1.8rem;
+      text-align:center; position:relative; overflow:hidden;
+      backdrop-filter:blur(10px);
+      box-shadow: 0 4px 30px var(--shadow);
+      transition:background 0.4s, border-color 0.4s, transform 0.3s, box-shadow 0.3s;
+    }
+    .word-card-accent {
+      position:absolute; top:0; left:0; right:0; height:4px;
+      background:linear-gradient(90deg, var(--sakura-deep), var(--gold) 50%, var(--accent-blue));
+    }
+    .word-card.shake { animation:shake 0.45s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shake {
+      10%,90%{transform:translateX(-3px)} 20%,80%{transform:translateX(5px)}
+      30%,50%,70%{transform:translateX(-5px)} 40%,60%{transform:translateX(5px)}
+    }
+    .word-card.pop { animation:cardPop 0.5s cubic-bezier(.4,0,.2,1); }
+    @keyframes cardPop { 0%{transform:scale(0.97)} 55%{transform:scale(1.02)} 100%{transform:scale(1)} }
+
+    .card-meta {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:1.4rem;
+    }
+    .day-badge {
+      display:flex; align-items:center; gap:0.45rem;
+      font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--mist);
+    }
+    .status-dot {
+      width:7px; height:7px; border-radius:50%; background:var(--sakura-deep);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(191,79,111,0.4)} 50%{opacity:0.5;box-shadow:0 0 0 5px rgba(191,79,111,0)} }
+    .round-badge { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--mist); }
+
+    .word-kana { font-family:'Noto Serif JP',serif; font-size:0.7rem; color:var(--mist); letter-spacing:0.35em; margin-bottom:0.6rem; }
+    .word-main {
+      font-family:'Shippori Mincho',serif; font-size:3rem; font-weight:600;
+      color:var(--ink); letter-spacing:0.01em; line-height:1.1;
+      transition:color 0.4s;
+    }
+    .word-phonetic { font-size:0.78rem; color:var(--mist); margin-top:0.4rem; letter-spacing:0.06em; }
+    .word-hint { margin-top:1rem; font-size:0.82rem; color:var(--ink-muted); line-height:1.65; font-weight:300; }
+
+    /* Progress */
+    .progress-wrap { margin-top:1.5rem; }
+    .progress-header {
+      display:flex; justify-content:space-between;
+      font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase;
+      color:var(--mist); margin-bottom:0.4rem;
+    }
+    .progress-track { height:3px; background:var(--border); border-radius:99px; overflow:hidden; }
+    .progress-fill {
+      height:100%; border-radius:99px;
+      background:linear-gradient(90deg, var(--sakura-deep), var(--gold));
+      transition:width 0.7s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── OPTIONS ── */
+    .options-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:0.75rem; margin-top:1.2rem;
+    }
+    .option-btn {
+      background:var(--paper-card); border:1px solid var(--border);
+      border-radius: var(--radius); padding:1rem 1.1rem;
+      font-family:'DM Sans',sans-serif;
+      font-size:0.85rem; color:var(--ink-soft); cursor:pointer;
+      text-align:left; display:flex; align-items:center; gap:0.7rem;
+      transition:all 0.22s; position:relative; overflow:hidden;
+      backdrop-filter:blur(6px); font-weight:400;
+    }
+    .option-btn:hover { border-color:var(--sakura-deep); color:var(--ink); transform:translateY(-2px); box-shadow:0 8px 22px var(--shadow); }
+    .opt-letter {
+      width:28px; height:28px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.66rem; font-weight:600; letter-spacing:0.04em;
+      border:1px solid var(--border); color:var(--mist);
+      transition:all 0.22s; font-family:'DM Sans',sans-serif;
+    }
+    .option-btn:hover .opt-letter { border-color:var(--sakura-deep); color:var(--sakura-deep); background:var(--sakura-pale); }
+    .opt-text { flex:1; line-height:1.45; }
+
+    .option-btn.correct { background:var(--green-pale); border-color:var(--green); color:var(--green); transform:translateY(-2px); box-shadow:0 8px 22px rgba(78,126,96,0.15); }
+    .option-btn.correct .opt-letter { border-color:var(--green); color:var(--green); background:rgba(78,126,96,0.1); }
+    .option-btn.wrong { background:var(--red-pale); border-color:var(--red); color:var(--red); }
+    .option-btn.wrong .opt-letter { border-color:var(--red); color:var(--red); background:var(--red-pale); }
+    .option-btn:disabled { cursor:default; transform:none !important; }
+
+    /* ── FEEDBACK ── */
+    .feedback-toast {
+      margin-top:1rem; padding:1rem 1.2rem;
+      border-radius: var(--radius); font-size:0.83rem; line-height:1.6;
+      display:none;
+    }
+    .feedback-toast.show { display:block; animation:slideUp 0.35s cubic-bezier(.4,0,.2,1); }
+    @keyframes slideUp { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
+    .feedback-toast.correct-toast { background:var(--green-pale); border:1px solid rgba(78,126,96,0.25); color:var(--green); }
+    .feedback-toast.wrong-toast { background:var(--red-pale); border:1px solid rgba(191,79,111,0.25); color:var(--red); }
+
+    .tip-box {
+      background:var(--gold-pale); border:1px solid rgba(196,154,66,0.25);
+      border-radius: var(--radius); padding:0.85rem 1rem;
+      margin-top:0.75rem; font-size:0.78rem; color:var(--ink-muted);
+      line-height:1.65; display:none; gap:0.6rem; align-items:flex-start;
+      transition: background 0.4s;
+    }
+    .tip-box.show { display:flex; animation:slideUp 0.35s 0.1s cubic-bezier(.4,0,.2,1) both; }
+    .tip-box i { color:var(--gold); flex-shrink:0; margin-top:2px; }
+
+    /* ── BOTTOM ACTIONS ── */
+    .bottom-actions {
+      display:grid; grid-template-columns:1fr auto; gap:0.75rem;
+      margin-top:1rem;
+    }
+    .next-btn, .refresh-btn {
+      padding:0.9rem 1.5rem; border:none; border-radius: var(--radius);
+      font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:600;
+      letter-spacing:0.14em; text-transform:uppercase; cursor:pointer;
+      transition:all 0.25s; display:flex; align-items:center; justify-content:center; gap:0.6rem;
+    }
+    .next-btn {
+      background:var(--sakura-deep); color:white;
+      display:none;
+      box-shadow:0 4px 20px rgba(191,79,111,0.28);
+    }
+    .next-btn.show { display:flex; animation:slideUp 0.35s cubic-bezier(.4,0,.2,1); }
+    .next-btn:hover { background:#a03055; transform:translateY(-2px); box-shadow:0 8px 28px rgba(191,79,111,0.4); }
+
+    .refresh-btn {
+      background:var(--paper-card); border:1px solid var(--border);
+      color:var(--ink-muted); padding:0.9rem 1.1rem;
+      display:flex; min-width:50px;
+    }
+    .refresh-btn:hover { border-color:var(--sakura-deep); color:var(--sakura-deep); background:var(--sakura-pale); transform:translateY(-2px); }
+    .refresh-btn i { font-size:0.95rem; transition:transform 0.4s; }
+    .refresh-btn:hover i { transform:rotate(180deg); }
+    .refresh-btn.spinning i { animation:spinOnce 0.5s ease; }
+    @keyframes spinOnce { from{transform:rotate(0deg)}to{transform:rotate(360deg)} }
+
+    /* Refresh tooltip */
+    .refresh-wrap {
+      position:relative; display:flex;
+    }
+    .refresh-wrap .tooltip {
+      position:absolute; bottom:calc(100% + 8px); right:0;
+      background:var(--ink); color:var(--paper); font-size:0.62rem;
+      letter-spacing:0.12em; text-transform:uppercase;
+      padding:0.35rem 0.7rem; border-radius:4px; white-space:nowrap;
+      pointer-events:none; opacity:0; transform:translateY(4px);
+      transition:all 0.2s;
+    }
+    .refresh-wrap .tooltip::after {
+      content:''; position:absolute; top:100%; right:12px;
+      border:5px solid transparent; border-top-color:var(--ink);
+    }
+    .refresh-wrap:hover .tooltip { opacity:1; transform:translateY(0); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position:fixed; inset:0; z-index:500;
+      background:rgba(0,0,0,0.6); backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center; padding:1rem;
+      opacity:0; visibility:hidden; transition:all 0.4s;
+    }
+    .modal-overlay.show { opacity:1; visibility:visible; }
+    .modal-box {
+      background:var(--paper); border:1px solid var(--border);
+      border-radius: var(--radius); padding:2.5rem 2rem;
+      max-width:420px; width:100%; text-align:center;
+      box-shadow:0 40px 90px rgba(0,0,0,0.22);
+      transform:translateY(28px) scale(0.96);
+      transition:transform 0.4s cubic-bezier(.4,0,.2,1);
+      position:relative; overflow:hidden;
+    }
+    .modal-overlay.show .modal-box { transform:translateY(0) scale(1); }
+    .modal-accent { position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg, var(--sakura-deep), var(--gold)); }
+    .modal-emoji { font-size:3.5rem; margin-bottom:1rem; display:block; }
+    .modal-title { font-family:'Shippori Mincho',serif; font-weight:500; font-size:1.8rem; color:var(--ink); margin-bottom:0.5rem; }
+    .modal-title em { font-style:normal; color:var(--sakura-deep); }
+    .modal-sub { font-size:0.83rem; color:var(--mist); line-height:1.75; margin-bottom:1.6rem; font-weight:300; }
+    .modal-stats { display:flex; justify-content:center; gap:2.5rem; margin-bottom:1.8rem; }
+    .modal-stat { display:flex; flex-direction:column; gap:0.25rem; align-items:center; }
+    .modal-stat-val { font-family:'Shippori Mincho',serif; font-size:1.9rem; font-weight:500; color:var(--sakura-deep); }
+    .modal-stat-val.gold { color:var(--gold); }
+    .modal-stat-label { font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--mist); }
+    .modal-btn {
+      width:100%; padding:0.9rem; border:none; border-radius: var(--radius);
+      background:var(--sakura-deep); color:white;
+      font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:600;
+      letter-spacing:0.14em; text-transform:uppercase; cursor:pointer; margin-bottom:0.6rem;
+      transition:all 0.25s; box-shadow:0 4px 18px rgba(191,79,111,0.28);
+    }
+    .modal-btn:hover { background:#a03055; transform:translateY(-2px); box-shadow:0 8px 28px rgba(191,79,111,0.4); }
+    .modal-btn.outline { background:transparent; color:var(--ink-muted); border:1px solid var(--border); box-shadow:none; }
+    .modal-btn.outline:hover { border-color:var(--sakura-deep); color:var(--sakura-deep); background:var(--sakura-pale); }
+
+    /* ── CONFETTI ── */
+    .confetti-bit {
+      position:fixed; top:-12px; width:9px; height:9px; border-radius:2px;
+      animation:confettiFall 1.6s ease-in forwards; z-index:600; pointer-events:none;
+    }
+    @keyframes confettiFall {
+      0%{transform:translateY(0) rotate(0) translateX(0);opacity:1}
+      100%{transform:translateY(102vh) rotate(740deg) translateX(var(--dx,40px));opacity:0}
+    }
+
+    /* ── FLAME ── */
+    .flame { display:inline-block; animation:flamePulse 0.6s ease-in-out; }
+    @keyframes flamePulse {
+      0%{transform:scale(1) rotate(0)} 25%{transform:scale(1.5) rotate(-12deg)}
+      60%{transform:scale(1.2) rotate(8deg)} 100%{transform:scale(1) rotate(0)}
+    }
+
+    @media (max-width:540px) {
+      .options-grid { grid-template-columns:1fr; }
+      .streak-banner { flex-wrap:wrap; }
+      .word-main { font-size:2.2rem; }
+      .hdr-btn { padding:0.4rem 0.8rem; font-size:0.62rem; }
+      .bottom-actions { grid-template-columns:1fr 50px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-wrap">
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+    <div class="grid-lines"></div>
+  </div>
+
+  <header>
+    <a class="logo-area" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle class="brush-ring" cx="20" cy="20" r="17" stroke-width="1" stroke-linecap="round"/>
+          <image href="logo/logo.png" x="10" y="10" width="20" height="20" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">RanjitGo</span>
+        <span class="logo-sub">English Learning</span>
+      </div>
+    </a> 
+    
+    <div class="header-actions">
+      <button class="hdr-btn" id="themeBtn" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i><span>Dark</span>
+      </button>
+      <a href="index.html" class="hdr-btn">
+        <i class="fas fa-arrow-left"></i><span>Back</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-head">
+      <div class="page-kanji">継続</div>
+      <h1 class="page-title"><em>Consistency</em> Challenge</h1>
+      <p class="page-sub">Show up every day</p>
+    </div>
+
+    <!-- Streak -->
+    <div class="streak-banner">
+      <div class="streak-item">
+        <span class="streak-val" id="streakCount">0</span>
+        <span class="streak-label">🔥 Day Streak</span>
+      </div>
+      <div class="streak-item">
+        <span class="streak-val gold" id="totalScore">0</span>
+        <span class="streak-label">⭐ Total XP</span>
+      </div>
+      <div class="streak-item">
+        <span class="streak-val blue" id="bestStreak">0</span>
+        <span class="streak-label">🏆 Best Streak</span>
+      </div>
+    </div>
+
+    <!-- Game -->
+    <div class="game-area">
+      <div class="word-card" id="wordCard">
+        <div class="word-card-accent"></div>
+        <div class="card-meta">
+          <div class="day-badge"><span class="status-dot"></span><span id="dayLabel">Day 1</span></div>
+          <div class="round-badge" id="roundBadge">1 / 8</div>
+        </div>
+        <div class="word-kana" id="wordKana">今日の単語</div>
+        <div class="word-main" id="wordMain">—</div>
+        <div class="word-phonetic" id="wordPhonetic"></div>
+        <div class="word-hint" id="wordHint"></div>
+        <div class="progress-wrap">
+          <div class="progress-header">
+            <span>Progress</span>
+            <span id="progressLabel">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="options-grid" id="optionsGrid"></div>
+
+      <div class="feedback-toast" id="feedbackToast"></div>
+      <div class="tip-box" id="tipBox"><i class="fas fa-lightbulb"></i><span id="tipText"></span></div>
+
+      <div class="bottom-actions">
+        <button class="next-btn" id="nextBtn">
+          <i class="fas fa-arrow-right"></i><span id="nextBtnText">Next Word</span>
+        </button>
+        <div class="refresh-wrap">
+          <div class="tooltip">Reset Score</div>
+          <button class="refresh-btn" id="refreshBtn" aria-label="Refresh / Reset score">
+            <i class="fas fa-rotate-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Result Modal -->
+  <div class="modal-overlay" id="resultModal">
+    <div class="modal-box">
+      <div class="modal-accent"></div>
+      <span class="modal-emoji" id="modalEmoji">🎉</span>
+      <h2 class="modal-title" id="modalTitle">Round <em>Complete!</em></h2>
+      <p class="modal-sub" id="modalSub">Keep going — every day counts!</p>
+      <div class="modal-stats">
+        <div class="modal-stat">
+          <span class="modal-stat-val" id="modalScore">0</span>
+          <span class="modal-stat-label">XP Earned</span>
+        </div>
+        <div class="modal-stat">
+          <span class="modal-stat-val gold" id="modalAccuracy">0%</span>
+          <span class="modal-stat-label">Accuracy</span>
+        </div>
+      </div>
+      <button class="modal-btn" id="playAgainBtn">🌸 Play Again</button>
+      <button class="modal-btn outline" onclick="window.location='index.html'">← Back to Home</button>
+    </div>
+  </div>
+
+  <!-- Refresh / Reset confirm modal -->
+  <div class="modal-overlay" id="refreshModal">
+    <div class="modal-box">
+      <div class="modal-accent"></div>
+      <span class="modal-emoji">🔄</span>
+      <h2 class="modal-title">Reset <em>Score?</em></h2>
+      <p class="modal-sub">This will clear your streak, XP, and best streak. The game will restart fresh. Are you sure?</p>
+      <button class="modal-btn" id="confirmRefreshBtn">Yes, Reset Everything</button>
+      <button class="modal-btn outline" id="cancelRefreshBtn">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+
+    /* ── THEME ── */
+    const html = document.documentElement;
+    const themeBtn = document.getElementById('themeBtn');
+    const tIcon = themeBtn.querySelector('i');
+    const tText = themeBtn.querySelector('span');
+
+    function applyTheme(t){
+      html.setAttribute('data-theme', t);
+      localStorage.setItem('lb-theme', t);
+      tIcon.className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+      tText.textContent = t === 'dark' ? 'Light' : 'Dark';
+    }
+    (function initTheme(){
+      const saved = localStorage.getItem('lb-theme');
+      const pref  = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      applyTheme(saved || pref);
+    })();
+    themeBtn.addEventListener('click', ()=>{
+      applyTheme(html.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    /* ── PETALS ── */
+    const bgWrap = document.querySelector('.bg-wrap');
+    const lPetal=['#e2869c','#f0b0c0','#d898a8'], dPetal=['#8a3a56','#a04e6a','#7a2e48'];
+    function makePetal(){
+      const el=document.createElement('div'); el.className='petal';
+      const s=7+Math.random()*11, x=Math.random()*100, d=9+Math.random()*13, dl=Math.random()*-22;
+      const c=(html.dataset.theme==='dark'?dPetal:lPetal)[Math.floor(Math.random()*3)];
+      el.style.cssText=`left:${x}vw;top:-20px;animation-duration:${d}s;animation-delay:${dl}s;`;
+      el.innerHTML=`<svg width="${s}" height="${s}" viewBox="0 0 20 20">
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${c}" opacity="0.65" transform="rotate(0,10,10)"/>
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${c}" opacity="0.65" transform="rotate(90,10,10)"/>
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${c}" opacity="0.65" transform="rotate(180,10,10)"/>
+        <ellipse cx="10" cy="5" rx="3" ry="5" fill="${c}" opacity="0.65" transform="rotate(270,10,10)"/>
+        <circle cx="10" cy="10" r="2" fill="#fde8ef" opacity="0.8"/>
+      </svg>`;
+      bgWrap.appendChild(el);
+      setTimeout(()=>el.remove(),(d+Math.abs(dl))*1000+600);
+    }
+    for(let i=0;i<7;i++) makePetal();
+    setInterval(makePetal,1900);
+
+    /* ── WORD BANK ── */
+    const words = [
+  { word:'Ambitious', hint:'🚀 "She is ambitious and dreams big."', options:['Lacking goals','Having strong desire to succeed','Feeling tired','Being careless'], correct:1, tip:'💡 Ambition = fire inside you 🔥' },
+
+  { word:'Adaptable', hint:'🌊 "He is adaptable in any situation."', options:['Rigid and fixed','Able to adjust easily','Always confused','Very slow'], correct:1, tip:'💡 Like water — fits any shape 💧' },
+
+  { word:'Innovative', hint:'💡 "Innovative ideas change the world."', options:['Copying others','Creating new ideas','Ignoring problems','Repeating mistakes'], correct:1, tip:'💡 Innovation = thinking different ⚡' },
+
+  { word:'Focused', hint:'🎯 "Stay focused on your goals."', options:['Distracted','Clear attention on one thing','Sleeping','Running fast'], correct:1, tip:'💡 Focus cuts distractions like a laser 🔥' },
+
+  { word:'Creative', hint:'🎨 "She has a creative mind."', options:['Boring thinking','Full of new ideas','Strict','Silent'], correct:1, tip:'💡 Creativity = imagination in action ✨' },
+
+  { word:'Dynamic', hint:'⚡ "He has a dynamic personality."', options:['Boring','Active and energetic','Lazy','Slow'], correct:1, tip:'💡 Dynamic = always moving forward' },
+
+  { word:'Enthusiastic', hint:'🎉 "Stay enthusiastic."', options:['Bored','Excited','Lazy','Angry'], correct:1, tip:'💡 Enthusiasm spreads energy' },
+
+  { word:'Faithful', hint:'🙏 "Stay faithful."', options:['Disloyal','Trustworthy','Lazy','Weak'], correct:1, tip:'💡 Faith builds strength' },
+
+  { word:'Helpful', hint:'🤝 "Be helpful."', options:['Selfish','Kind','Lazy','Weak'], correct:1, tip:'💡 Helping others = growth' },
+
+  { word:'Insightful', hint:'🔍 "Insightful thinking matters."', options:['Blind','Deep understanding','Lazy','Weak'], correct:1, tip:'💡 Insight = seeing deeper' },
+
+  { word:'Kind', hint:'💖 "Kindness matters."', options:['Rude','Caring','Lazy','Weak'], correct:1, tip:'💡 Kindness = silent power' },
+
+  { word:'Leader', hint:'👑 "Be a leader."', options:['Follower','Guide others','Lazy','Weak'], correct:1, tip:'💡 Leaders create paths' },
+
+  { word:'Quick', hint:'⚡ "Be quick in action."', options:['Slow','Fast','Lazy','Weak'], correct:1, tip:'💡 Speed matters in decisions' }
+];
+
+    /* ── STATE ── */
+    let round=0, score=0, correct=0, answered=false, shuffled=[];
+    let streakData = JSON.parse(localStorage.getItem('lb-streak')||'{"streak":0,"best":0,"totalXP":0,"lastDate":""}');
+
+    const today = new Date().toDateString();
+    if(streakData.lastDate && streakData.lastDate !== today){
+      const yest=new Date(); yest.setDate(yest.getDate()-1);
+      if(streakData.lastDate !== yest.toDateString()) streakData.streak=0;
+    }
+
+    function updateBanner(){
+      document.getElementById('streakCount').textContent = streakData.streak;
+      document.getElementById('totalScore').textContent  = streakData.totalXP;
+      document.getElementById('bestStreak').textContent  = streakData.best;
+    }
+    updateBanner();
+
+    function shuffle(a){ return [...a].sort(()=>Math.random()-0.5); }
+
+    function startGame(){
+      shuffled=shuffle(words); round=0; score=0; correct=0;
+      nextQ();
+    }
+
+    function nextQ(){
+      answered=false;
+      const toast=document.getElementById('feedbackToast');
+      const tip=document.getElementById('tipBox');
+      const next=document.getElementById('nextBtn');
+      toast.classList.remove('show','correct-toast','wrong-toast');
+      tip.classList.remove('show');
+      next.classList.remove('show');
+
+      const q=shuffled[round], total=shuffled.length;
+      const pct=Math.round((round/total)*100);
+
+      document.getElementById('dayLabel').textContent    = 'Day '+(streakData.streak+1);
+      document.getElementById('roundBadge').textContent  = (round+1)+' / '+total;
+      document.getElementById('wordKana').textContent    = q.jp;
+      document.getElementById('wordMain').textContent    = q.word;
+      document.getElementById('wordPhonetic').textContent= q.phonetic;
+      document.getElementById('wordHint').textContent    = q.hint;
+      document.getElementById('progressFill').style.width= pct+'%';
+      document.getElementById('progressLabel').textContent= pct+'%';
+
+      const card=document.getElementById('wordCard');
+      card.classList.remove('pop','shake'); void card.offsetWidth; card.classList.add('pop');
+
+      const grid=document.getElementById('optionsGrid'); grid.innerHTML='';
+      const letters=['A','B','C','D'];
+      shuffle(q.options.map((o,i)=>({text:o,idx:i}))).forEach((o,i)=>{
+        const b=document.createElement('button');
+        b.className='option-btn'; b.dataset.idx=o.idx;
+        b.innerHTML=`<span class="opt-letter">${letters[i]}</span><span class="opt-text">${o.text}</span>`;
+        b.addEventListener('click',()=>answer(b,o.idx,q));
+        grid.appendChild(b);
+      });
+    }
+
+    function answer(btn,chosen,q){
+      if(answered) return; answered=true;
+      document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+      const isOk=chosen===q.correct;
+      document.querySelectorAll('.option-btn').forEach(b=>{
+        if(parseInt(b.dataset.idx)===q.correct) b.classList.add('correct');
+      });
+      if(!isOk) btn.classList.add('wrong');
+
+      const toast=document.getElementById('feedbackToast');
+      const card=document.getElementById('wordCard');
+
+      if(isOk){
+        correct++; score+=15;
+        card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop');
+        const msgs=['🎉 YESSS! Genius-level move!','🌸 Correct! Hana is proud of you~','⚡ Boom! Nailed it!','🔥 You\'re on FIRE!','🦋 Beautiful! Perfect landing.','🏆 Gold star, scholar!'];
+        toast.innerHTML=`<strong>${msgs[Math.floor(Math.random()*msgs.length)]}</strong><br><small>+15 XP earned!</small>`;
+        toast.className='feedback-toast show correct-toast';
+        confetti();
+      } else {
+        card.classList.remove('pop'); void card.offsetWidth; card.classList.add('shake');
+        const msgs=[`😅 Oops! Answer: <strong>"${q.options[q.correct]}"</strong>`,`🙈 Not quite! It's: <strong>"${q.options[q.correct]}"</strong>`,`🤔 Almost! Correct: <strong>"${q.options[q.correct]}"</strong>`];
+        toast.innerHTML=msgs[Math.floor(Math.random()*msgs.length)];
+        toast.className='feedback-toast show wrong-toast';
+      }
+
+      document.getElementById('tipText').textContent=q.tip;
+      document.getElementById('tipBox').classList.add('show');
+
+      const isLast=round>=shuffled.length-1;
+      document.getElementById('nextBtnText').textContent=isLast?'See Results 🎊':'Next Word →';
+      document.getElementById('nextBtn').classList.add('show');
+    }
+
+    document.getElementById('nextBtn').addEventListener('click',()=>{
+      round++;
+      if(round>=shuffled.length) showResult();
+      else nextQ();
+    });
+
+    function showResult(){
+      document.getElementById('progressFill').style.width='100%';
+      document.getElementById('progressLabel').textContent='100%';
+
+      const total=shuffled.length, acc=Math.round((correct/total)*100), xp=score;
+
+      if(streakData.lastDate!==today){
+        streakData.streak++;
+        streakData.lastDate=today;
+        if(streakData.streak>streakData.best) streakData.best=streakData.streak;
+      }
+      streakData.totalXP+=xp;
+      localStorage.setItem('lb-streak',JSON.stringify(streakData));
+      updateBanner();
+
+      const streakEl=document.getElementById('streakCount');
+      streakEl.innerHTML=`<span class="flame">🔥</span>${streakData.streak}`;
+
+      let emoji,title,sub;
+      if(acc===100){emoji='🏆';title='<em>Perfect!</em> Incredible!';sub='100% accuracy? Hana is speechless. 🌸 Come back tomorrow!';confetti(30);}
+      else if(acc>=75){emoji='🎊';title='Round <em>Complete!</em>';sub=`${acc}% accuracy — solid! One more round and you\'ll hit 100%. 💪`;confetti(15);}
+      else if(acc>=50){emoji='📚';title='Keep <em>Going!</em>';sub=`${acc}% — you\'re getting there! The words you missed will stick tomorrow. 🧠`;}
+      else{emoji='🌱';title='<em>Day 1</em> Done!';sub='Every expert was once a beginner. You showed up — that\'s the whole game! 🌸';}
+
+      document.getElementById('modalEmoji').textContent   =emoji;
+      document.getElementById('modalTitle').innerHTML     =title;
+      document.getElementById('modalSub').textContent     =sub;
+      document.getElementById('modalScore').textContent   ='+'+xp;
+      document.getElementById('modalAccuracy').textContent=acc+'%';
+      document.getElementById('resultModal').classList.add('show');
+    }
+
+    document.getElementById('playAgainBtn').addEventListener('click',()=>{
+      document.getElementById('resultModal').classList.remove('show');
+      startGame();
+    });
+
+    /* ── REFRESH / RESET ── */
+    const refreshBtn=document.getElementById('refreshBtn');
+    const refreshModal=document.getElementById('refreshModal');
+    const confirmBtn=document.getElementById('confirmRefreshBtn');
+    const cancelBtn=document.getElementById('cancelRefreshBtn');
+
+    refreshBtn.addEventListener('click',()=>{
+      // Spin animation
+      refreshBtn.classList.add('spinning');
+      setTimeout(()=>refreshBtn.classList.remove('spinning'),500);
+      // Show confirm modal
+      refreshModal.classList.add('show');
+    });
+
+    confirmBtn.addEventListener('click',()=>{
+      // Full reset
+      streakData={ streak:0, best:0, totalXP:0, lastDate:'' };
+      localStorage.setItem('lb-streak',JSON.stringify(streakData));
+      updateBanner();
+      refreshModal.classList.remove('show');
+      document.getElementById('resultModal').classList.remove('show');
+      startGame();
+    });
+
+    cancelBtn.addEventListener('click',()=>{
+      refreshModal.classList.remove('show');
+    });
+
+    // Click outside to close modals
+    refreshModal.addEventListener('click',(e)=>{
+      if(e.target===refreshModal) refreshModal.classList.remove('show');
+    });
+    document.getElementById('resultModal').addEventListener('click',(e)=>{
+      if(e.target===document.getElementById('resultModal')) document.getElementById('resultModal').classList.remove('show');
+    });
+
+    /* ── CONFETTI ── */
+    function confetti(n=18){
+      const cols=['#bf4f6f','#e2869c','#c49a42','#6688aa','#4e7e60','#f0b8c6'];
+      for(let i=0;i<n;i++){
+        const b=document.createElement('div'); b.className='confetti-bit';
+        const x=Math.random()*100, dx=(Math.random()-0.5)*220;
+        b.style.cssText=`left:${x}vw;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${1+Math.random()*0.8}s;animation-delay:${Math.random()*0.5}s;--dx:${dx}px;transform:rotate(${Math.random()*360}deg);`;
+        document.body.appendChild(b);
+        setTimeout(()=>b.remove(),2800);
+      }
+    }
+
+    startGame();
+  })();
+  </script>
+</body>
+</html>

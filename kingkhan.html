@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RanjitGo · Watch & Learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400&family=Zen+Kaku+Gothic+New:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ══════════════════════════════════════
+   THEME TOKENS
+══════════════════════════════════════ */
+:root {
+  --ink:          #1a1a2e;
+  --ink-soft:     #2d2d44;
+  --ink-muted:    #5c5c7a;
+  --paper:        #faf8f5;
+  --paper-warm:   #f5f0e8;
+  --paper-card:   rgba(255,255,255,0.82);
+  --paper-header: rgba(250,248,245,0.94);
+  --sakura:       #e8a0b4;
+  --sakura-pale:  #f7e8ef;
+  --sakura-deep:  #c4687e;
+  --gold:         #c8a96e;
+  --gold-pale:    #f5edda;
+  --mist:         #8a8fa8;
+  --accent-blue:  #7b9bbf;
+  --green:        #5e8a6a;
+  --border:       rgba(26,26,46,0.10);
+  --shadow:       rgba(26,26,46,0.08);
+  --shadow-md:    rgba(26,26,46,0.18);
+  --toggle-track: rgba(26,26,46,0.12);
+  --toggle-thumb: #c4687e;
+}
+[data-theme="dark"] {
+  --ink:          #e4dfd7;
+  --ink-soft:     #c0bab4;
+  --ink-muted:    #7a7590;
+  --paper:        #111018;
+  --paper-warm:   #18161f;
+  --paper-card:   rgba(26,24,38,0.94);
+  --paper-header: rgba(13,12,20,0.97);
+  --sakura:       #a05070;
+  --sakura-pale:  rgba(196,104,126,0.10);
+  --sakura-deep:  #e888a4;
+  --gold:         #c8a96e;
+  --gold-pale:    rgba(200,169,110,0.10);
+  --mist:         #56546a;
+  --accent-blue:  #5a7a9e;
+  --green:        #4a9e5e;
+  --border:       rgba(255,255,255,0.07);
+  --shadow:       rgba(0,0,0,0.32);
+  --shadow-md:    rgba(0,0,0,0.54);
+  --toggle-track: rgba(232,136,164,0.22);
+  --toggle-thumb: #e888a4;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family:'Zen Kaku Gothic New', sans-serif;
+  background:var(--paper); color:var(--ink);
+  min-height:100vh; display:flex; flex-direction:column;
+  overflow-x:hidden; transition:background .5s, color .5s;
+}
+
+/* ══════════ BACKGROUND ══════════ */
+.bg-canvas { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.ink-circle { position:absolute; border-radius:50%; opacity:.05; animation:inkPulse 8s ease-in-out infinite; }
+.ink-circle:nth-child(1){width:700px;height:700px;top:-200px;right:-200px;background:var(--sakura-deep);}
+.ink-circle:nth-child(2){width:500px;height:500px;bottom:-150px;left:-100px;background:var(--accent-blue);animation-delay:-3s;}
+.ink-circle:nth-child(3){width:300px;height:300px;top:40%;left:30%;background:var(--gold);animation-delay:-5s;}
+@keyframes inkPulse{0%,100%{transform:scale(1);opacity:.04}50%{transform:scale(1.08);opacity:.09}}
+[data-theme="dark"] .ink-circle{opacity:.13}
+.petal{position:absolute;opacity:0;animation:petalFall linear infinite;pointer-events:none;}
+@keyframes petalFall{0%{transform:translateY(-40px) rotate(0deg);opacity:0}10%{opacity:.55}90%{opacity:.3}100%{transform:translateY(105vh) rotate(360deg) translateX(60px);opacity:0}}
+.ink-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--ink) 30%,var(--ink) 70%,transparent);opacity:.06;animation:inkStroke 12s ease-in-out infinite;}
+@keyframes inkStroke{0%,100%{transform:scaleX(.4);opacity:.03}50%{transform:scaleX(1);opacity:.08}}
+
+/* ══════════ HEADER ══════════ */
+header {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.1rem 5%;
+  background:var(--paper-header); backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  transition:background .5s, border-color .5s;
+}
+.logo-area{
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+  text-decoration:none;
+}
+
+/* Logo circle */
+.logo-mark{
+  position:relative;
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.logo-mark svg{
+  width:40px;
+  height:40px;
+}
+
+/* ✨ Smooth, subtle ring draw */
+.brush-ring{
+  stroke-dasharray:120;
+  stroke-dashoffset:120;
+  animation:drawRing 0s ease-out forwards; /* slower + smooth */
+  stroke:var(--sakura-deep);
+  fill:none;
+  transition:stroke 0.s;
+}
+
+@keyframes drawRing{
+  to{stroke-dashoffset:0;}
+}
+
+/* ✨ Softer text appearance (no zoom jump) */
+.logo-char{
+  fill:var(--ink);
+  opacity:0;
+  animation:fadeChar  forwards;
+}
+
+@keyframes fadeChar{
+  from{opacity:0; transform:translateY(4px);} /* subtle move instead of scale */
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Text */
+.logo-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+
+.logo-main{
+  font-family:'Noto Serif JP',serif;
+  font-weight:300;
+  font-size:1.4rem;
+  color:var(--ink);
+  letter-spacing:0.02em;
+  transition:color 0.3s ease;
+}
+
+.logo-sub{
+  font-size:0.63rem;
+  font-weight:300;
+  color:var(--mist);
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  margin-top:2px;
+  transition:color 0.3s ease;
+}
+.menu-container { position:relative; }
+.menu-button { background:transparent; border:1px solid var(--border); color:var(--ink-soft); padding:.55rem 1.3rem; border-radius:2px; font-family:'Zen Kaku Gothic New',sans-serif; font-size:.75rem; font-weight:400; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; display:flex; align-items:center; gap:.6rem; transition:all .3s; position:relative; overflow:hidden; }
+.menu-button::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--sakura-deep); transform:scaleX(0); transform-origin:left; transition:transform .4s cubic-bezier(.4,0,.2,1); }
+.menu-button:hover::after,.menu-container.active .menu-button::after { transform:scaleX(1); }
+.menu-button:hover { border-color:var(--sakura-deep); color:var(--ink); }
+.menu-button .chevron { font-size:.7rem; transition:transform .4s; }
+.menu-container.active .menu-button .chevron { transform:rotate(180deg); }
+.dropdown-menu { position:absolute; top:calc(100% + 10px); right:0; background:var(--paper-header); backdrop-filter:blur(22px); border:1px solid var(--border); border-radius:2px; min-width:220px; padding:.5rem 0; z-index:200; opacity:0; visibility:hidden; transform:translateY(-8px); transition:all .3s cubic-bezier(.4,0,.2,1); box-shadow:0 24px 48px var(--shadow); }
+.menu-container.active .dropdown-menu { opacity:1; visibility:visible; transform:translateY(0); }
+.dropdown-menu a { display:flex; align-items:center; gap:.8rem; padding:.72rem 1.4rem; color:var(--ink-soft); text-decoration:none; font-size:.82rem; letter-spacing:.06em; transition:all .2s; position:relative; }
+.dropdown-menu a::before { content:''; position:absolute; left:0; top:20%; bottom:20%; width:2px; background:var(--sakura-deep); transform:scaleY(0); transition:transform .25s; }
+.dropdown-menu a:hover { color:var(--ink); background:var(--sakura-pale); }
+.dropdown-menu a:hover::before { transform:scaleY(1); }
+.dropdown-menu a i { width:16px; color:var(--sakura-deep); font-size:.75rem; }
+.dropdown-menu hr { margin:.4rem 1rem; border:none; border-top:1px solid var(--border); }
+.dropdown-item-toggle { display:flex; align-items:center; justify-content:space-between; padding:.72rem 1.4rem; cursor:pointer; transition:background .2s; }
+.dropdown-item-toggle:hover { background:var(--sakura-pale); }
+.toggle-label { display:flex; align-items:center; gap:.8rem; font-size:.82rem; letter-spacing:.06em; color:var(--ink-soft); }
+.toggle-label i { width:16px; color:var(--sakura-deep); font-size:.8rem; }
+.switch { position:relative; width:36px; height:20px; flex-shrink:0; }
+.switch input { opacity:0; width:0; height:0; }
+.switch-track { position:absolute; inset:0; background:var(--toggle-track); border-radius:20px; cursor:pointer; transition:background .4s; }
+.switch-track::after { content:''; position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:var(--toggle-thumb); transition:transform .35s cubic-bezier(.4,0,.2,1); box-shadow:0 1px 4px rgba(0,0,0,.2); }
+.switch input:checked + .switch-track::after { transform:translateX(16px); }
+
+/* ══════════ MAIN ══════════ */
+main { position:relative; z-index:1; flex:1; padding:2.5rem 5% 5rem; }
+
+/* ══════════ SECTION HEAD ══════════ */
+.section-head { margin-bottom:2.5rem; display:flex; align-items:baseline; gap:1rem; }
+.section-kanji { font-family:'Noto Serif JP',serif; font-weight:200; font-size:3.5rem; color:rgba(26,26,46,.07); line-height:1; letter-spacing:-.02em; user-select:none; transition:color .5s; }
+[data-theme="dark"] .section-kanji { color:rgba(228,223,215,.06); }
+.section-title-wrap { display:flex; flex-direction:column; }
+.section-title { font-family:'Noto Serif JP',serif; font-size:1.6rem; font-weight:200; color:var(--ink); letter-spacing:.02em; line-height:1.3; }
+.section-title strong { font-weight:400; color:var(--sakura-deep); }
+.section-label { font-size:.63rem; letter-spacing:.3em; text-transform:uppercase; color:var(--mist); margin-top:4px; }
+
+/* ══════════ FILTER BAR ══════════ */
+.filter-bar { display:flex; align-items:center; gap:.6rem; margin-bottom:2rem; flex-wrap:wrap; }
+.filter-btn { font-family:'Zen Kaku Gothic New',sans-serif; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; padding:.35rem 1rem; border-radius:1px; border:1px solid var(--border); background:transparent; color:var(--mist); cursor:pointer; transition:all .25s; position:relative; overflow:hidden; }
+.filter-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:var(--sakura-deep); transform:scaleX(0); transform-origin:left; transition:transform .3s cubic-bezier(.4,0,.2,1); }
+.filter-btn:hover::after,.filter-btn.active::after { transform:scaleX(1); }
+.filter-btn:hover { color:var(--ink); }
+.filter-btn.active { color:var(--sakura-deep); border-color:rgba(196,104,126,.35); background:var(--sakura-pale); }
+.filter-sep { width:1px; height:20px; background:var(--border); flex-shrink:0; }
+.search-wrap { margin-left:auto; position:relative; }
+.search-input { background:var(--paper-card); border:1px solid var(--border); border-radius:2px; padding:.38rem .9rem .38rem 2.2rem; font-family:'Zen Kaku Gothic New',sans-serif; font-size:.75rem; color:var(--ink); outline:none; width:200px; transition:border-color .25s, background .5s, width .35s cubic-bezier(.4,0,.2,1); }
+.search-input::placeholder { color:var(--mist); }
+.search-input:focus { border-color:var(--sakura-deep); width:240px; }
+.search-icon { position:absolute; left:.75rem; top:50%; transform:translateY(-50%); color:var(--mist); font-size:.7rem; pointer-events:none; }
+
+/* ══════════ PLAYER PANEL ══════════ */
+.player-panel { display:grid; grid-template-columns:1fr 320px; gap:1.4rem; margin-bottom:2.5rem; animation:fadeUp .5s cubic-bezier(.4,0,.2,1) both; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+.player-main { background:var(--paper-card); border:1px solid var(--border); border-radius:3px; overflow:hidden; position:relative; backdrop-filter:blur(8px); transition:background .5s, border-color .5s; }
+.player-main::before { content:''; position:absolute; top:0; left:0; width:40px; height:40px; border-top:2px solid var(--sakura-deep); border-left:2px solid var(--sakura-deep); z-index:5; pointer-events:none; }
+.player-main::after  { content:''; position:absolute; bottom:0; right:0; width:40px; height:40px; border-bottom:2px solid var(--gold); border-right:2px solid var(--gold); z-index:5; pointer-events:none; }
+
+.video-frame-wrap { position:relative; width:100%; aspect-ratio:16/9; background:#0a0a12; overflow:hidden; }
+.video-iframe { width:100%; height:100%; border:none; display:block; }
+
+/* LIVE badge */
+.live-badge { position:absolute; top:.9rem; left:.9rem; z-index:10; display:flex; align-items:center; gap:.4rem; background:rgba(196,104,126,.92); color:white; font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; padding:.22rem .7rem; border-radius:1px; font-weight:600; backdrop-filter:blur(4px); animation:livePulse 2s ease-in-out infinite; }
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.7}}
+.live-dot { width:6px; height:6px; border-radius:50%; background:white; animation:liveDot 1.2s ease-in-out infinite; }
+@keyframes liveDot{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+
+/* Keyboard shortcuts overlay */
+.shortcuts-overlay { position:absolute; inset:0; background:rgba(10,10,18,.88); z-index:20; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .3s; }
+.shortcuts-overlay.visible { opacity:1; }
+.shortcuts-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem 1.5rem; }
+.shortcut-item { display:flex; align-items:center; gap:.6rem; color:white; font-size:.7rem; letter-spacing:.08em; }
+.shortcut-item kbd { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); border-radius:3px; padding:.15rem .5rem; font-family:monospace; font-size:.65rem; color:var(--gold); }
+.shortcuts-title { color:var(--sakura-deep); font-family:'Noto Serif JP',serif; font-weight:300; font-size:.95rem; text-align:center; margin-bottom:1rem; letter-spacing:.06em; }
+
+/* Progress bar */
+.video-progress-wrap { padding:0 1.2rem .6rem; }
+.video-progress-label { display:flex; justify-content:space-between; font-size:.6rem; color:var(--mist); margin-bottom:.3rem; letter-spacing:.1em; }
+.video-progress-bar { height:3px; background:var(--border); border-radius:2px; overflow:hidden; cursor:pointer; position:relative; }
+.video-progress-bar:hover { height:5px; transition:height .15s; }
+.video-progress-fill { height:100%; background:linear-gradient(90deg,var(--sakura-deep),var(--gold)); border-radius:2px; transition:width .4s cubic-bezier(.4,0,.2,1); position:relative; }
+.video-progress-fill::after { content:''; position:absolute; right:-4px; top:50%; transform:translateY(-50%); width:8px; height:8px; border-radius:50%; background:var(--sakura-deep); opacity:0; transition:opacity .2s; }
+.video-progress-bar:hover .video-progress-fill::after { opacity:1; }
+
+/* Info bar */
+.player-info-bar { padding:1rem 1.2rem .8rem; border-top:1px solid var(--border); transition:border-color .5s; }
+.playing-num { font-family:'Noto Serif JP',serif; font-weight:200; font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; color:var(--mist); margin-bottom:.3rem; }
+.playing-title { font-family:'Noto Serif JP',serif; font-size:1.15rem; font-weight:300; color:var(--ink); margin-bottom:.4rem; line-height:1.3; transition:color .5s; }
+.playing-meta { display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
+.meta-tag { font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; padding:.2rem .55rem; border-radius:1px; border:1px solid; font-weight:400; }
+.meta-tag.sakura { color:var(--sakura-deep); border-color:var(--sakura); background:var(--sakura-pale); }
+.meta-tag.blue   { color:var(--accent-blue); border-color:rgba(123,155,191,.4); background:rgba(123,155,191,.08); }
+.meta-tag.gold   { color:#9e7a30; border-color:var(--gold); background:var(--gold-pale); }
+[data-theme="dark"] .meta-tag.gold { color:var(--gold); }
+.meta-dur { font-size:.7rem; color:var(--mist); display:flex; align-items:center; gap:.35rem; }
+
+/* Like / dislike counter */
+.like-count { font-size:.68rem; color:var(--mist); letter-spacing:.06em; margin-left:auto; display:flex; align-items:center; gap:.4rem; }
+.like-count span { color:var(--sakura-deep); font-weight:600; }
+
+/* ══════ PLAYER ACTIONS ══════ */
+.player-actions { display:flex; align-items:center; gap:.6rem; padding:.8rem 1.2rem 1rem; border-top:1px solid var(--border); flex-wrap:wrap; transition:border-color .5s; }
+
+.btn-watch {
+  display:flex; align-items:center; gap:.5rem;
+  background:var(--sakura-deep); border:none; color:white;
+  padding:.6rem 1.4rem; border-radius:2px; cursor:pointer;
+  font-family:'Zen Kaku Gothic New',sans-serif; font-size:.75rem;
+  letter-spacing:.15em; text-transform:uppercase;
+  transition:background .25s, transform .2s, box-shadow .25s;
+  position:relative; overflow:hidden;
+}
+.btn-watch::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:rgba(255,255,255,.35); transform:scaleX(0); transform-origin:left; transition:transform .4s cubic-bezier(.4,0,.2,1); }
+.btn-watch:hover::after { transform:scaleX(1); }
+.btn-watch:hover { background:#a04060; transform:translateY(-2px); box-shadow:0 8px 20px rgba(196,104,126,.3); }
+
+.btn-download {
+  display:flex; align-items:center; gap:.5rem;
+  background:transparent; border:1px solid var(--border);
+  color:var(--ink-soft); padding:.6rem 1.2rem; border-radius:2px; cursor:pointer;
+  font-family:'Zen Kaku Gothic New',sans-serif; font-size:.75rem;
+  letter-spacing:.15em; text-transform:uppercase;
+  transition:all .25s; position:relative; overflow:hidden;
+}
+.btn-download::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); transform:scaleX(0); transform-origin:left; transition:transform .4s cubic-bezier(.4,0,.2,1); }
+.btn-download:hover::after { transform:scaleX(1); }
+.btn-download:hover { border-color:var(--gold); color:var(--ink); }
+
+/* Icon action buttons */
+.btn-icon-only {
+  width:36px; height:36px; border-radius:2px; border:1px solid var(--border);
+  background:transparent; color:var(--mist); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; transition:all .25s; position:relative;
+}
+.btn-icon-only:hover { border-color:var(--sakura-deep); color:var(--sakura-deep); background:var(--sakura-pale); }
+.btn-icon-only.liked { color:var(--sakura-deep); border-color:var(--sakura-deep); background:var(--sakura-pale); }
+.btn-icon-only.liked .fa-heart { animation:heartPop .3s cubic-bezier(.4,0,.2,1); }
+@keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+.btn-icon-only.bookmarked { color:var(--gold); border-color:var(--gold); background:var(--gold-pale); }
+.btn-icon-only.rated-up { color:var(--green); border-color:var(--green); background:rgba(94,138,106,.08); }
+.btn-icon-only.rated-down { color:var(--mist); border-color:var(--mist); background:rgba(138,143,168,.08); }
+
+/* Tooltip */
+.has-tooltip { position:relative; }
+.has-tooltip::before {
+  content:attr(data-tip); position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%);
+  background:var(--ink); color:var(--paper); font-size:.6rem; letter-spacing:.08em;
+  white-space:nowrap; padding:.22rem .6rem; border-radius:2px;
+  opacity:0; pointer-events:none; transition:opacity .2s; z-index:50;
+}
+.has-tooltip:hover::before { opacity:1; }
+
+/* Speed badge on Watch btn */
+.speed-badge { font-size:.6rem; letter-spacing:.08em; background:rgba(255,255,255,.25); padding:.1rem .3rem; border-radius:2px; margin-left:.2rem; }
+
+/* ══════ PLAYLIST ══════ */
+.playlist-panel { background:var(--paper-card); border:1px solid var(--border); border-radius:3px; display:flex; flex-direction:column; backdrop-filter:blur(8px); overflow:hidden; transition:background .5s, border-color .5s; max-height:520px; }
+.playlist-head { padding:.9rem 1rem .7rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.playlist-title { font-family:'Noto Serif JP',serif; font-weight:300; font-size:.95rem; color:var(--ink); letter-spacing:.02em; }
+.playlist-count { font-size:.62rem; letter-spacing:.15em; text-transform:uppercase; color:var(--mist); }
+.playlist-scroll { overflow-y:auto; flex:1; }
+.playlist-scroll::-webkit-scrollbar { width:3px; }
+.playlist-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+.playlist-item { display:flex; align-items:center; gap:.75rem; padding:.7rem 1rem; cursor:pointer; position:relative; border-bottom:1px solid var(--border); transition:background .2s; }
+.playlist-item:last-child { border-bottom:none; }
+.playlist-item::before { content:''; position:absolute; left:0; top:15%; bottom:15%; width:2px; background:var(--sakura-deep); transform:scaleY(0); transition:transform .25s; }
+.playlist-item:hover { background:var(--sakura-pale); }
+.playlist-item:hover::before { transform:scaleY(1); }
+.playlist-item.active { background:var(--sakura-pale); }
+.playlist-item.active::before { transform:scaleY(1); }
+.playlist-item.completed .pi-title { opacity:.6; }
+.pi-check { font-size:.6rem; color:var(--green); margin-left:auto; flex-shrink:0; display:none; }
+.playlist-item.completed .pi-check { display:block; }
+
+.pi-thumb img { width:72px; height:42px; border-radius:1px; flex-shrink:0; background:var(--paper-warm); overflow:hidden; position:relative; border:1px solid var(--border); }
+.pi-thumb-inner { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+.pi-play-icon { position:absolute; inset:0; background:rgba(196,104,126,.7); display:flex; align-items:center; justify-content:center; color:white; font-size:.75rem; opacity:0; transition:opacity .2s; }
+.playlist-item:hover .pi-play-icon,.playlist-item.active .pi-play-icon { opacity:1; }
+.pi-info { flex:1; min-width:0; }
+.pi-num { font-family:'Noto Serif JP',serif; font-weight:200; font-size:.55rem; letter-spacing:.18em; color:var(--mist); margin-bottom:2px; }
+.pi-title { font-size:.75rem; color:var(--ink-soft); line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.playlist-item.active .pi-title { color:var(--sakura-deep); }
+.pi-dur { font-size:.6rem; color:var(--mist); white-space:nowrap; }
+.pi-dl-btn { width:26px; height:26px; border-radius:1px; border:1px solid var(--border); background:transparent; color:var(--mist); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.65rem; transition:all .2s; flex-shrink:0; }
+.pi-dl-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ══════ NOTES PANEL ══════ */
+.notes-panel { background:var(--paper-card); border:1px solid var(--border); border-radius:3px; margin-bottom:1.4rem; overflow:hidden; backdrop-filter:blur(8px); transition:background .5s, border-color .5s; }
+.notes-head { padding:.85rem 1.2rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.notes-title { font-family:'Noto Serif JP',serif; font-weight:300; font-size:.95rem; color:var(--ink); letter-spacing:.02em; display:flex; align-items:center; gap:.5rem; }
+.notes-title i { color:var(--sakura-deep); font-size:.8rem; }
+.notes-tabs { display:flex; gap:.2rem; }
+.notes-tab { font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; padding:.22rem .7rem; border-radius:1px; border:1px solid var(--border); background:transparent; color:var(--mist); cursor:pointer; transition:all .2s; }
+.notes-tab.active { color:var(--sakura-deep); border-color:var(--sakura-deep); background:var(--sakura-pale); }
+.notes-body { padding:1rem 1.2rem; }
+.notes-textarea { width:100%; min-height:90px; background:transparent; border:1px solid var(--border); border-radius:2px; padding:.7rem; font-family:'Zen Kaku Gothic New',sans-serif; font-size:.8rem; color:var(--ink); resize:vertical; outline:none; transition:border-color .25s, background .5s; line-height:1.7; }
+.notes-textarea:focus { border-color:var(--sakura-deep); }
+.notes-textarea::placeholder { color:var(--mist); }
+.notes-actions-row { display:flex; align-items:center; justify-content:space-between; margin-top:.6rem; }
+.notes-hint { font-size:.6rem; color:var(--mist); letter-spacing:.1em; }
+.btn-save-note { font-family:'Zen Kaku Gothic New',sans-serif; font-size:.65rem; letter-spacing:.15em; text-transform:uppercase; padding:.3rem .9rem; border-radius:1px; border:1px solid var(--sakura-deep); background:transparent; color:var(--sakura-deep); cursor:pointer; transition:all .2s; }
+.btn-save-note:hover { background:var(--sakura-deep); color:white; }
+
+/* Rating stars */
+.star-rating { display:flex; gap:.2rem; }
+.star-btn { background:transparent; border:none; cursor:pointer; font-size:1rem; color:var(--mist); transition:color .2s, transform .15s; padding:.1rem; }
+.star-btn:hover,.star-btn.active { color:var(--gold); transform:scale(1.15); }
+
+/* ══════ VIDEO GRID ══════ */
+.grid-head { display:flex; align-items:baseline; gap:1rem; margin-bottom:1.5rem; }
+.grid-kanji { font-family:'Noto Serif JP',serif; font-weight:200; font-size:2.2rem; color:rgba(26,26,46,.07); line-height:1; user-select:none; transition:color .5s; }
+[data-theme="dark"] .grid-kanji { color:rgba(228,223,215,.06); }
+.grid-title { font-family:'Noto Serif JP',serif; font-size:1.15rem; font-weight:200; color:var(--ink); letter-spacing:.02em; }
+.grid-title strong { font-weight:400; color:var(--sakura-deep); }
+.grid-label { font-size:.6rem; letter-spacing:.28em; text-transform:uppercase; color:var(--mist); margin-top:3px; }
+.video-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.2rem; margin-bottom:3rem; }
+
+.video-card {
+  background:var(--paper-card); border:1px solid var(--border);
+  border-radius:3px; overflow:hidden; cursor:pointer;
+  display:flex; flex-direction:column; position:relative;
+  transition:transform .4s cubic-bezier(.4,0,.2,1), border-color .4s, box-shadow .4s, background .5s;
+  animation:cardReveal .6s cubic-bezier(.4,0,.2,1) both;
+  backdrop-filter:blur(8px);
+}
+@keyframes cardReveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.video-card::before { content:''; position:absolute; top:0; left:0; width:32px; height:32px; border-top:2px solid transparent; border-left:2px solid transparent; transition:border-color .4s, width .4s, height .4s; z-index:5; pointer-events:none; }
+.video-card::after  { content:''; position:absolute; bottom:0; right:0; width:32px; height:32px; border-bottom:2px solid transparent; border-right:2px solid transparent; transition:border-color .4s, width .4s, height .4s; z-index:5; pointer-events:none; }
+.video-card:hover { transform:translateY(-5px); box-shadow:0 20px 48px var(--shadow-md); }
+.video-card:hover::before { border-color:var(--sakura-deep); width:46px; height:46px; }
+.video-card:hover::after  { border-color:var(--gold); width:46px; height:46px; }
+.video-card.watched { opacity:.75; }
+.video-card.watched::after { border-color:var(--green) !important; }
+.vc-stripe { position:absolute; top:0; left:1.2rem; right:1.2rem; height:2px; transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.4,0,.2,1); z-index:4; }
+.video-card:hover .vc-stripe { transform:scaleX(1); }
+
+.vc-thumb { position:relative; aspect-ratio:16/9; overflow:hidden; background:var(--paper-warm); }
+.vc-thumb-bg { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; transition:transform .4s cubic-bezier(.4,0,.2,1); }
+.video-card:hover .vc-thumb-bg { transform:scale(1.06); }
+.vc-play-overlay { position:absolute; inset:0; background:rgba(10,10,18,.38); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .3s; }
+.video-card:hover .vc-play-overlay { opacity:1; }
+.vc-play-circle { width:42px; height:42px; border-radius:50%; background:rgba(196,104,126,.88); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; color:white; font-size:.9rem; transform:scale(.85); transition:transform .3s cubic-bezier(.4,0,.2,1); }
+.video-card:hover .vc-play-circle { transform:scale(1); }
+.vc-duration-badge { position:absolute; bottom:.5rem; right:.5rem; background:rgba(10,10,18,.75); color:white; font-size:.58rem; letter-spacing:.08em; padding:.15rem .45rem; border-radius:1px; backdrop-filter:blur(4px); }
+.vc-level-badge { position:absolute; top:.5rem; left:.5rem; font-size:.55rem; letter-spacing:.15em; text-transform:uppercase; padding:.18rem .5rem; border-radius:1px; backdrop-filter:blur(4px); }
+.vc-watched-badge { position:absolute; top:.5rem; right:.5rem; background:rgba(94,138,106,.85); color:white; font-size:.55rem; padding:.18rem .4rem; border-radius:1px; display:none; }
+.video-card.watched .vc-watched-badge { display:block; }
+
+.vc-body { padding:.85rem 1rem 1rem; flex:1; display:flex; flex-direction:column; gap:.3rem; }
+.vc-num { font-family:'Noto Serif JP',serif; font-weight:200; font-size:.58rem; letter-spacing:.2em; color:var(--mist); }
+.vc-title { font-family:'Noto Serif JP',serif; font-weight:300; font-size:.95rem; color:var(--ink); line-height:1.3; flex:1; }
+.vc-desc { font-size:.72rem; font-weight:300; color:var(--mist); line-height:1.6; }
+.vc-footer { display:flex; align-items:center; justify-content:space-between; margin-top:.8rem; padding-top:.7rem; border-top:1px solid var(--border); }
+.vc-tag { font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; padding:.2rem .5rem; border-radius:1px; border:1px solid; font-weight:400; }
+.vc-actions { display:flex; gap:.4rem; }
+.vc-btn { width:28px; height:28px; border-radius:1px; border:1px solid var(--border); background:transparent; cursor:pointer; color:var(--mist); display:flex; align-items:center; justify-content:center; font-size:.7rem; transition:all .2s; }
+.vc-btn.watch:hover { border-color:var(--sakura-deep); color:var(--sakura-deep); background:var(--sakura-pale); }
+.vc-btn.dl:hover    { border-color:var(--gold); color:var(--gold); background:var(--gold-pale); }
+.vc-btn.fav:hover   { border-color:var(--sakura-deep); color:var(--sakura-deep); }
+.vc-btn.fav.active  { color:var(--sakura-deep); border-color:var(--sakura-deep); }
+
+/* ══════ SHARE MODAL ══════ */
+.modal-backdrop { position:fixed; inset:0; background:rgba(10,10,18,.6); z-index:300; display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:opacity .3s; backdrop-filter:blur(4px); }
+.modal-backdrop.open { opacity:1; visibility:visible; }
+.share-modal { background:var(--paper-card); border:1px solid var(--border); border-radius:3px; width:420px; max-width:90vw; padding:0; overflow:hidden; transform:translateY(20px) scale(.97); transition:transform .3s cubic-bezier(.4,0,.2,1); backdrop-filter:blur(12px); }
+.modal-backdrop.open .share-modal { transform:translateY(0) scale(1); }
+.share-modal-head { padding:1.2rem 1.4rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.share-modal-title { font-family:'Noto Serif JP',serif; font-weight:300; font-size:1.1rem; color:var(--ink); letter-spacing:.02em; }
+.modal-close { width:30px; height:30px; border:1px solid var(--border); border-radius:2px; background:transparent; color:var(--mist); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.8rem; transition:all .2s; }
+.modal-close:hover { border-color:var(--sakura-deep); color:var(--sakura-deep); }
+.share-modal-body { padding:1.4rem; }
+.share-link-row { display:flex; gap:.5rem; margin-bottom:1.2rem; }
+.share-link-input { flex:1; background:var(--paper-warm); border:1px solid var(--border); border-radius:2px; padding:.5rem .8rem; font-family:'Zen Kaku Gothic New',sans-serif; font-size:.72rem; color:var(--ink-muted); outline:none; letter-spacing:.04em; }
+.btn-copy-link { font-family:'Zen Kaku Gothic New',sans-serif; font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; padding:.5rem 1rem; border-radius:2px; border:none; background:var(--sakura-deep); color:white; cursor:pointer; transition:background .2s; white-space:nowrap; }
+.btn-copy-link:hover { background:#a04060; }
+.btn-copy-link.copied { background:var(--green); }
+.share-platforms { display:grid; grid-template-columns:repeat(4,1fr); gap:.7rem; }
+.share-btn { display:flex; flex-direction:column; align-items:center; gap:.4rem; padding:.7rem; border:1px solid var(--border); border-radius:2px; background:transparent; cursor:pointer; transition:all .2s; color:var(--ink-soft); }
+.share-btn:hover { border-color:var(--border); transform:translateY(-2px); box-shadow:0 6px 16px var(--shadow); }
+.share-btn i { font-size:1.1rem; }
+.share-btn span { font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--mist); }
+.share-btn.wa:hover { border-color:#25d366; color:#25d366; background:rgba(37,211,102,.06); }
+.share-btn.tw:hover { border-color:#1da1f2; color:#1da1f2; background:rgba(29,161,242,.06); }
+.share-btn.tg:hover { border-color:#2ca5e0; color:#2ca5e0; background:rgba(44,165,224,.06); }
+.share-btn.em:hover { border-color:var(--gold); color:var(--gold); background:var(--gold-pale); }
+.share-qr { text-align:center; margin-top:1.2rem; padding-top:1.2rem; border-top:1px solid var(--border); }
+.qr-hint { font-size:.62rem; letter-spacing:.15em; text-transform:uppercase; color:var(--mist); margin-bottom:.6rem; }
+.qr-box { width:80px; height:80px; margin:0 auto; background:var(--paper-warm); border:1px solid var(--border); border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
+
+/* ══════ QUALITY PICKER ══════ */
+.quality-panel { position:absolute; bottom:calc(100% + 8px); right:0; background:var(--paper-header); border:1px solid var(--border); border-radius:2px; min-width:140px; padding:.4rem 0; z-index:50; box-shadow:0 12px 32px var(--shadow-md); opacity:0; visibility:hidden; transform:translateY(6px); transition:all .25s cubic-bezier(.4,0,.2,1); }
+.quality-panel.open { opacity:1; visibility:visible; transform:translateY(0); }
+.quality-option { display:flex; align-items:center; justify-content:space-between; padding:.55rem 1rem; cursor:pointer; font-size:.75rem; color:var(--ink-soft); letter-spacing:.06em; transition:background .15s; }
+.quality-option:hover { background:var(--sakura-pale); color:var(--ink); }
+.quality-option.active { color:var(--sakura-deep); }
+.quality-option .q-badge { font-size:.55rem; letter-spacing:.1em; background:var(--sakura-pale); color:var(--sakura-deep); border:1px solid var(--sakura); padding:.1rem .3rem; border-radius:1px; }
+.quality-btn-wrap { position:relative; }
+
+/* ══════ DEMO HINT ══════ */
+.demo-hint { text-align:center; font-size:.68rem; letter-spacing:.18em; text-transform:uppercase; color:var(--mist); opacity:.65; display:flex; align-items:center; justify-content:center; gap:.6rem; margin-top:.5rem; }
+.demo-hint::before,.demo-hint::after { content:''; display:inline-block; width:24px; height:1px; background:var(--mist); opacity:.5; }
+
+/* ══════ TOAST ══════ */
+.dl-toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:var(--paper); padding:.65rem 1.4rem; border-radius:2px; font-size:.78rem; letter-spacing:.06em; opacity:0; pointer-events:none; transition:opacity .3s, transform .3s; z-index:600; white-space:nowrap; display:flex; align-items:center; gap:.5rem; }
+.dl-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ══════ KEYBOARD HINT BAR ══════ */
+.kb-bar { display:flex; align-items:center; gap:1.2rem; padding:.5rem 1.2rem; border-top:1px solid var(--border); background:rgba(0,0,0,.02); flex-wrap:wrap; }
+.kb-item { display:flex; align-items:center; gap:.4rem; font-size:.6rem; color:var(--mist); letter-spacing:.08em; }
+.kb-item kbd { background:var(--paper-warm); border:1px solid var(--border); border-radius:2px; padding:.1rem .35rem; font-size:.58rem; font-family:monospace; color:var(--ink-muted); }
+
+/* ══════ RESPONSIVE ══════ */
+@media(max-width:1100px){ .video-grid{grid-template-columns:repeat(3,1fr);} }
+@media(max-width:900px){
+  .player-panel{grid-template-columns:1fr;}
+  .playlist-panel{max-height:280px;}
+  .video-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:560px){
+  .video-grid{grid-template-columns:1fr;}
+  .filter-bar{gap:.4rem;}
+  .search-wrap{width:100%;margin-left:0;}
+  .search-input{width:100%;}
+  .search-input:focus{width:100%;}
+  .player-actions{gap:.4rem;}
+}
+.video-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ══════════════════════════════════════════
+   BACK BUTTON
+══════════════════════════════════════════ */
+.back-btn {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 1000;
+
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+
+  background: var(--paper-card);
+  border: 1px solid var(--border);
+
+  color: var(--sakura-deep);
+  font-size: 1.2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 28px var(--shadow);
+
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+/* Hover effect (matching your theme) */
+.back-btn:hover {
+  transform: translateY(-4px) scale(1.05);
+  border-color: var(--sakura-deep);
+  color: var(--ink);
+  box-shadow: 0 14px 40px var(--shadow);
+}
+
+/* Active click */
+.back-btn:active {
+  transform: scale(0.95);
+}
+
+/* Mobile adjustment */
+@media (max-width:540px) {
+  .back-btn {
+    bottom: 1.5rem;
+    left: 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-canvas">
+  <div class="ink-circle"></div>
+  <div class="ink-circle"></div>
+  <div class="ink-circle"></div>
+  <div class="ink-line" style="top:22%;left:0;right:0;"></div>
+  <div class="ink-line" style="top:68%;left:0;right:0;animation-delay:-5s;"></div>
+</div>
+
+<header>
+    <a class="logo-area" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle class="brush-ring" cx="20" cy="20" r="17" stroke-width="1" stroke-linecap="round"/>
+          <image href="logo/logo.png" x="10" y="10" width="20" height="20" />
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-main">RanjitGo</span>
+        <span class="logo-sub">English Learning</span>
+      </div>
+    </a>
+
+  <div class="menu-container" id="menuContainer">
+    <button class="menu-button" id="menuToggle" aria-expanded="false">
+      <span>Menu</span>
+      <i class="fas fa-chevron-down chevron"></i>
+    </button>
+    <nav class="dropdown-menu" id="dropdownMenu">
+      <a href="index.html"><i class="fas fa-house"></i> Home</a>
+      <a href="about.html"><i class="fas fa-book-open"></i> About</a>
+      <hr>
+      <a href="login.html"><i class="fas fa-right-to-bracket"></i> Login</a>
+      <a href="#"><i class="fas fa-user-plus"></i> Sign up</a>
+      <hr>
+      <hr>
+      <div class="dropdown-item-toggle" id="themeToggleRow" role="button" tabindex="0">
+        <span class="toggle-label">
+          <i class="fas fa-moon" id="themeIcon"></i>
+          <span id="themeLabel">Dark Mode</span>
+        </span>
+        <label class="switch" onclick="event.stopPropagation()">
+          <input type="checkbox" id="themeSwitch">
+          <div class="switch-track"></div>
+        </label>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="section-head">
+    <span class="section-kanji">映</span>
+    <div class="section-title-wrap">
+      <h1 class="section-title"><strong>Watch</strong> &amp; learn, anytime.</h1>
+      <span class="section-label"> cinematic lessons · Live stream · Free download</span>
+    </div>
+  </div>
+
+  
+
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="beginner">Beginner</button>
+    <button class="filter-btn" data-filter="intermediate">Intermediate</button>
+    <button class="filter-btn" data-filter="advanced">Advanced</button>
+    <div class="filter-sep"></div>
+    <button class="filter-btn" data-filter="grammar">Grammar</button>
+    <button class="filter-btn" data-filter="speaking">Speaking</button>
+    <button class="filter-btn" data-filter="vocabulary">Vocabulary</button>
+    <button id="resetWatchBtn" style="
+  margin-left:10px;
+  padding:6px 12px;
+  border:1px solid #c4687e;
+  background:transparent;
+  color:#c4687e;
+  cursor:pointer;
+  font-size:12px;
+  letter-spacing:1px;
+">
+   Reset Watched
+</button>
+    
+    <div class="search-wrap">
+      <i class="fas fa-magnifying-glass search-icon"></i>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search lessons…">
+    </div>
+  </div> 
+
+  <!-- Player + Playlist -->
+  <div class="player-panel">
+    <div class="player-main" id="playerMain">
+      <div class="video-frame-wrap">
+        <iframe class="video-iframe" id="videoIframe"
+          src="https://www.youtube.com/embed/FdlLsxR5AE0?rel=0&modestbranding=1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <div class="live-badge" id="liveBadge"><div class="live-dot"></div> Live</div>
+        <!-- Keyboard shortcuts overlay -->
+        <div class="shortcuts-overlay" id="shortcutsOverlay">
+          <div>
+            <div class="shortcuts-title">Keyboard Shortcuts</div>
+            <div class="shortcuts-grid">
+              <div class="shortcut-item"><kbd>Space</kbd> Play / Pause</div>
+              <div class="shortcut-item"><kbd>F</kbd> Fullscreen</div>
+              <div class="shortcut-item"><kbd>L</kbd> Like</div>
+              <div class="shortcut-item"><kbd>S</kbd> Share</div>
+              <div class="shortcut-item"><kbd>N</kbd> Next lesson</div>
+              <div class="shortcut-item"><kbd>B</kbd> Bookmark</div>
+              <div class="shortcut-item"><kbd>?</kbd> Shortcuts</div>
+              <div class="shortcut-item"><kbd>Esc</kbd> Close</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="video-progress-wrap">
+        <div class="video-progress-label">
+          <span id="progressLabel">Episode 01 — Now Playing</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="video-progress-bar" id="progressBar">
+          <div class="video-progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Info bar -->
+      <div class="player-info-bar">
+        <div class="playing-num" id="playingNum">01 · Lesson</div>
+        <div class="playing-title" id="playingTitle">English Foundations: Sounds &amp; Rhythm</div>
+        <div class="playing-meta">
+          <span class="meta-tag sakura" id="playingLevel">A1 · Beginner</span>
+          <span class="meta-tag blue"   id="playingCat">Pronunciation</span>
+          <span class="meta-tag gold"   id="playingType">Grammar Snack</span>
+          <span class="meta-dur"><i class="fas fa-clock"></i> <span id="playingDur">12 min</span></span>
+          <div class="like-count" id="likeCountDisplay"><i class="fas fa-heart" style="color:var(--sakura-deep)"></i> <span id="likeCountNum">247</span> likes</div>
+        </div>
+      </div>
+
+      <!-- Star Rating -->
+      <div style="padding:.5rem 1.2rem .4rem; display:flex; align-items:center; gap:1rem; border-top:1px solid var(--border);">
+        <span style="font-size:.65rem; letter-spacing:.14em; text-transform:uppercase; color:var(--mist);">Rate this lesson</span>
+        <div class="star-rating" id="starRating">
+          <button class="star-btn" data-star="1"><i class="fas fa-star"></i></button>
+          <button class="star-btn" data-star="2"><i class="fas fa-star"></i></button>
+          <button class="star-btn" data-star="3"><i class="fas fa-star"></i></button>
+          <button class="star-btn" data-star="4"><i class="fas fa-star"></i></button>
+          <button class="star-btn" data-star="5"><i class="fas fa-star"></i></button>
+        </div>
+        <span id="ratingLabel" style="font-size:.65rem; color:var(--mist); letter-spacing:.08em;"></span>
+      </div>
+
+      <!-- Actions -->
+      <div class="player-actions" id="playerActions">
+        <button class="btn-watch" id="btnWatch">
+          <i class="fas fa-play"></i> Watch Now
+        </button>
+        <button class="btn-download" id="btnDownload">
+          <i class="fas fa-download"></i> Download
+        </button>
+
+        <!-- Like -->
+        <button class="btn-icon-only has-tooltip" id="btnLike" data-tip="Like (L)">
+          <i class="fas fa-heart"></i>
+        </button>
+
+        <!-- Bookmark -->
+        <button class="btn-icon-only has-tooltip" id="btnBookmark" data-tip="Bookmark (B)">
+          <i class="fas fa-bookmark"></i>
+        </button>
+
+        <!-- Thumbs up / down -->
+        <button class="btn-icon-only has-tooltip" id="btnThumbUp" data-tip="Helpful">
+          <i class="fas fa-thumbs-up"></i>
+        </button>
+        <button class="btn-icon-only has-tooltip" id="btnThumbDown" data-tip="Not helpful">
+          <i class="fas fa-thumbs-down"></i>
+        </button>
+
+        <!-- Share -->
+        <button class="btn-icon-only has-tooltip" id="btnShare" data-tip="Share (S)">
+          <i class="fas fa-share-nodes"></i>
+        </button>
+
+        <!-- Subtitles -->
+        <button class="btn-icon-only has-tooltip" id="btnCC" data-tip="Subtitles">
+          <i class="fas fa-closed-captioning"></i>
+        </button>
+
+        <!-- Quality picker -->
+        <div class="quality-btn-wrap">
+          <button class="btn-icon-only has-tooltip" id="btnQuality" data-tip="Quality">
+            <i class="fas fa-sliders"></i>
+          </button>
+          <div class="quality-panel" id="qualityPanel">
+            <div class="quality-option active" data-q="1080">1080p <span class="q-badge">HD</span></div>
+            <div class="quality-option" data-q="720">720p</div>
+            <div class="quality-option" data-q="480">480p</div>
+            <div class="quality-option" data-q="360">360p</div>
+            <div class="quality-option" data-q="auto">Auto</div>
+          </div>
+        </div>
+
+        <!-- Keyboard shortcuts -->
+        <button class="btn-icon-only has-tooltip" id="btnShortcuts" data-tip="Shortcuts (?)">
+          <i class="fas fa-keyboard"></i>
+        </button>
+
+        <!-- Fullscreen -->
+        <button class="btn-icon-only has-tooltip" id="btnFullscreen" data-tip="Fullscreen (F)" style="margin-left:auto;">
+          <i class="fas fa-expand"></i>
+        </button>
+
+        <!-- Next -->
+        <button class="btn-icon-only has-tooltip" id="btnNext" data-tip="Next lesson (N)">
+          <i class="fas fa-forward-step"></i>
+        </button>
+      </div>
+
+      <!-- Keyboard hint bar -->
+      <div class="kb-bar">
+        <div class="kb-item"><kbd>Space</kbd> Play</div>
+        <div class="kb-item"><kbd>F</kbd> Full</div>
+        <div class="kb-item"><kbd>L</kbd> Like</div>
+        <div class="kb-item"><kbd>S</kbd> Share</div>
+        <div class="kb-item"><kbd>N</kbd> Next</div>
+        <div class="kb-item"><kbd>?</kbd> All shortcuts</div>
+      </div>
+    </div>
+
+    <!-- Playlist -->
+    <div class="playlist-panel">
+      <div class="playlist-head">
+        <span class="playlist-title">Playlist</span>
+        <span class="playlist-count" id="playlistCount">12 lessons</span>
+      </div>
+      <div class="playlist-scroll" id="playlistScroll"></div>
+    </div>
+  </div>
+
+  <!-- Notes Panel -->
+  <div class="notes-panel">
+    <div class="notes-head">
+      <div class="notes-title"><i class="fas fa-pen-to-square"></i> Lesson Notes</div>
+      <div class="notes-tabs">
+        <button class="notes-tab active" data-tab="notes">Notes</button>
+        <button class="notes-tab" data-tab="vocab">Vocab</button>
+        <button class="notes-tab" data-tab="questions">Questions</button>
+      </div>
+    </div>
+    <div class="notes-body">
+      <textarea class="notes-textarea" id="notesArea" placeholder="Jot down key points, new words, or questions as you watch…"></textarea>
+      <div class="notes-actions-row">
+        <span class="notes-hint" id="notesHint">Notes saved locally</span>
+        <button class="btn-save-note" id="btnSaveNote">Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-head">
+    <span class="grid-kanji">全</span>
+    <div class="section-title-wrap">
+      <h2 class="grid-title">All <strong>Lessons</strong></h2>
+      <span class="grid-label">Browse · Watch · Download</span>
+    </div>
+  </div>
+
+  <div class="video-grid" id="videoGrid"></div>
+  <div class="demo-hint">Watch the lessons · Boost your vocabulary </div>
+</main>
+
+<!-- ─── Back Button ─── -->
+<button class="back-btn" onclick="goBack()" aria-label="Go back">
+  <i class="fas fa-arrow-left-long"></i>
+</button>
+
+<!-- Share Modal -->
+<div class="modal-backdrop" id="shareModal">
+  <div class="share-modal">
+    <div class="share-modal-head">
+      <span class="share-modal-title">Share this Lesson</span>
+      <button class="modal-close" id="modalClose"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="share-modal-body">
+      <div class="share-link-row">
+        <input class="share-link-input" id="shareLinkInput" value="https://ranjitgo.com/lesson/01" readonly>
+        <button class="btn-copy-link" id="btnCopyLink">Copy Link</button>
+      </div>
+      <div class="share-platforms">
+        <button class="share-btn wa" onclick="shareToWhatsApp()">
+          <i class="fab fa-whatsapp"></i><span>WhatsApp</span>
+        </button>
+        <button class="share-btn tw" onclick="shareToTwitter()">
+          <i class="fab fa-x-twitter"></i><span>X / Twitter</span>
+        </button>
+        <button class="share-btn tg" onclick="shareToTelegram()">
+          <i class="fab fa-telegram"></i><span>Telegram</span>
+        </button>
+        <button class="share-btn em" onclick="shareByEmail()">
+          <i class="fas fa-envelope"></i><span>Email</span>
+        </button>
+      </div>
+      <div class="share-qr">
+        <div class="qr-hint">Scan QR to share</div>
+        <div class="qr-box">⬛</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="dl-toast" id="dlToast">
+  <i class="fas fa-circle-check"></i>
+  <span id="dlToastMsg">Downloading…</span>
+</div>
+
+<script>
+(function(){
+
+/* ── THEME ── */
+const html = document.documentElement;
+const themeSwitch = document.getElementById('themeSwitch');
+const themeIcon   = document.getElementById('themeIcon');
+const themeLabel  = document.getElementById('themeLabel');
+const themeToggleRow = document.getElementById('themeToggleRow');
+const saved = localStorage.getItem('rg-theme');
+if(saved==='dark') applyDark(true, false);
+function applyDark(on, save=true){
+  html.dataset.theme = on ? 'dark' : 'light';
+  themeSwitch.checked = on;
+  themeIcon.className = on ? 'fas fa-sun' : 'fas fa-moon';
+  themeLabel.textContent = on ? 'Light Mode' : 'Dark Mode';
+  if(save) localStorage.setItem('rg-theme', on ? 'dark' : 'light');
+}
+themeSwitch.addEventListener('change', ()=>applyDark(themeSwitch.checked));
+themeToggleRow.addEventListener('click', ()=>applyDark(!themeSwitch.checked));
+themeToggleRow.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); applyDark(!themeSwitch.checked); }});
+
+/* ── MENU ── */
+const mc=document.getElementById('menuContainer'), mt=document.getElementById('menuToggle');
+mt.addEventListener('click', e=>{ e.stopPropagation(); const o=mc.classList.toggle('active'); mt.setAttribute('aria-expanded',o); });
+document.addEventListener('click', e=>{ if(!mc.contains(e.target)){ mc.classList.remove('active'); mt.setAttribute('aria-expanded','false'); }});
+
+/* ── PETALS ── */
+const bgCanvas = document.querySelector('.bg-canvas');
+function makePetal(){
+  const el=document.createElement('div'); el.className='petal';
+  const size=8+Math.random()*10, x=Math.random()*100, dur=10+Math.random()*12, dly=Math.random()*-20;
+  const isDark=html.dataset.theme==='dark';
+  const cols=isDark?['#8a3a58','#a05070']:['#e8a0b4','#f2b8c6','#d4a0b0'];
+  const col=cols[Math.floor(Math.random()*cols.length)];
+  el.style.cssText=`left:${x}vw;top:-20px;animation-duration:${dur}s;animation-delay:${dly}s;`;
+  el.innerHTML=`<svg width="${size}" height="${size}" viewBox="0 0 20 20"><ellipse cx="10" cy="5" rx="3" ry="5" fill="${col}" opacity=".65" transform="rotate(0,10,10)"/><ellipse cx="10" cy="5" rx="3" ry="5" fill="${col}" opacity=".65" transform="rotate(90,10,10)"/><ellipse cx="10" cy="5" rx="3" ry="5" fill="${col}" opacity=".65" transform="rotate(180,10,10)"/><ellipse cx="10" cy="5" rx="3" ry="5" fill="${col}" opacity=".65" transform="rotate(270,10,10)"/></svg>`;
+  bgCanvas.appendChild(el);
+  setTimeout(()=>el.remove(), (dur+Math.abs(dly))*1000+500);
+}
+for(let i=0;i<8;i++) makePetal();
+setInterval(makePetal,1800);
+
+/* ── VIDEO DATA ── */
+const VIDEOS = [
+
+  { id:1, num:'01',
+    title:'English speech part one (SHAH RUKH KHAN): Freedom to Be yourself',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'24.25 min',
+    level:'A1 · Beginner',
+    cat:'Pronunciation',
+    type:'Grammar Snack',
+    image:'youtubeSRK/srk1.jpg',
+    levelClass:'sakura',
+    ytId:'BZ7v0wVrKDo',
+    filter:['beginner','grammar'],
+    likes:247
+  },
+
+  { id:2, num:'02',
+    title:'English speech part two (SHAH RUKH KHAN): Life Lessons!.',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'12.31 min',
+    level:'A1 · Beginner',
+    cat:'Grammar',
+    type:'Full Lesson',
+    image:'youtubeSRK/srk2.jpg',
+    levelClass:'blue',
+    ytId:'tqmYgFGlgAI',
+    filter:['beginner','grammar','speaking'],
+    likes:183
+  },
+
+  { id:3, num:'03',
+    title:'ENGLISH SPEECH | BRAD PITT & SRK: Brad Pitt meets SRK .',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'14.17 min',
+    level:'A2 · Elementary',
+    cat:'Vocabulary',
+    type:'Word Pack',
+    image:'youtubeSRK/srk3.jpg',
+    levelClass:'gold',
+    ytId:'r2fWl3S7Wmk',
+    filter:['beginner','vocabulary'],
+    likes:312
+  },
+
+  { id:4, num:'04',
+    title:'ENGLISH SPEECH | SHAH RUKH KHAN: Perseverance & Success.',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'16.15 min',
+    level:'A2 · Elementary',
+    cat:'Grammar',
+    type:'Full Lesson',
+    image:'youtubeSRK/srk4.jpg',
+    levelClass:'green',
+    ytId:'LRKodKH456o',
+    filter:['beginner','grammar'],
+    likes:156
+  },
+
+  { id:5,
+    num:'05',
+    title:'ENGLISH SPEECH | LEARN ENGLISH with SHAH RUKH KHAN: Idioms & Expressions.',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'11.51 min',
+    level:'B1 · Intermediate',
+    cat:'Vocabulary',
+    type:'Idiom Pack',
+    image:'youtubeSRK/srk5.jpg',
+    levelClass:'sakura',
+    ytId:'WsMgf963UCg',
+    filter:['intermediate','vocabulary'],
+    likes:428
+  },
+
+  { id:6, num:'06',
+    title:'ENGLISH SPEECH | SRK AND DEEPIKA: Jawan Press Meet.',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'9.22 min',
+    level:'B1 · Intermediate',
+    cat:'Grammar',
+    type:'Deep Dive',
+    image:'youtubeSRK/srk6.jpg',
+    levelClass:'blue',
+    ytId:'IlzsvE6roZ0',
+    filter:['intermediate','grammar'],
+    likes:291
+  },
+
+  { id:7, num:'07',
+    title:'Thoughts on humanity, fame and love | Shah Rukh Khan | TED',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'17.51 min',
+    level:'B1 · Intermediate',
+    cat:'Vocabulary',
+    type:'Word Pack',
+    image:'youtubeSRK/srk7.jpg',
+    levelClass:'gold',
+    ytId:'0NV1KdWRHck',
+    filter:['intermediate','vocabulary'],
+    likes:374
+  },
+
+  { id:8, num:'08',
+    title:'Shahrukh Khan at International Film Festival Berlinale 2008',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'38.14 min',
+    level:'B2 · Advanced',
+    cat:'Exam Prep',
+    type:'IELTS',
+    image:'youtubeSRK/srk8.jpg',
+    stripe:'#5e8a6a',
+    levelClass:'green',
+    ytId:'DH86ln9DnXM',
+    filter:['advanced','grammar'],
+    likes:512
+  },
+
+  { id:9, num:'09',
+    title:'An Insight, An Idea with Shah Rukh Khan',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'31.49 min',
+    level:'B2 · Advanced',
+    cat:'Vocabulary',
+    type:'Word Pack',
+    image:'youtubeSRK/srk9.png',
+    levelClass:'sakura',
+    ytId:'IVF_ms3G2O8',
+    filter:['advanced','vocabulary'],
+    likes:198
+  },
+
+  { id:10, num:'10',
+    title:'7 Times Shah Rukh Khan Was The Wittiest On Stage | SRK Filmfare | Yale University',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'29.10 min',
+    level:'B2 · Advanced',
+    cat:'Speaking',
+    type:'Full Lesson',
+    image:'youtubeSRK/srk10.jpg',
+    levelClass:'blue',
+    ytId:'Yfo9kKheOPQ',
+    filter:['advanced','speaking'],
+    likes:443
+  },
+
+  { id:11, num:'11',
+    title:'Shah Rukh Khan at Yale University as Chubb Fellow (official video)',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'69.34 min',
+    level:'B1 · Intermediate',
+    cat:'Grammar',
+    type:'Grammar Snack',
+    image:'youtubeSRK/srk11.jpg',
+    levelClass:'gold',
+    ytId:'q0OaOnT8res',
+    filter:['intermediate','grammar'],
+    likes:167
+  },
+
+  { id:12, num:'12',
+    title:'India Today Conclave: Q&A With Shah Rukh Khan',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'39.25 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk12.jpg',
+    levelClass:'green',
+    ytId:'i6mcguPa4p8',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:13, num:'13',
+    title:'AIB Podcast : feat. Shah Rukh Khan (Part 01)',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'30.28 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk13.jpg',
+    levelClass:'green',
+    ytId:'5LFdcZe7WW4',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:14, num:'14',
+    title:'AIB Podcast : feat. Shah Rukh Khan (Part 02)',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'24.10 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk14.jpg',
+    levelClass:'green',
+    ytId:'HmCfiqW0Y0I',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:15, num:'15',
+    title:'Follow the heart in Life and Leadership: Shah Rukh Khan at IIMBUE 2015',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'36.39 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk15.jpg',
+    levelClass:'green',
+    ytId:'QScpbN25C40',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:16, num:'16',
+    title:'Walk The Talk with Shah Rukh Khan',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'13.40 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk16.jpg',
+    levelClass:'green',
+    ytId:'PoZMN96YevY',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:17, num:'17',
+    title:'Walk The Talk with Shah Rukh Khan (Part 2)',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'10.34 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk17.jpg',
+    levelClass:'green',
+    ytId:'OsOX-dAX93g',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:18, num:'18',
+    title:'An Interview With The King | Shahrukh Khan | Anupama Chopra | Film Companion',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'27.25 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk18.jpg',
+    levelClass:'green',
+    ytId:'w4rlMwZjiLQ',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:19, num:'19',
+    title:'1Kyw_HLk6hQ',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'23.44 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk19.jpg',
+    levelClass:'green',
+    ytId:'1Kyw_HLk6hQ',
+    filter:['beginner','speaking'],
+    likes:339
+  },
+  { id:20, num:'20',
+    title:'Shah Rukh Khan with Sundar Pichai | Happy New Year Film | Talks at Google',
+    desc:'Be fearless, be real — learn English through SRK’s powerful message of self-expression.',
+    dur:'36.52 min',
+    level:'A2 · Elementary',
+    cat:'Pronunciation',
+    type:'Culture Note',
+    image:'youtubeSRK/srk20.jpg',
+    levelClass:'green',
+    ytId:'H_8UBv5bZo0',
+    filter:['beginner','speaking'],
+    likes:339
+  }
+
+];
+
+/* ── STATE ── */
+let currentVideo = VIDEOS[0];
+let filterActive = 'all';
+let likedVideos  = new Set(JSON.parse(localStorage.getItem('rg-liked')||'[]'));
+let bookmarked   = new Set(JSON.parse(localStorage.getItem('rg-bookmarked')||'[]'));
+let watchedVideos= new Set(JSON.parse(localStorage.getItem('rg-watched')||'[]'));
+let favCards     = new Set(JSON.parse(localStorage.getItem('rg-favCards')||'[]'));
+let currentRating = 0;
+let thumbState   = null; // 'up' | 'down' | null
+
+/* ── STYLES MAP ── */
+const tagMap = {
+  sakura:{ color:'var(--sakura-deep)', border:'var(--sakura)', bg:'var(--sakura-pale)' },
+  blue:  { color:'var(--accent-blue)', border:'rgba(123,155,191,.4)', bg:'rgba(123,155,191,.08)' },
+  gold:  { color:'#9e7a30',            border:'var(--gold)',           bg:'var(--gold-pale)' },
+  green: { color:'#3d6e4a',            border:'rgba(94,138,106,.4)',   bg:'rgba(94,138,106,.08)' },
+};
+const levelBgMap = {
+  sakura:{ bg:'rgba(196,104,126,.18)', color:'#c4687e', border:'rgba(196,104,126,.4)' },
+  blue:  { bg:'rgba(123,155,191,.15)', color:'#7b9bbf', border:'rgba(123,155,191,.4)' },
+  gold:  { bg:'rgba(200,169,110,.18)', color:'#9e7a30', border:'rgba(200,169,110,.5)' },
+  green: { bg:'rgba(94,138,106,.15)',  color:'#3d6e4a', border:'rgba(94,138,106,.4)' },
+};
+
+function saveState(){
+  localStorage.setItem('rg-liked',     JSON.stringify([...likedVideos]));
+  localStorage.setItem('rg-bookmarked',JSON.stringify([...bookmarked]));
+  localStorage.setItem('rg-watched',   JSON.stringify([...watchedVideos]));
+  localStorage.setItem('rg-favCards',  JSON.stringify([...favCards]));
+}
+
+/* ── BUILD PLAYLIST ── */
+function buildPlaylist(){
+  const scroll = document.getElementById('playlistScroll');
+  scroll.innerHTML = '';
+  VIDEOS.forEach(v=>{
+    const item = document.createElement('div');
+    item.className = 'playlist-item' + (v.id===currentVideo.id?' active':'') + (watchedVideos.has(v.id)?' completed':'');
+    item.dataset.id = v.id;
+    item.innerHTML = `
+      <div class="pi-thumb">
+        <div class="pi-thumb-inner">${v.image ? `<img src="${v.image}" alt="thumbnail">` : `<i class="fas fa-play"></i>`}</div>
+      </div>
+      <div class="pi-info">
+        <div class="pi-num">${v.num}· Lesson</div>
+        <div class="pi-title">${v.title}</div>
+      </div>
+      <div class="pi-dur">${v.dur}</div>
+      <i class="fas fa-circle-check pi-check"></i>
+      <button class="pi-dl-btn" title="Download" data-dl="${v.id}"><i class="fas fa-download"></i></button>`;
+    item.addEventListener('click', e=>{
+      if(e.target.closest('.pi-dl-btn')){ triggerDownload(v); return; }
+      loadVideo(v);
+    });
+    scroll.appendChild(item);
+  });
+  // Scroll active into view
+  const active = scroll.querySelector('.active');
+  if(active) active.scrollIntoView({block:'nearest'});
+}
+
+/* ── BUILD GRID ── */
+function buildGrid(filter='all', query=''){
+  const grid = document.getElementById('videoGrid');
+  grid.innerHTML = '';
+  let list = filter==='all' ? VIDEOS : VIDEOS.filter(v=>v.filter.includes(filter));
+  if(query) list = list.filter(v=>
+    v.title.toLowerCase().includes(query)||
+    v.desc.toLowerCase().includes(query)||
+    v.cat.toLowerCase().includes(query)||
+    v.level.toLowerCase().includes(query)
+  );
+  list.forEach((v,i)=>{
+    const card = document.createElement('div');
+    card.className = 'video-card' + (watchedVideos.has(v.id)?' watched':'');
+    card.style.animationDelay=(i*0.07)+'s';
+    const lc=v.levelClass, t=tagMap[lc], lb=levelBgMap[lc];
+    const isFav = favCards.has(v.id);
+    card.innerHTML = `
+      <div class="vc-stripe" style="background:${v.stripe}"></div>
+      <div class="vc-thumb">
+        <div class="vc-thumb">
+  ${v.image 
+    ? `<img src="${v.image}" class="video-icon" alt="thumbnail">`
+    : `<div class="vc-thumb-bg">${v.emoji}</div>`
+  }
+</div>
+        <div class="vc-play-overlay"><div class="vc-play-circle"><i class="fas fa-play"></i></div></div>
+        <span class="vc-duration-badge">${v.dur}</span>
+        <span class="vc-level-badge" style="background:${lb.bg};color:${lb.color};border:1px solid ${lb.border}">${v.level.split('·')[0].trim()}</span>
+        <span class="vc-watched-badge"><i class="fas fa-check"></i> Watched</span>
+      </div>
+      <div class="vc-body">
+        <div class="vc-num">${v.num} · Lesson</div>
+        <div class="vc-title">${v.title}</div>
+        <div class="vc-desc">${v.desc}</div>
+        <div class="vc-footer">
+          <span class="vc-tag" style="color:${t.color};border-color:${t.border};background:${t.bg}">${v.cat}</span>
+          <div class="vc-actions">
+            <button class="vc-btn watch has-tooltip" data-tip="Watch" data-watch="${v.id}"><i class="fas fa-play"></i></button>
+            <button class="vc-btn fav has-tooltip ${isFav?'active':''}" data-tip="${isFav?'Unfavourite':'Favourite'}" data-fav="${v.id}"><i class="fas fa-heart"></i></button>
+            <button class="vc-btn dl has-tooltip" data-tip="Download" data-dl="${v.id}"><i class="fas fa-download"></i></button>
+          </div>
+        </div>
+      </div>`;
+    card.addEventListener('click', e=>{
+      if(e.target.closest('[data-dl]')){ triggerDownload(v); return; }
+      if(e.target.closest('[data-fav]')){ toggleCardFav(v, card, e.target.closest('[data-fav]')); return; }
+      loadVideo(v);
+      document.getElementById('playerMain').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    grid.appendChild(card);
+  });
+}
+
+function toggleCardFav(v, card, btn){
+  if(favCards.has(v.id)){ favCards.delete(v.id); btn.classList.remove('active'); btn.dataset.tip='Favourite'; showToast(`💔 Removed from favourites`); }
+  else { favCards.add(v.id); btn.classList.add('active'); btn.dataset.tip='Unfavourite'; showToast(`❤️ Added to favourites!`); }
+  saveState();
+}
+
+/* ── LOAD VIDEO ── */
+function loadVideo(v){
+  currentVideo = v;
+  watchedVideos.add(v.id);
+  saveState();
+
+  document.getElementById('videoIframe').src =
+    `https://www.youtube.com/embed/${v.ytId}?autoplay=1&rel=0&modestbranding=1`;
+  document.getElementById('playingNum').textContent   = `${v.num} · 映像`;
+  document.getElementById('playingTitle').textContent = v.title;
+  document.getElementById('playingLevel').textContent = v.level;
+  document.getElementById('playingCat').textContent   = v.cat;
+  document.getElementById('playingType').textContent  = v.type;
+  document.getElementById('playingDur').textContent   = v.dur;
+  document.getElementById('progressLabel').textContent= `Episode ${v.num} — Now Playing`;
+  document.getElementById('likeCountNum').textContent = likedVideos.has(v.id) ? v.likes+1 : v.likes;
+  document.getElementById('shareLinkInput').value     = `https://ranjitgo.com/lesson/${v.num}`;
+
+  const pct = Math.floor(Math.random()*80)+5;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressPct').textContent  = pct+'%';
+  document.getElementById('liveBadge').style.display  = v.id===1 ? 'flex' : 'none';
+
+  // Update like button
+  const btnLike = document.getElementById('btnLike');
+  btnLike.classList.toggle('liked', likedVideos.has(v.id));
+
+  // Update bookmark
+  const btnBM = document.getElementById('btnBookmark');
+  btnBM.classList.toggle('bookmarked', bookmarked.has(v.id));
+
+  // Reset rating
+  currentRating = 0; updateStars(0);
+  document.getElementById('ratingLabel').textContent = '';
+
+  // Reset thumbs
+  thumbState = null;
+  document.getElementById('btnThumbUp').classList.remove('rated-up');
+  document.getElementById('btnThumbDown').classList.remove('rated-down');
+
+  // Load notes
+  const note = localStorage.getItem(`rg-note-${v.id}`)||'';
+  document.getElementById('notesArea').value = note;
+
+  buildPlaylist();
+  buildGrid(filterActive, document.getElementById('searchInput').value.toLowerCase().trim());
+}
+
+/* ── LIKE ── */
+document.getElementById('btnLike').addEventListener('click', ()=>{
+  const btn = document.getElementById('btnLike');
+  const numEl= document.getElementById('likeCountNum');
+  if(likedVideos.has(currentVideo.id)){
+    likedVideos.delete(currentVideo.id);
+    btn.classList.remove('liked');
+    numEl.textContent = currentVideo.likes;
+    showToast('💔 Like removed');
+  } else {
+    likedVideos.add(currentVideo.id);
+    btn.classList.add('liked');
+    numEl.textContent = currentVideo.likes + 1;
+    showToast('❤️ Liked! Thanks for the love');
+  }
+  saveState();
+});
+
+/* ── BOOKMARK ── */
+document.getElementById('btnBookmark').addEventListener('click', ()=>{
+  const btn = document.getElementById('btnBookmark');
+  if(bookmarked.has(currentVideo.id)){
+    bookmarked.delete(currentVideo.id);
+    btn.classList.remove('bookmarked');
+    showToast('🔖 Bookmark removed');
+  } else {
+    bookmarked.add(currentVideo.id);
+    btn.classList.add('bookmarked');
+    showToast('🔖 Bookmarked! Find it later');
+  }
+  saveState();
+});
+
+/* ── THUMBS ── */
+document.getElementById('btnThumbUp').addEventListener('click', ()=>{
+  const up=document.getElementById('btnThumbUp'), dn=document.getElementById('btnThumbDown');
+  if(thumbState==='up'){ thumbState=null; up.classList.remove('rated-up'); showToast('👍 Rating removed'); }
+  else { thumbState='up'; up.classList.add('rated-up'); dn.classList.remove('rated-down'); showToast('👍 Marked as helpful!'); }
+});
+document.getElementById('btnThumbDown').addEventListener('click', ()=>{
+  const up=document.getElementById('btnThumbUp'), dn=document.getElementById('btnThumbDown');
+  if(thumbState==='down'){ thumbState=null; dn.classList.remove('rated-down'); showToast('Rating removed'); }
+  else { thumbState='down'; dn.classList.add('rated-down'); up.classList.remove('rated-up'); showToast('Thanks for your feedback'); }
+});
+
+/* ── STAR RATING ── */
+function updateStars(n){
+  document.querySelectorAll('.star-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active', i < n);
+  });
+}
+document.querySelectorAll('.star-btn').forEach(btn=>{
+  btn.addEventListener('mouseenter', ()=>updateStars(+btn.dataset.star));
+  btn.addEventListener('mouseleave', ()=>updateStars(currentRating));
+  btn.addEventListener('click', ()=>{
+    currentRating = +btn.dataset.star;
+    updateStars(currentRating);
+    const labels=['','Nice try!','Getting there!','Good lesson!','Great lesson!','Outstanding! ⭐'];
+    document.getElementById('ratingLabel').textContent = labels[currentRating];
+    showToast(`⭐ You rated this ${currentRating}/5!`);
+  });
+});
+
+/* ── SHARE MODAL ── */
+const shareModal = document.getElementById('shareModal');
+document.getElementById('btnShare').addEventListener('click', ()=> shareModal.classList.add('open'));
+document.getElementById('modalClose').addEventListener('click', ()=> shareModal.classList.remove('open'));
+shareModal.addEventListener('click', e=>{ if(e.target===shareModal) shareModal.classList.remove('open'); });
+
+document.getElementById('btnCopyLink').addEventListener('click', ()=>{
+  const input = document.getElementById('shareLinkInput');
+  navigator.clipboard.writeText(input.value).then(()=>{
+    const btn = document.getElementById('btnCopyLink');
+    btn.textContent='Copied!'; btn.classList.add('copied');
+    showToast('🔗 Link copied to clipboard!');
+    setTimeout(()=>{ btn.textContent='Copy Link'; btn.classList.remove('copied'); },2000);
+  }).catch(()=>{
+    input.select(); document.execCommand('copy');
+    showToast('🔗 Link copied!');
+  });
+});
+
+window.shareToWhatsApp = ()=>{
+  const url = encodeURIComponent(document.getElementById('shareLinkInput').value);
+  const txt = encodeURIComponent(`Check out this lesson: ${currentVideo.title}`);
+  window.open(`https://wa.me/?text=${txt}%20${url}`,'_blank');
+  shareModal.classList.remove('open');
+};
+window.shareToTwitter = ()=>{
+  const url = encodeURIComponent(document.getElementById('shareLinkInput').value);
+  const txt = encodeURIComponent(`Learning English with "${currentVideo.title}" on RanjitGo! 🎌`);
+  window.open(`https://twitter.com/intent/tweet?text=${txt}&url=${url}`,'_blank');
+  shareModal.classList.remove('open');
+};
+window.shareToTelegram = ()=>{
+  const url = encodeURIComponent(document.getElementById('shareLinkInput').value);
+  const txt = encodeURIComponent(`Check out: ${currentVideo.title}`);
+  window.open(`https://t.me/share/url?url=${url}&text=${txt}`,'_blank');
+  shareModal.classList.remove('open');
+};
+window.shareByEmail = ()=>{
+  const url = document.getElementById('shareLinkInput').value;
+  const subj= encodeURIComponent(`English Lesson: ${currentVideo.title}`);
+  const body= encodeURIComponent(`Hi!\n\nI thought you might enjoy this English lesson:\n${currentVideo.title}\n\n${url}\n\nHappy learning!`);
+  window.location.href=`mailto:?subject=${subj}&body=${body}`;
+  shareModal.classList.remove('open');
+};
+
+/* ── QUALITY PICKER ── */
+const qPanel = document.getElementById('qualityPanel');
+document.getElementById('btnQuality').addEventListener('click', e=>{
+  e.stopPropagation(); qPanel.classList.toggle('open');
+});
+document.querySelectorAll('.quality-option').forEach(opt=>{
+  opt.addEventListener('click', ()=>{
+    document.querySelectorAll('.quality-option').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+    qPanel.classList.remove('open');
+    showToast(`⚙️ Quality: ${opt.dataset.q}`);
+  });
+});
+document.addEventListener('click', e=>{ if(!e.target.closest('.quality-btn-wrap')) qPanel.classList.remove('open'); });
+
+/* ── SHORTCUTS OVERLAY ── */
+const shortcutsOverlay = document.getElementById('shortcutsOverlay');
+document.getElementById('btnShortcuts').addEventListener('click', ()=>{
+  shortcutsOverlay.classList.toggle('visible');
+});
+shortcutsOverlay.addEventListener('click', ()=> shortcutsOverlay.classList.remove('visible'));
+
+/* ── SUBTITLES ── */
+document.getElementById('btnCC').addEventListener('click', ()=>{
+  const btn = document.getElementById('btnCC');
+  btn.classList.toggle('bookmarked');
+  showToast(btn.classList.contains('bookmarked') ? '📝 Subtitles ON' : '📝 Subtitles OFF');
+});
+
+/* ── DOWNLOAD ── */
+function triggerDownload(v){
+  showToast(`⬇️ Downloading "${v.title}"…`);
+  setTimeout(()=> showToast(`✅ "${v.title}" saved!`), 2200);
+}
+
+/* ── PROGRESS BAR ── */
+document.getElementById('progressBar').addEventListener('click', e=>{
+  const rect=e.currentTarget.getBoundingClientRect();
+  const pct=Math.round(((e.clientX-rect.left)/rect.width)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressPct').textContent=pct+'%';
+});
+
+/* ── PLAYER BUTTONS ── */
+document.getElementById('btnWatch').addEventListener('click', ()=>{
+  loadVideo(currentVideo); showToast(`▶️ Now playing: ${currentVideo.title}`);
+});
+document.getElementById('btnDownload').addEventListener('click', ()=> triggerDownload(currentVideo));
+document.getElementById('btnFullscreen').addEventListener('click', ()=>{
+  const iframe=document.getElementById('videoIframe');
+  if(iframe.requestFullscreen) iframe.requestFullscreen();
+  else if(iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+});
+document.getElementById('btnNext').addEventListener('click', ()=>{
+  const idx = VIDEOS.findIndex(v=>v.id===currentVideo.id);
+  const next = VIDEOS[(idx+1) % VIDEOS.length];
+  loadVideo(next);
+  showToast(`⏭️ Next: ${next.title}`);
+  document.getElementById('playerMain').scrollIntoView({behavior:'smooth',block:'start'});
+});
+
+/* ── NOTES ── */
+document.getElementById('btnSaveNote').addEventListener('click', ()=>{
+  const txt = document.getElementById('notesArea').value;
+  localStorage.setItem(`rg-note-${currentVideo.id}`, txt);
+  showToast('📝 Note saved!');
+  document.getElementById('notesHint').textContent = 'Saved ✓ ' + new Date().toLocaleTimeString();
+});
+document.querySelectorAll('.notes-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.notes-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const placeholders = { notes:'Jot down key points, new words, or questions as you watch…', vocab:'Add new vocabulary and example sentences here…', questions:'Write questions you want to research further…' };
+    document.getElementById('notesArea').placeholder = placeholders[tab.dataset.tab];
+  });
+});
+
+/* ── FILTER ── */
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    filterActive = btn.dataset.filter;
+    buildGrid(filterActive, document.getElementById('searchInput').value.toLowerCase().trim());
+  });
+});
+
+/* ── SEARCH ── */
+document.getElementById('searchInput').addEventListener('input', e=>{
+  buildGrid(filterActive, e.target.value.toLowerCase().trim());
+});
+
+/* ── TOAST ── */
+const toast=document.getElementById('dlToast'), toastMsg=document.getElementById('dlToastMsg');
+let toastTimer;
+function showToast(msg){
+  clearTimeout(toastTimer);
+  toastMsg.textContent=msg; toast.classList.add('show');
+  toastTimer=setTimeout(()=>toast.classList.remove('show'),3000);
+}
+
+/* ── KEYBOARD SHORTCUTS ── */
+document.addEventListener('keydown', e=>{
+  const tag=document.activeElement.tagName.toLowerCase();
+  if(tag==='input'||tag==='textarea') return;
+  switch(e.key){
+    case 'f': case 'F':
+      e.preventDefault();
+      document.getElementById('btnFullscreen').click(); break;
+    case 'l': case 'L':
+      e.preventDefault();
+      document.getElementById('btnLike').click(); break;
+    case 's': case 'S':
+      e.preventDefault();
+      shareModal.classList.toggle('open'); break;
+    case 'n': case 'N':
+      e.preventDefault();
+      document.getElementById('btnNext').click(); break;
+    case 'b': case 'B':
+      e.preventDefault();
+      document.getElementById('btnBookmark').click(); break;
+    case '?':
+      e.preventDefault();
+      shortcutsOverlay.classList.toggle('visible'); break;
+    case 'Escape':
+      shareModal.classList.remove('open');
+      shortcutsOverlay.classList.remove('visible');
+      qPanel.classList.remove('open');
+      break;
+  }
+});
+
+/* ── INIT ── */
+buildPlaylist();
+buildGrid('all');
+
+})();
+
+// RESET WATCHED BUTTON
+const resetBtn = document.getElementById("resetWatchBtn");
+
+resetBtn.addEventListener("click", () => {
+
+  // 1. Remove from localStorage
+  localStorage.removeItem("rg-watched");
+
+  // 2. Remove class from all cards
+  document.querySelectorAll(".video-card").forEach(card => {
+    card.classList.remove("watched");
+  });
+
+  // 3. Optional: show message
+  alert("All watched marks cleared!");
+
+});
+function goBack() {
+  window.history.back();
+}
+</script>
+</body>
+</html>
