@@ -40,7 +40,7 @@ Add your app screenshots here.
 
 Clone the repository:
 
-git clone https://github.com/your-username/RanjitGo.git
+git clone https://github.com/QuantumCode001/RanjitGo.git
 
 Go to the project folder:
 
